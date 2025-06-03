@@ -17,4 +17,7 @@ I principali caratteri per formattazione del testo markdown sono:
 Le intestazioni sono molto utili per strutturare una documentazione.  
 
 Per le intestazioni usiamo il carattere **#**.  
-In base al numero di **#** il titolo è più o meno grande, fino ad un massimo di sei **#**.
+In base al numero di **#** il titolo è più o meno grande, fino ad un massimo di sei **#**.\\
+Alcuni esempi:\
+# Titolo molto grande
+###### Titolo molto piccolo
