@@ -59,6 +59,7 @@ La formattazione serve modificare il testo inserendo per esempio testo in grasse
 ## Fare un elenco
 
 Per gli elenchi puntati si inserisce un trattino `-` all'inizio della riga  
+
 *Sintassi:*  
 
 `-elemento 1`  
@@ -86,12 +87,24 @@ Per l’elenco numerato si inserisce il numero dell’elemento seguito da un pun
 ## Fare un collegamento esterno
 
 Per inserire un collegamento ad un sito esterno.  
+
 *Sintassi:*  
+
 `<indirizzo del sito web>.`  
 
+*Esempio:*  
+
+<https://www.wikipedia.org>
+
 Collegamento con nome personalizzato.  
+
 *Sintassi:*  
+
 `[nome personalizzato]\(<link>).`  
+
+*Esempio:*  
+
+[Visita Wikipedia](https://www.wikipedia.org)  
 
 ## Inserire immagini
 
