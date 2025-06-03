@@ -16,6 +16,7 @@ Git è un sistema di controllo di versione distribuito che permette di gestire e
 ! [rejected]        main -> main (non-fast-forward)
 error: failed to push some refs to 'origin'
 hint: Updates were rejected because the tip of your current branch is behind
+```
 
 ## Concetti chiave
 - **Repository (repo)**: cartella che contiene i file del progetto e la cronologia delle modifiche, può essere locale o remoto
