@@ -108,24 +108,40 @@ Collegamento con nome personalizzato.
 
 ## Inserire immagini
 
-Per inserire le immagini si usa la sintassi:  
+Per inserire le immagini  
+
+*Sintassi:*  
+
 __`![Testo alternativo](URL o percorso “Titolo opzionale")`__
 
-`!`indica che inserisci l’immagine.  
-`[Testo alternativo]`è il testo che viene mostrato in caso non si carica l’immagine.  
-`(URL o percorso)`il link all’immagine (percorso locale o URL).  
-`”Titolo”`opzionale, compare quando passi il mouse sopra l’immagine.  
+`!` : indica che inserisci l’immagine.  
+`[Testo alternativo]` : testo che viene mostrato in caso non si carica l’immagine.  
+`(URL o percorso)` : link all’immagine (percorso locale o URL).  
+`”Titolo”` : opzionale, compare quando passi il mouse sopra l’immagine.  
+
+
+*Esempio:*  
+
+![Logo di GitHub](https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png "Vai su GitHub")
+
 
 ## Collegare un’immagine a un link
 
-Per rendere cliccabile un immagine in Markdown (cioè che porta a un link), si usa la sintassi:  
+Per rendere cliccabile un immagine in Markdown (cioè che porta a un link)  
+
+*Sintassi:*  
 
 __`[![Testo alternativo](URL o percorso “Titolo”)](Link di destinazione)`__
 
-`[ … ]`le parentesi indicano che si sta creando un link.
-`!`Dice che dentro ci sarà un immagine.  
-`![Testo alternativo]`È l’immagine vera e propria.  
-`(URL o percorso)`È il percorso o il link dell’immagine da mostrare.  
-`”Titolo”`Facoltativo, appare quando passi il mouse sull’immagine.  
-`(Link di destinazione)`Dopo l’immagine, tra parentesi tonde va l’URL dove porterà il clic.  
-  
+`[ … ]` : le parentesi indicano che si sta creando un link.
+`!` : Dice che dentro ci sarà un immagine.  
+`![Testo alternativo]` : È l’immagine vera e propria.  
+`(URL o percorso)` : È il percorso o il link dell’immagine da mostrare.  
+`”Titolo”` : Facoltativo, appare quando passi il mouse sull’immagine.  
+`(Link di destinazione)` : Dopo l’immagine, tra parentesi tonde va l’URL dove porterà il clic.  
+
+
+  *Esempio:*  
+
+  [![GitHub Logo](https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png "Vai su GitHub")](https://github.com)
+
