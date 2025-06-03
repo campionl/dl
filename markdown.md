@@ -54,4 +54,28 @@ La formattazione serve modificare il testo inserendo per esempio testo in grasse
 
   *Esempio:*  
   `~~barrato~~`  
-  ~~barrato~~  
+  ~~barrato~~
+
+## Inserire immagini
+
+Per inserire le immagini si usa la sintassi
+__![Testo alternativo](URL o percorso “Titolo opzionale)__
+
+`!`indica che inserisci l’immagine.
+`[Testo alternativo]`è il testo che viene mostrato in caso non si carica l’immagine.
+`(URL o percorso)`il link all’immagine (percorso locale o URL).
+`”Titolo”`opzionale, compare quando passi il mouse sopra l’immagine.
+
+##Collegare un’immagine a un link
+
+Per rendere cliccabile un immagine in Markdown (cioè che porta a un link), si usa la sintassi:
+
+`[![Testo alternativo](URL o percorso “Titolo”)](Link di destinazione)
+
+`[ … ]`le parentesi indicano che si sta creando un link.
+`!`Dice che dentro ci sarà un immagine.
+`![Testo alternativo]`È l’immagine vera e propria.
+`(URL o percorso)`È il percorso o il link dell’immagine da mostrare.
+`”Titolo”`Facoltativo, appare quando passi il mouse sull’immagine.
+`(Link di destinazione)`Dopo l’immagine, tra parentesi tonde va l’URL dove porterà il clic.
+  
