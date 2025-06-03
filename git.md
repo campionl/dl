@@ -1,7 +1,7 @@
 # Git
 ---
 ## Cos’è Git
-Git è un sistema di controllo di versione distribuito che permette di gestire e tracciare le modifiche al codice sorgente di un progetto in modo efficiente e sicuro. Ogni sviluppatore ha una copia completa del repository, inclusa la storia delle modifiche, e può lavorare sia offline sia online.
+Git è un sistema di controllo di versione che permette di gestire e tenere traccia delle modifiche al codice di un progetto. Ogni sviluppatore ha una copia completa del repository, compresa la cronologia delle modifiche, e può lavorare sia offline che online. Questo rende il lavoro di squadra più sicuro, organizzato ed efficiente.
 
 ## Concetti chiave
 - **Repository (repo)**: cartella che contiene i file del progetto e la cronologia delle modifiche, può essere locale o remota
