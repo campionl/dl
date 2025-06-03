@@ -22,3 +22,13 @@ In base al numero di `#` il titolo è più o meno grande, fino ad un massimo di 
 *Alcuni esempi:*
 - `#` Titolo molto grande
 - `#######` Titolo molto piccolo
+
+## Formattazione  
+La formattazione serve modificare il testo inserendo per esempio testo in grassetto o in corsivo.  
+- Testo normale  
+  Per il testo senza formattazione non c'è bisogno di alcun simbolo  
+  
+  *Esempio:*
+  
+- Testo in grassetto
+  
