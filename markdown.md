@@ -10,7 +10,7 @@ Con Markdown quindi possiamo dare design e struttura al testo per personalizzarl
 
 I principali caratteri per formattazione del testo markdown sono:
 
-( * ) ( # ) ( _ ) ( - )
+`*` `#` `-` `_`
 
 
 ## Intestazioni
