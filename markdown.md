@@ -85,14 +85,13 @@ Per l’elenco numerato si inserisce il numero dell’elemento seguito da un pun
 
 ## Fare un collegamento esterno
 
-Per inserire un collegamento ad un sito esterno.
-*Sintassi:*
-<indirizzo del sito web>.
-`<indirizzo del sito web>.`
+Per inserire un collegamento ad un sito esterno.  
+*Sintassi:*  
+`<indirizzo del sito web>.`  
 
-Collegamento con nome personalizzato.
-*Sintassi:*
-`[nome personalizzato]\(<link>).`
+Collegamento con nome personalizzato.  
+*Sintassi:*  
+`[nome personalizzato]\(<link>).`  
 
 ## Inserire immagini
 
