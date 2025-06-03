@@ -4,8 +4,10 @@
 Git è un sistema di controllo di versione che permette di gestire e tenere traccia delle modifiche al codice di un progetto. Ogni sviluppatore ha una copia completa del repository, compresa la cronologia delle modifiche, e può lavorare sia offline che online. Questo rende il lavoro di squadra più sicuro, organizzato ed efficiente.
 
 ## Concetti chiave
-- **Repository (repo)**: cartella che contiene i file del progetto e la cronologia delle modifiche, può essere locale o remota
-- **Snapshot/Commit**: ogni volta che si salva il lavoro con un commit, Git crea uno snapshot dello stato attuale dei file
+- **Repository (repo)**: Pensa a un repository (repo) come una cartella speciale per il tuo progetto. Questa cartella non contiene solo i tuoi file, ma anche tutta la storia delle modifiche che hai fatto. Ne esistono due tipi:
+    - Locale: La copia del progetto che hai sul tuo computer.
+    - Remota: La copia del progetto che si trova su un server online (come GitHub), utile per collaborare con altri o per avere un backup.
+- **Commit**: Ogni volta che "salvi" il tuo lavoro in Git con un commit, è come se scattassi una "fotografia" (snapshot) del tuo progetto in quel preciso momento. Questa foto cattura lo stato di tutti i tuoi file così come sono in quel commit.
 
 ## Aree di lavoro
 - **Working directory**: dove si modificano i file
