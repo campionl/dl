@@ -28,7 +28,30 @@ La formattazione serve modificare il testo inserendo per esempio testo in grasse
 - Testo normale  
   Per il testo senza formattazione non c'è bisogno di alcun simbolo  
   
+  *Esempio:*  
+  `Testo normale`  
+  Testo normale
+- Testo in grassetto  
+  Per il grassetto bisogna inserire due asterischi all'inizio e alla fine della frase interessata
+
+  *Esempio:*  
+  `**grassetto**`  
+  **grassetto**
+- Testo corsivo
+  Per il corsivo si inserisce un asterisco all'inizio e alla fine della frase interessata
+
   *Esempio:*
-  
-- Testo in grassetto
-  
+  `*corsivo*`  
+  *corsivo*
+- Testo corsivo e grassetto
+  Per inserire un testo sia in corsivo e in grassetto si utilizzano tre asterischi all'inizio e alla fine della frase interessata
+
+  *Esempio:*
+  `***grassetto e corsivo***`
+  ***grassetto e corsivo***
+- Testo con la barra
+  Per inserire un testo con la barra sopra si utilizzano due tilde `~` all'inizio e alla fine della frase interessata
+
+  *Esempio:*  
+  `~~barrato~~`
+  ~~barrato~~
