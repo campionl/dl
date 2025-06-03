@@ -4,9 +4,8 @@
 Git è un sistema di controllo di versione distribuito che permette di gestire e tracciare le modifiche al codice sorgente di un progetto in modo efficiente e sicuro. Ogni sviluppatore ha una copia completa del repository, inclusa la storia delle modifiche, e può lavorare sia offline sia online.
 
 ## Concetti chiave
-- **Repository (repo)**: cartella che contiene i file del progetto e la cronologia delle modifiche, può essere locale o remoto
+- **Repository (repo)**: cartella che contiene i file del progetto e la cronologia delle modifiche, può essere locale o remota
 - **Snapshot/Commit**: ogni volta che si salva il lavoro con un commit, Git crea uno snapshot dello stato attuale dei file
-- **Checksum SHA-1**: Git usa un codice univoco per identificare ogni commit e file, garantendo l’integrità dei dati
 
 ## Aree di lavoro
 - **Working directory**: dove si modificano i file
@@ -15,8 +14,8 @@ Git è un sistema di controllo di versione distribuito che permette di gestire e
 
 ## Flusso di lavoro base
 1. **Modificare i file** nella working directory
-2. **Aggiungere le modifiche** all’area di staging con ```git add```
-3. **Salvare le modifiche** con ```git commit```
+2. **Aggiungere i file modificati** all’area di staging con ```git add```
+3. **Salvare le modifiche** con ```git commit``` con una descrizione appropriata
 4. **Sincronizzare con il repository** remoto usando ```git push``` (invia) e ```git pull``` (riceve)
 
 ## Configurazione iniziale
@@ -26,59 +25,13 @@ git config --global user.name "<nome>"
 git config --global user.email "<email>"
 ```
 
-## Risoluzione dei conflitti
-
-### Scenario:
-
-- Entrambi gli utenti, nominati A e B, eseguono un git pull correttamente.
-- Entrambi modificano **lo stesso file**.
-- L'**utente A** esegue git add e git push correttamente.
-- L'**utente B** prova a fare git push, ma riceve un errore in quanto è presente un conflitto fra la versione locale e quella nel repository remoto.
-
-```
-! [rejected]        main -> main (non-fast-forward)
-error: failed to push some refs to 'origin'
-hint: Updates were rejected because the tip of your current branch is behind
-```
-
-#### Passi da seguire:
-- Eseguire una pull dal main (o dal branch in cui si sta lavorando)
-
-```
-git pull origin main
-```
-
-- Si verifica un conflitto: durante il git pull, Git cercherà di unire i cambiamenti dell’utente A con quelli dell’utente B. Se entrambi hanno modificato la stessa parte dello stesso file, Git non può risolverlo automaticamente e mostrerà un messaggio tipo:
-```
-Auto-merging esempio.txt
-CONFLICT (content): Merge conflict in esempio.txt
-Automatic merge failed; fix conflicts and then commit the result.
-```
-
-- Aprire il file di testo
-Vedrai qualcosa del genere: 
-```
-<<<<<<< HEAD  
-Contenuto modificato da Utente B  
-=======
-Contenuto modificato da Utente A  
-\>>>>>>> origin/main  
-```
-- Risolvi il conflitto manualmente.  
-Decidi come vuoi unire i due contenuti. Puoi:
-	- Tenere la versione dell’utente B
-	- Tenere la versione dell’utente A
-	- Fondere le modifiche manualmente
-
-Esempio di fusione manuale:
-Contenuto modificato da Utente A
-Contenuto modificato da Utente B
-Poi rimuovi i segni speciali (<<<<<<<, =======, >>>>>>>).
-
-- Concludi con le istruzioni di add, commit e push
-
-
 ## Gestione dei branch (rami)
+
+Immaginiamo il nostro progetto (repo) come un albero: 
+
+- Il branch *main* è il tronco, ossia la versione stabile del progetto
+- I diversi branch (in italiano *rami*) sono copie indipendenti del progetto, dove è possibile implementare nuove funzionalità e testarle senza corrompere la versione stabile
+
 Creazione di un branch
 ```
 git branch <nome-branch>
@@ -89,7 +42,7 @@ Spostarsi in un branch
 git checkout <nome-branch>
 ```
 
-Spingere il nuovo branch su GitHub
+Caricare il nuovo branch su GitHub
 ```
 git push -u origin <nome-branch>
 ```
@@ -144,3 +97,54 @@ Visualizzare la cronologia
 ```
 git log
 ```
+
+## Risoluzione dei conflitti
+
+### Scenario:
+
+- Entrambi gli utenti, nominati A e B, eseguono un git pull correttamente.
+- Entrambi modificano **lo stesso file**.
+- L'**utente A** esegue git add e git push correttamente.
+- L'**utente B** prova a fare git push, ma riceve un errore in quanto è presente un conflitto fra la versione locale e quella nel repository remoto.
+
+```
+! [rejected]        main -> main (non-fast-forward)
+error: failed to push some refs to 'origin'
+hint: Updates were rejected because the tip of your current branch is behind
+```
+
+#### Passi da seguire:
+- Eseguire una pull dal main (o dal branch in cui si sta lavorando)
+
+```
+git pull origin main
+```
+
+- Si verifica un conflitto: durante il git pull, Git cercherà di unire i cambiamenti dell’utente A con quelli dell’utente B. Se entrambi hanno modificato la stessa parte dello stesso file, Git non può risolverlo automaticamente e mostrerà un messaggio tipo:
+```
+Auto-merging esempio.txt
+CONFLICT (content): Merge conflict in esempio.txt
+Automatic merge failed; fix conflicts and then commit the result.
+```
+
+- Aprire il file di testo
+Vedrai qualcosa del genere: 
+```
+<<<<<<< HEAD  
+Contenuto modificato da Utente B  
+=======
+Contenuto modificato da Utente A  
+\>>>>>>> origin/main  
+```
+- Risolvi il conflitto manualmente.  
+Decidi come vuoi unire i due contenuti. Puoi:
+	- Tenere la versione dell’utente B
+	- Tenere la versione dell’utente A
+	- Fondere le modifiche manualmente
+
+Esempio di fusione manuale:
+Contenuto modificato da Utente A
+Contenuto modificato da Utente B
+Poi rimuovi i segni speciali (<<<<<<<, =======, >>>>>>>).
+
+- Concludi con le istruzioni di add, commit e push
