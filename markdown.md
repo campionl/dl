@@ -58,8 +58,8 @@ La formattazione serve modificare il testo inserendo per esempio testo in grasse
 
 ## Fare un elenco
 
-Per gli elenchi puntati si inserisce un trattino `-` all'inizio della riga
-*Sintassi:*
+Per gli elenchi puntati si inserisce un trattino `-` all'inizio della riga  
+*Sintassi:*  
 
 `-elemento 1`  
 `-elemento 2`  
