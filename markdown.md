@@ -56,29 +56,30 @@ La formattazione serve modificare il testo inserendo per esempio testo in grasse
   `~~barrato~~`  
   ~~barrato~~
 
-
 ## Citazioni
 Le citazioni evidenziano blocchi di testo o di codice.  
 Esistono quindi **due** tipi di citazioni.
-+ Le **Citazioni testo** sono usate per evidenziare un passaggio importante che non è codice.
-Sono ideali per citazioni verbali, estratti da documenti, o per mettere in risalto avvisi o note.<br>
-**Come fare una citazione di testo?**
-Per scrivere una citazione usiamo `>`.<br>
+
+---
+Le **Citazioni di testo** sono usate per evidenziare un passaggio importante che non è codice.  
++ Sono ideali per citazioni verbali, estratti da documenti, o per mettere in risalto avvisi o note.<br>
++ Per scrivere una citazione usiamo `>`.<br>
 **Esempio di citazione di testo**
 > Il file Markdown.md serve da introduzione per scrivere una documentazione in modo professionale. <br>
-+ Le **Citazioni di codice** sono usate specificamente per mostrare frammenti di codice sorgente, comandi o sintassi che non devono essere interpretati come testo normale.<br>
- **Come fare una citazione di codice?**
- Esistono due distinzioni:
+
+---
+Le **Citazioni di codice** sono usate specificamente per mostrare frammenti di codice sorgente, comandi o sintassi che non devono essere interpretati come testo normale.<br>
+
+ + Esistono due distinzioni:
    + Il **Codice Inline** è usato per evidenziare piccoli frammenti di codice: 
    Per creare un codice inline si racchiude il testo tra due apici inversi.
-    `esempio di codice inline`
+`esempio di codice inline`
     + Il **Blocco di codice** è usato per evidenziare diverse righe di codice.
      Si usano tre apici inversi all'inizio e alla fine del blocco di codice.
      ```python
 	     for(i in range(10)):
 				print(i)
 	 ```
-
 ## Fare un elenco
 
 Per gli elenchi puntati si inserisce un trattino `-` all'inizio della riga  
