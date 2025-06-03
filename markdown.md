@@ -122,6 +122,8 @@ __`![Testo alternativo](URL o percorso “Titolo opzionale")`__
 
 *Esempio:*  
 
+`![Logo di GitHub](https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png "Vai su GitHub")`  
+
 ![Logo di GitHub](https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png "Vai su GitHub")
 
 
@@ -142,6 +144,8 @@ __`[![Testo alternativo](URL o percorso “Titolo”)](Link di destinazione)`__
 
 
   *Esempio:*  
+
+`[![GitHub Logo](https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png "Vai su GitHub")](https://github.com)`  
 
   [![GitHub Logo](https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png "Vai su GitHub")](https://github.com)
 
