@@ -158,7 +158,7 @@ Per rendere cliccabile un immagine in Markdown (cioè che porta a un link)
 
 __`[![Testo alternativo](URL o percorso “Titolo”)](Link di destinazione)`__
 
-`[ … ]` : le parentesi indicano che si sta creando un link.
+`[ … ]` : le parentesi indicano che si sta creando un link.  
 `!` : Dice che dentro ci sarà un immagine.  
 `![Testo alternativo]` : È l’immagine vera e propria.  
 `(URL o percorso)` : È il percorso o il link dell’immagine da mostrare.  
