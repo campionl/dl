@@ -66,7 +66,7 @@ __![Testo alternativo](URL o percorso “Titolo opzionale)__
 `(URL o percorso)`il link all’immagine (percorso locale o URL).
 `”Titolo”`opzionale, compare quando passi il mouse sopra l’immagine.
 
-##Collegare un’immagine a un link
+## Collegare un’immagine a un link
 
 Per rendere cliccabile un immagine in Markdown (cioè che porta a un link), si usa la sintassi:
 
