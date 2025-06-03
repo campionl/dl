@@ -40,18 +40,18 @@ La formattazione serve modificare il testo inserendo per esempio testo in grasse
 - Testo corsivo
   Per il corsivo si inserisce un asterisco all'inizio e alla fine della frase interessata
 
-  *Esempio:*
-  `*corsivo*`  
-  *corsivo*
+  *Esempio:*  
+  `*corsivo*`    
+  *corsivo*  
 - Testo corsivo e grassetto
   Per inserire un testo sia in corsivo e in grassetto si utilizzano tre asterischi all'inizio e alla fine della frase interessata
 
-  *Esempio:*
-  `***grassetto e corsivo***`
-  ***grassetto e corsivo***
+  *Esempio:*  
+  `***grassetto e corsivo***`  
+  ***grassetto e corsivo***  
 - Testo con la barra
   Per inserire un testo con la barra sopra si utilizzano due tilde `~` all'inizio e alla fine della frase interessata
 
   *Esempio:*  
-  `~~barrato~~`
-  ~~barrato~~
+  `~~barrato~~`  
+  ~~barrato~~  
