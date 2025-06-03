@@ -70,7 +70,7 @@ __![Testo alternativo](URL o percorso “Titolo opzionale)__
 
 Per rendere cliccabile un immagine in Markdown (cioè che porta a un link), si usa la sintassi:  
 
-__`[![Testo alternativo](URL o percorso “Titolo”)](Link di destinazione)__
+__`[![Testo alternativo](URL o percorso “Titolo”)](Link di destinazione)`__
 
 `[ … ]`le parentesi indicano che si sta creando un link.
 `!`Dice che dentro ci sarà un immagine.  
