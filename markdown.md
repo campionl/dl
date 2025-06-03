@@ -61,7 +61,7 @@ Le citazioni evidenziano blocchi di testo o di codice.
 Esistono quindi **due** tipi di citazioni.
 
 ---
-Le **Citazioni testo** sono usate per evidenziare un passaggio importante che non è codice.  
+Le **Citazioni di testo** sono usate per evidenziare un passaggio importante che non è codice.  
 + Sono ideali per citazioni verbali, estratti da documenti, o per mettere in risalto avvisi o note.<br>
 + Per scrivere una citazione usiamo `>`.<br>
 **Esempio di citazione di testo**
@@ -73,7 +73,7 @@ Le **Citazioni di codice** sono usate specificamente per mostrare frammenti di c
  + Esistono due distinzioni:
    + Il **Codice Inline** è usato per evidenziare piccoli frammenti di codice: 
    Per creare un codice inline si racchiude il testo tra due apici inversi.
-    `esempio di codice inline`
+`esempio di codice inline`
     + Il **Blocco di codice** è usato per evidenziare diverse righe di codice.
      Si usano tre apici inversi all'inizio e alla fine del blocco di codice.
      ```python
