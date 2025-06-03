@@ -61,8 +61,8 @@ La formattazione serve modificare il testo inserendo per esempio testo in grasse
 Per gli elenchi puntati si inserisce un trattino `-` all'inizio della riga
 *Sintassi:*
 
-`-elemento 1`
-`-elemento 2`
+`-elemento 1`  
+`-elemento 2`  
 
 *Esempio:*
 - elemento 1
@@ -72,9 +72,9 @@ Per l’elenco numerato si inserisce il numero dell’elemento seguito da un pun
 
 *Sintassi:*
 
-`1. elemento 1`
-`2. elemento 2`
-`3. elemento 3`
+`1. elemento 1`  
+`2. elemento 2`  
+`3. elemento 3`  
 
 *Esempio:*
 
