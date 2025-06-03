@@ -59,7 +59,7 @@ La formattazione serve modificare il testo inserendo per esempio testo in grasse
 ## Inserire immagini
 
 Per inserire le immagini si usa la sintassi:  
-__![Testo alternativo](URL o percorso “Titolo opzionale)__
+__`![Testo alternativo](URL o percorso “Titolo opzionale")`__
 
 `!`indica che inserisci l’immagine.  
 `[Testo alternativo]`è il testo che viene mostrato in caso non si carica l’immagine.  
