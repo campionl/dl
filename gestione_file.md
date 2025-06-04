@@ -11,8 +11,3 @@ Un repository Git dovrebbe sempre contenere:
 - `license.txt`: file contenente il testo legale della licenza del tuo progetto
 - `.gitignore`: file che indica quali file o cartelle non devono essere tracciate da Git
 - `.git/`: cartella nascosta creata da Git per tracciare il repository
-
-#### Best Practice  
-- Mantenere nomi **descrittivi** e **minuscoli** con trattini (`-`) o underscore (`_`).
-- Evitare spazi nei nomi.
-- Commit frequenti aiutano a tracciare bene le modifiche.
