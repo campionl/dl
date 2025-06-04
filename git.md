@@ -203,4 +203,9 @@ git revert
 Annullare le modifiche tornando indietro a un commit specifico  
 ```
 git reset
-```
+```   
+Mette da parte temporaneamente tutte le modifiche non committate  
+```  
+git stash  
+```  
+
