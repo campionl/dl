@@ -32,7 +32,13 @@ git config --global user.email "<email>"
 ## Login su Git
 Per fare il login su Github esistono due modi.
 ### HTTPS e Token Personale
-
+1. Crea il tuo token cliccando [qui](https://github.com/settings/tokens) *(è necessario essere loggati con il proprio account GitHub)*.
+2. Clicca su **Generate new token (classic)**, dopo:
+	- Scegliere una scadenza per il token (30 o 90 giorni).
+	- Selezionare i permessi del token in base a cosa bisogna fare (per lavorare con repository spuntare **repo**).
+3.  Quando GitHub chiede **username e password**:
+	- Username: *il tuo nome utente GitHub*
+    - Password: *Token generato*
 ### SSH
 ## Gestione dei branch (rami)
 
