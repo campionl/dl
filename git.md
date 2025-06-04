@@ -50,13 +50,9 @@ Questi comandi servono per "firmare" i commit su git.
 **Non** è un login.
 
 ```
-
 git config --global user.name "<nome>"
-
 git config --global user.email "<email>"
-
 ```
-
 ## Login su Git
 
 Per fare il login su Github esistono due modi.
@@ -117,24 +113,19 @@ Per funzionare viene creato un **lucchetto** (detto chiave pubblica) e una **chi
 	```
 5. **Registrare la chiave su GitHub**
 	1. Andare su [github.com/settings/keys](https://github.com/settings/keys)  (bisogna essere loggato)
-    
 	2.  Clicca  **"New SSH key"**
-    
 	3.  Compila i campi:
-    
 	    - **Title**: Un nome riconoscibile (es. "PC Ufficio Windows")
         
 	    - **Key type**: Lascia "Authentication Key"
         
 	    - **Key**: Incolla (`Ctrl+V`) il testo copiato al punto 4
-        
 	4.  Clicca  **"Add SSH key"**
 6. **Tentativo di connessione**
 	```
 	ssh -T git@github.com
 	```
 	Se il comando non dà errori, tutto è stato fatto correttamente.  
-	
 7. **Conclusioni**
 Da adesso, quando si aprirà una repository bisognerà seguire questa sintassi.
 	```
@@ -142,11 +133,8 @@ Da adesso, quando si aprirà una repository bisognerà seguire questa sintassi.
 	```
 ## Gestione dei branch (rami)
 Immaginiamo il nostro progetto (repo) come un albero:
-
 - Il branch *main* è il tronco, ossia la versione stabile del progetto
-
 - I diversi branch (in italiano *rami*) sono copie indipendenti del progetto, dove è possibile implementare nuove funzionalità e testarle senza corrompere la versione stabile
-
 Creazione di un branch
 ```
 git branch <nome-branch>
@@ -155,144 +143,77 @@ Spostarsi in un branch
 ```
 git checkout <nome-branch>
 ```
-
-  
 Crea e si sposta in un nuovo branch
 ```
 git checkout -b <nome-branch>
 ```
-  
 Caricare il nuovo branch su GitHub
 ```
 git push -u origin <nome-branch>
 ```
-
-  
-
 Vedere i branch presenti
-
 ```
 git branch -a
 ```
-
-  
 Fare il merge di un branch
 ```
 git merge <nome-branch>
 ```
-
-<<<<<<< HEAD
-  
-=======
 Eliminare un branch in locale
 ```
 git branch -D <nome-branch>
 ```
-
 Eliminare un branch in remoto
 ```
 git push origin --delete <nome-branch>
 ```
->>>>>>> 5233b4d6f5391460b657e94f03f5e438efbbbcb2
-
 ## Comandi base
-
 Creare un repository
-
 ```
-
 git init
-
 ```
-
-  
-
 Clonare localmente un repository
-
 ```
-
 git clone <url-repo>
-
 ```
-
-  
-
 Mostrare lo stato dei file
-
 ```
 git status
 ```
-
-  
-
 Preparare un file per il commit
-
 ```
 git add <file>
 ```
-
-  
-
 Salvare le modifiche
-
 ```
 git commit -m <messaggio>
 ```
 Inviare le modifiche
-
 ```
 git push
 ```
-
-  
-
 Aggiornare le modifiche
-
 ```
 git pull
 ```
-
-  
-
 Visualizzare la cronologia
-
 ```
 git log
 ```
-
-  
-
 mostra le differenze tra due versioni (file non aggiunti o tra commit)
-
 ```
 git diff
-<<<<<<< HEAD
 ```
-=======
-```
-
+Per abbreviare i comandi (alias)
 Mette da parte temporaneamente tutte le modifiche non committate  
 ```  
-git stash  
+git stash
 ```  
-
-
-## Risoluzione dei conflitti
-
-### Scenario:
-
-- Entrambi gli utenti, nominati A e B, eseguono un git pull correttamente.
-- Entrambi modificano **lo stesso file**.
-- L'**utente A** esegue git add e git push correttamente.
-- L'**utente B** prova a fare git push, ma riceve un errore in quanto è presente un conflitto fra la versione locale e quella nel repository remoto.
-
 Per abbreviare i comandi (alias)
-
 ```
 git config --global alias.<comando-abbreviato> '<comando-da-abbreviare>'
 git rebase
 ```
-
 Trova il commit che ha introdotto un bug
 ```
 git bisect start
@@ -302,22 +223,19 @@ git bad [nome del commit con bug]
 git bisect good		# se il bug non è presente
 git bisect bad		# se il bug è presente
 ```
-
 Esempio:
 ```
 git config --global alias.del-branch 'branch -d'
 git del-branch nome-branch
-```
+```  
 Unisce i branch ma si ottiene una cronologia più pulita rispetto al merge come se fosse sempre stato sullo stesso branch
 ```
 git rebase
 ```
-
 Annullare le modifiche introdotte da un commit, creando un nuovo commit  
 ```
 git revert
 ```
-
 Annullare le modifiche tornando indietro a un commit specifico  
 ```
 git reset
@@ -326,159 +244,106 @@ Mette da parte temporaneamente tutte le modifiche non committate
 ```  
 git stash  
 ```  
-
 Sinconizza i cambiamenti remoti senza modificare i file  
 ```
 git fetch
 ```
-
 Configura le impostazioni di Git  
 ```
 git config
 ```
-
 Cancella i file non tracciati in locale  
 ```
 git clean
 ```
-
 ## Git Reflog – Registro delle Attività
-
 Immagina il `reflog` come il **registro delle attività** del tuo progetto Git.  
 È come un diario che tiene traccia di tutto quello che fai con i tuoi branch e commit.
-
 ---
-
 ##  Cosa registra il reflog?
-
 Tutte le tue **azioni importanti**, tra cui:
-
 - Quando cambi branch (`git checkout`)
 - Quando fai nuovi commit (`git commit`)
 - Quando unisci branch (`git merge`)
 - Quando cancelli o modifichi commit (`git reset`, `git rebase`)
 ---
-
 ##  A cosa serve?
-
 - È come il **"Ctrl+Z"** di Git: se fai un errore, puoi tornare indietro
 - Ti mostra la **storia completa** di tutto quello che hai fatto
 - Ti aiuta a **ritrovare commit** che pensavi di aver perso
-
 ---
-
 ## Sintassi base
-
 ```bash
 git reflog
 git reflog show <branch>  # Mostra il reflog per un branch specifico
 ```
-
 ---
-
 ## Output tipico
-
 L'output mostra righe nel formato:
-
 ```
 <checksum> HEAD@{<n>}: <azione>: <messaggio>
 ```
-
 **Esempio:**
-
 ```
 a1b2c3d HEAD@{0}: commit: Aggiorna documentazione
 e4f5g6h HEAD@{1}: checkout: moving from main to feature-branch
 ```
-
 ---
-
 ## Casi d'uso principali
-
 ### Recupero di commit persi
-
 - Hai eliminato un branch per sbaglio
 - Hai fatto un `reset --hard` e vuoi tornare indietro
-
 ### Analisi della cronologia
-
 - Vedere tutte le operazioni eseguite nel repository
-
 ###  Debug
-
 - Capire quando e come è stato introdotto un bug
-
-
 ##  Esempi pratici
-
 ### Per vedere tutte le modifiche a HEAD:
-
 ```bash
 git reflog
 ```
-
 ### Per vedere le modifiche a un branch specifico:
-
 ```bash
 git reflog show feature-branch
 ```
-
 ### Per tornare a uno stato precedente:
-
 ```bash
 git reset --hard HEAD@{5}
 ```
-
 ---
-
 ##  Importanti note
-
 - Il reflog è **locale** al tuo repository
 - Le voci **scadono dopo 90 giorni** (configurabile)
 - Il reflog **non viene pushato** sul repository remoto
 - È un **meccanismo di sicurezza**, non un sostituto per i commit
-
 ---
-
 ##  Dettagli aggiuntivi
-
 ### Dove eri e dove vai:
-
 - Ricorda qual era il tuo commit precedente
 - Registra a quale nuovo commit sei arrivato
-
 > Esempio:  
 > "Sei passato dal commit `ABC123` al commit `DEF456`"
-
 ### Cosa hai fatto esattamente:
-
 - Scrive se hai fatto un commit, un merge, un reset, ecc.
 - Aggiunge il messaggio del commit (se applicabile)
-
 ---
 ##  Esempio pratico
-
 Hai cancellato per sbaglio un branch? Con `git reflog` puoi:
-
 - Vedere quando quel branch esisteva
 - Trovare l'ultimo commit che era su quel branch
 - **Recuperarlo!**
-
 Elenca i nomi dei repository remoti configurati
 ```
 git remote
 ```
-
 Elenca i remoti con gli URL di fetch e push
 ```
 git remote -v
 ```
-
 Aggiunge un nuovo repository remoto
 ```
 git remote add <nome> <url>	
 ```
-
 Rimuove un repository remoto
 ```
 git remote remove <nome>	
@@ -488,4 +353,3 @@ Cambia il nome di un repository remoto
 ```
 git remote rename <nome-vecchio> <nome-nuovo>	
 ```
->>>>>>> 5233b4d6f5391460b657e94f03f5e438efbbbcb2
