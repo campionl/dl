@@ -1,53 +1,13 @@
-## Gestione File e Cartelle nei progetti Git  
+# Gestione file e cartelle nei progetti Git 
 
-
-### Struttura di base di un Repository  
-
-Un repository Git contiene tipicamente:  
-- `README.md`: documento introduttivo del progetto
-- `.gitignore`: file che indica quali file/cartelle non devono essere tracciate
-- `src/`: cartella con il codice sorgente
-- `docs/`: documentazione
-- `tests/`: file per i test
-- `build/ o dist/`: file compilati o distribuiti (di solito ignorati)
+Un repository Git dovrebbe sempre contenere:  
+- `README.md`: documento introduttivo del progetto contenente i riferimenti agli altri documenti
+- `src/` oppure `app/`: cartella contenente il codice sorgente del progetto
+- `docs/`: cartella contenente i file di documentazione del progetto
+- `assets/`: cartella contenente file grafici come immagini, icone e font
+- `tests/`: cartella contenente i file di test automatici
+- `config/`: cartella contenente i file di configurazione del progetto
+- `build/` oppure `dist/`: cartella contenente i file compilati o distribuiti (di solito ignorati)
+- `license.txt`: file contenente il testo legale della licenza del tuo progetto
+- `.gitignore`: file che indica quali file o cartelle non devono essere tracciate da Git
 - `.git/`: cartella nascosta creata da Git per tracciare il repository
-
-### Aggiunta File e Cartelle   
-
-```
-git add nomefile.estensione
-```
-```
-git add nomecartella/
-```
-
-### Rimuovere File e Cartelle
-```
-git rm nomefile  
-```  
-```  
-git rm -r nomecartella  
-```   
-
-### Rinominare o Spostare  
-```
-git mv vecchio_nome nuovo_nome
-```  
-
-
-### Organizzazione Consigliata del Progetto  
-progetto/  
-│  
-├── README.md  
-├── .gitignore  
-├── src/  
-│     ├── main/  
-│     └── utils/  
-├── tests/  
-├── docs/  
-└── build/   ← da ignorare   
-
-#### Best Practice  
-- Mantenere nomi **descrittivi** e **minuscoli** con trattini (`-`) o underscore (`_`).
-- Evitare spazi nei nomi.
-- Commit frequenti aiutano a tracciare bene le modifiche.
