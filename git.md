@@ -253,9 +253,6 @@ mostra le differenze tra due versioni (file non aggiunti o tra commit)
 
 ```
 git diff
-<<<<<<< HEAD
-```
-=======
 ```
 
 Mette da parte temporaneamente tutte le modifiche non committate  
@@ -475,4 +472,3 @@ Cambia il nome di un repository remoto
 ```
 git remote rename <nome-vecchio> <nome-nuovo>	
 ```
->>>>>>> 5233b4d6f5391460b657e94f03f5e438efbbbcb2
