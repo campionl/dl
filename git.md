@@ -155,37 +155,28 @@ Spostarsi in un branch
 ```
 git checkout <nome-branch>
 ```
-
-  
 Crea e si sposta in un nuovo branch
 ```
 git checkout -b <nome-branch>
 ```
-  
 Caricare il nuovo branch su GitHub
 ```
 git push -u origin <nome-branch>
 ```
-
-  
-
 Vedere i branch presenti
-
 ```
 git branch -a
 ```
-
-  
 Fare il merge di un branch
 ```
 git merge <nome-branch>
 ```
 
 Eliminare un branch in locale
+
 ```
 git branch -D <nome-branch>
 ```
-
 Eliminare un branch in remoto
 ```
 git push origin --delete <nome-branch>
@@ -471,4 +462,3 @@ Cambia il nome di un repository remoto
 ```
 git remote rename <nome-vecchio> <nome-nuovo>	
 ```
-
