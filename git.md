@@ -180,7 +180,25 @@ mostra le differenze tra due versioni (file non aggiunti o tra commit)
 git diff
 ```
 
+<<<<<<< HEAD
+Mette da parte temporaneamente tutte le modifiche non committate  
+```  
+git stash  
+```  
+
+
+## Risoluzione dei conflitti
+
+### Scenario:
+
+- Entrambi gli utenti, nominati A e B, eseguono un git pull correttamente.
+- Entrambi modificano **lo stesso file**.
+- L'**utente A** esegue git add e git push correttamente.
+- L'**utente B** prova a fare git push, ma riceve un errore in quanto è presente un conflitto fra la versione locale e quella nel repository remoto.
+
+=======
 Per abbreviare i comandi (alias)
+>>>>>>> 9c985346765e62feee00cd21df6b5c3b69cb8abf
 ```
 git config --global alias.<comando-abbreviato> '<comando-da-abbreviare>'
 ```
@@ -209,3 +227,140 @@ Mette da parte temporaneamente tutte le modifiche non committate
 git stash  
 ```  
 
+Sinconizza i cambiamenti remoti senza modificare i file  
+```
+git fetch
+```
+
+Configura le impostazioni di Git  
+```
+git config
+```
+
+Cancella i file non tracciati in locale  
+```
+git clean
+```
+
+## Git Reflog – Registro delle Attività
+
+Immagina il `reflog` come il **registro delle attività** del tuo progetto Git.  
+È come un diario che tiene traccia di tutto quello che fai con i tuoi branch e commit.
+
+---
+
+##  Cosa registra il reflog?
+
+Tutte le tue **azioni importanti**, tra cui:
+
+- Quando cambi branch (`git checkout`)
+- Quando fai nuovi commit (`git commit`)
+- Quando unisci branch (`git merge`)
+- Quando cancelli o modifichi commit (`git reset`, `git rebase`)
+---
+
+##  A cosa serve?
+
+- È come il **"Ctrl+Z"** di Git: se fai un errore, puoi tornare indietro
+- Ti mostra la **storia completa** di tutto quello che hai fatto
+- Ti aiuta a **ritrovare commit** che pensavi di aver perso
+
+---
+
+## Sintassi base
+
+```bash
+git reflog
+git reflog show <branch>  # Mostra il reflog per un branch specifico
+```
+
+---
+
+## Output tipico
+
+L'output mostra righe nel formato:
+
+```
+<checksum> HEAD@{<n>}: <azione>: <messaggio>
+```
+
+**Esempio:**
+
+```
+a1b2c3d HEAD@{0}: commit: Aggiorna documentazione
+e4f5g6h HEAD@{1}: checkout: moving from main to feature-branch
+```
+
+---
+
+## Casi d'uso principali
+
+### Recupero di commit persi
+
+- Hai eliminato un branch per sbaglio
+- Hai fatto un `reset --hard` e vuoi tornare indietro
+
+### Analisi della cronologia
+
+- Vedere tutte le operazioni eseguite nel repository
+
+###  Debug
+
+- Capire quando e come è stato introdotto un bug
+
+---
+
+##  Esempi pratici
+
+### Per vedere tutte le modifiche a HEAD:
+
+```bash
+git reflog
+```
+
+### Per vedere le modifiche a un branch specifico:
+
+```bash
+git reflog show feature-branch
+```
+
+### Per tornare a uno stato precedente:
+
+```bash
+git reset --hard HEAD@{5}
+```
+
+---
+
+##  Importanti note
+
+- Il reflog è **locale** al tuo repository
+- Le voci **scadono dopo 90 giorni** (configurabile)
+- Il reflog **non viene pushato** sul repository remoto
+- È un **meccanismo di sicurezza**, non un sostituto per i commit
+
+---
+
+##  Dettagli aggiuntivi
+
+### Dove eri e dove vai:
+
+- Ricorda qual era il tuo commit precedente
+- Registra a quale nuovo commit sei arrivato
+
+> Esempio:  
+> "Sei passato dal commit `ABC123` al commit `DEF456`"
+
+### Cosa hai fatto esattamente:
+
+- Scrive se hai fatto un commit, un merge, un reset, ecc.
+- Aggiunge il messaggio del commit (se applicabile)
+
+---
+##  Esempio pratico
+
+Hai cancellato per sbaglio un branch? Con `git reflog` puoi:
+
+- Vedere quando quel branch esisteva
+- Trovare l'ultimo commit che era su quel branch
+- **Recuperarlo!**
