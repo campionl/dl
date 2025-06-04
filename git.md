@@ -32,8 +32,45 @@ git config --global user.email "<email>"
 ## Login su Git
 Per fare il login su Github esistono due modi.
 ### HTTPS e Token Personale
-
+1. Crea il tuo token cliccando [qui](https://github.com/settings/tokens) *(è necessario essere loggati con il proprio account GitHub)*.
+2. Clicca su **Generate new token (classic)**, dopo:
+	- Scegliere una scadenza per il token (30 o 90 giorni).
+	- Selezionare i permessi del token in base a cosa bisogna fare (per lavorare con repository spuntare **repo**).
+3.  Quando GitHub chiede **username e password**:
+	- Username: *il tuo nome utente GitHub*
+    - Password: *Token generato*
 ### SSH
+1. Genera una chiave SSH
+```
+ssh-keygen -t ed25519 -C "<email>"
+```
+
+2. Avvia l'agente
+```
+eval "$(ssh-agent -s)"
+```
+
+3. Aggiungi la chiave all'agente
+```
+ssh-add ~/.ssh/id_ed25519
+```
+
+4. Copia la chiave pubblica
+```
+cat ~/.ssh/id_ed25519.pub
+```
+
+5. Aggiungi la chiave al tuo account GitHub
+    1. Vai sulle impostazioni di github e clicca su "SSH and GPG keys"
+    2. Clicca su "New SSH key"
+    3. Incolla la chiave
+    4. Dagli un nome e salvala
+
+6. Testa la connessione
+```
+ssh -T git@github.com
+```
+
 ## Gestione dei branch (rami)
 
 Immaginiamo il nostro progetto (repo) come un albero: 
@@ -115,6 +152,17 @@ git log
 mostra le differenze tra due versioni (file non aggiunti o tra commit)
 ```
 git diff
+```
+
+Per abbreviare i comandi (alias)
+```
+git config --global alias.<comando-abbreviato> '<comando-da-abbreviare>'
+```
+
+Esempio:
+```
+git config --global alias.del-branch 'branch -d'
+git del-branch nome-branch
 ```
 
 ## Risoluzione dei conflitti
