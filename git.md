@@ -143,6 +143,10 @@ Spostarsi in un branch
 ```
 git checkout <nome-branch>
 ```
+<<<<<<< HEAD
+=======
+
+>>>>>>> 18420b3329fc73e1cd23d9829d91668e318574ee
 Crea e si sposta in un nuovo branch
 ```
 git checkout -b <nome-branch>
@@ -151,14 +155,26 @@ Caricare il nuovo branch su GitHub
 ```
 git push -u origin <nome-branch>
 ```
+<<<<<<< HEAD
+=======
+
+>>>>>>> 18420b3329fc73e1cd23d9829d91668e318574ee
 Vedere i branch presenti
 ```
 git branch -a
 ```
+<<<<<<< HEAD
+=======
+
+>>>>>>> 18420b3329fc73e1cd23d9829d91668e318574ee
 Fare il merge di un branch
 ```
 git merge <nome-branch>
 ```
+<<<<<<< HEAD
+=======
+
+>>>>>>> 18420b3329fc73e1cd23d9829d91668e318574ee
 Eliminare un branch in locale
 ```
 git branch -D <nome-branch>
@@ -167,23 +183,43 @@ Eliminare un branch in remoto
 ```
 git push origin --delete <nome-branch>
 ```
+<<<<<<< HEAD
+=======
+
+>>>>>>> 18420b3329fc73e1cd23d9829d91668e318574ee
 ## Comandi base
 Creare un repository
 ```
 git init
 ```
+<<<<<<< HEAD
+=======
+
+>>>>>>> 18420b3329fc73e1cd23d9829d91668e318574ee
 Clonare localmente un repository
 ```
 git clone <url-repo>
 ```
+<<<<<<< HEAD
+=======
+
+>>>>>>> 18420b3329fc73e1cd23d9829d91668e318574ee
 Mostrare lo stato dei file
 ```
 git status
 ```
+<<<<<<< HEAD
+=======
+
+>>>>>>> 18420b3329fc73e1cd23d9829d91668e318574ee
 Preparare un file per il commit
 ```
 git add <file>
 ```
+<<<<<<< HEAD
+=======
+
+>>>>>>> 18420b3329fc73e1cd23d9829d91668e318574ee
 Salvare le modifiche
 ```
 git commit -m <messaggio>
@@ -192,23 +228,45 @@ Inviare le modifiche
 ```
 git push
 ```
+<<<<<<< HEAD
+=======
+
+>>>>>>> 18420b3329fc73e1cd23d9829d91668e318574ee
 Aggiornare le modifiche
 ```
 git pull
 ```
+<<<<<<< HEAD
+=======
+
+>>>>>>> 18420b3329fc73e1cd23d9829d91668e318574ee
 Visualizzare la cronologia
 ```
 git log
 ```
+<<<<<<< HEAD
+=======
+
+>>>>>>> 18420b3329fc73e1cd23d9829d91668e318574ee
 mostra le differenze tra due versioni (file non aggiunti o tra commit)
 ```
 git diff
 ```
+<<<<<<< HEAD
 Per abbreviare i comandi (alias)
+=======
+
+Per abbreviare i comandi (alias)
+
+>>>>>>> 18420b3329fc73e1cd23d9829d91668e318574ee
 Mette da parte temporaneamente tutte le modifiche non committate  
 ```  
 git stash
 ```  
+<<<<<<< HEAD
+=======
+
+>>>>>>> 18420b3329fc73e1cd23d9829d91668e318574ee
 Per abbreviare i comandi (alias)
 ```
 git config --global alias.<comando-abbreviato> '<comando-da-abbreviare>'
@@ -228,6 +286,10 @@ Esempio:
 git config --global alias.del-branch 'branch -d'
 git del-branch nome-branch
 ```  
+<<<<<<< HEAD
+=======
+
+>>>>>>> 18420b3329fc73e1cd23d9829d91668e318574ee
 Unisce i branch ma si ottiene una cronologia più pulita rispetto al merge come se fosse sempre stato sullo stesso branch
 ```
 git rebase
@@ -240,7 +302,9 @@ Annullare le modifiche tornando indietro a un commit specifico
 ```
 git reset
 ```   
+
 Mette da parte temporaneamente tutte le modifiche non committate  
+
 ```  
 git stash  
 ```  
@@ -352,4 +416,8 @@ git remote remove <nome>
 Cambia il nome di un repository remoto
 ```
 git remote rename <nome-vecchio> <nome-nuovo>	
+<<<<<<< HEAD
 ```
+=======
+```
+>>>>>>> 18420b3329fc73e1cd23d9829d91668e318574ee

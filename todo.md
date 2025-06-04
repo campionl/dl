@@ -10,5 +10,5 @@
 - [x] Convenzioni descrizioni commit
 - [x] Documentazione gestione file e cartelle progetto Git
 - [x] Risoluzione conflitti nei push
-- [ ] Aggiungere parte login (conf. iniziale Git da cli)
-- [ ] SSH Github
+- [x] Aggiungere parte login (conf. iniziale Git da cli)
+- [x] SSH Github
