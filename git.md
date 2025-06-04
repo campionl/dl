@@ -259,7 +259,6 @@ git stash
 
 Per abbreviare i comandi (alias)
 
->>>>>>> 10941fa9807d9626d7fcbd7f76a62a69b8cef5e9
 ```
 git config --global alias.<comando-abbreviato> '<comando-da-abbreviare>'
 git rebase
