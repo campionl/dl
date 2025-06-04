@@ -120,6 +120,12 @@ mostra le differenze tra due versioni (file non aggiunti o tra commit)
 git diff
 ```
 
+Mette da parte temporaneamente tutte le modifiche non committate  
+```  
+git stash  
+```  
+
+
 ## Risoluzione dei conflitti
 
 ### Scenario:
