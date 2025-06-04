@@ -10,9 +10,9 @@ Git è un sistema di controllo di versione che permette di gestire e tenere trac
 
 -  **Repository (repo)**: Pensa a un repository (repo) come una cartella speciale per il tuo progetto. Questa cartella non contiene solo i tuoi file, ma anche tutta la storia delle modifiche che hai fatto. Ne esistono due tipi:
 
-- Locale: La copia del progetto che hai sul tuo computer.
+- **Locale**: La copia del progetto che hai sul tuo computer.
 
-- Remota: La copia del progetto che si trova su un server online (come GitHub), utile per collaborare con altri o per avere un backup.
+- **Remota**: La copia del progetto che si trova su un server online (come GitHub), utile per collaborare con altri o per avere un backup.
 
 -  **Commit**: Ogni volta che "salvi" il tuo lavoro in Git con un commit, è come se scattassi una "fotografia" (snapshot) del tuo progetto in quel preciso momento. Questa foto cattura lo stato di tutti i tuoi file così come sono in quel commit.
 
@@ -32,11 +32,11 @@ Git è un sistema di controllo di versione che permette di gestire e tenere trac
 
 1.  **Modificare i file** nella working directory
 
-2.  **Aggiungere i file modificati** all’area di staging con ```git add```
+2.  **Aggiungere i file modificati** all’area di staging con `git add`
 
-3.  **Salvare le modifiche** con ```git commit``` con una descrizione appropriata
+3.  **Salvare le modifiche** con `git commit` con una descrizione appropriata
 
-4.  **Sincronizzare con il repository** remoto usando ```git push``` (invia) e ```git pull``` (riceve)
+4.  **Sincronizzare con il repository** remoto usando `git push` (invia) e `git pull` (riceve)
 
   
 
@@ -46,14 +46,12 @@ I comandi che seguono vanno eseguiti subito dopo la configurazione di Git.
 
 Questi comandi servono per "firmare" i commit su git.
 
-**Non** è un login.
+Questo **NON** è un login.
 
 ```
-
 git config --global user.name "<nome>"
 
 git config --global user.email "<email>"
-
 ```
 
 ## Login su Git
@@ -105,6 +103,12 @@ Per funzionare viene creato un **lucchetto** (detto chiave pubblica) e una **chi
 	```
 	eval "$(ssh-agent -s)"
 	```
+	Con Windows è necessario abilitare il servizio ssh-agent
+
+	```
+	sc config ssh-agent start=auto
+	sc start ssh-agent
+	```
 3. **Aggiungiamo la chiave privata**
 	```
 	ssh-add ~/.ssh/id_ed25519
@@ -117,9 +121,9 @@ Per funzionare viene creato un **lucchetto** (detto chiave pubblica) e una **chi
 5. **Registrare la chiave su GitHub**
 	1. Andare su [github.com/settings/keys](https://github.com/settings/keys)  (bisogna essere loggato)
     
-	2.  Clicca  **"New SSH key"**
+	2. Clicca  **"New SSH key"**
     
-	3.  Compila i campi:
+	3. Compila i campi:
     
 	    - **Title**: Un nome riconoscibile (es. "PC Ufficio Windows")
         
@@ -127,7 +131,7 @@ Per funzionare viene creato un **lucchetto** (detto chiave pubblica) e una **chi
         
 	    - **Key**: Incolla (`Ctrl+V`) il testo copiato al punto 4
         
-	4.  Clicca  **"Add SSH key"**
+	4. Clicca  **"Add SSH key"**
 6. **Tentativo di connessione**
 	```
 	ssh -T git@github.com
@@ -150,32 +154,37 @@ Creazione di un branch
 ```
 git branch <nome-branch>
 ```
+
 Spostarsi in un branch
 ```
 git checkout <nome-branch>
 ```
+
 Crea e si sposta in un nuovo branch
 ```
 git checkout -b <nome-branch>
 ```
+
 Caricare il nuovo branch su GitHub
 ```
 git push -u origin <nome-branch>
 ```
+
 Vedere i branch presenti
 ```
 git branch -a
 ```
+
 Fare il merge di un branch
 ```
 git merge <nome-branch>
 ```
 
 Eliminare un branch in locale
-
 ```
 git branch -D <nome-branch>
 ```
+
 Eliminare un branch in remoto
 ```
 git push origin --delete <nome-branch>
@@ -184,72 +193,46 @@ git push origin --delete <nome-branch>
 ## Comandi base
 
 Creare un repository
-
 ```
-
 git init
-
 ```
-
-  
 
 Clonare localmente un repository
-
 ```
-
 git clone <url-repo>
-
 ```
-
-  
 
 Mostrare lo stato dei file
-
 ```
 git status
 ```
 
-  
-
 Preparare un file per il commit
-
 ```
 git add <file>
 ```
 
-  
-
 Salvare le modifiche
-
 ```
 git commit -m <messaggio>
 ```
-Inviare le modifiche
 
+Inviare le modifiche
 ```
 git push
 ```
 
-  
-
 Aggiornare le modifiche
-
 ```
 git pull
 ```
 
-  
-
 Visualizzare la cronologia
-
 ```
 git log
 ```
 
-  
-
-mostra le differenze tra due versioni (file non aggiunti o tra commit)
-
+Mostra le differenze tra due versioni (file non aggiunti o tra commit)
 ```
 git diff
 ```
@@ -260,7 +243,6 @@ git stash
 ```  
 
 Per abbreviare i comandi (alias)
-
 ```
 git config --global alias.<comando-abbreviato> '<comando-da-abbreviare>'
 git rebase
@@ -281,6 +263,7 @@ Esempio:
 git config --global alias.del-branch 'branch -d'
 git del-branch nome-branch
 ```
+
 Unisce i branch ma si ottiene una cronologia più pulita rispetto al merge come se fosse sempre stato sullo stesso branch
 ```
 git rebase
@@ -294,11 +277,7 @@ git revert
 Annullare le modifiche tornando indietro a un commit specifico  
 ```
 git reset
-```   
-Mette da parte temporaneamente tutte le modifiche non committate  
-```  
-git stash  
-```  
+```
 
 Sinconizza i cambiamenti remoti senza modificare i file  
 ```
