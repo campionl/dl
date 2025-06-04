@@ -36,8 +36,8 @@ git mv vecchio_nome nuovo_nome
 
 
 ### Organizzazione Consigliata del Progetto  
-progetto/
-│
+progetto/  
+│  
 ├── README.md  
 ├── .gitignore  
 ├── src/  
