@@ -1,7 +1,124 @@
 # Git
 ---
 ## Cos’è Git
-Git è un sistema di controllo di versione distribuito che permette di gestire e tracciare le modifiche al codice sorgente di un progetto in modo efficiente e sicuro. Ogni sviluppatore ha una copia completa del repository, inclusa la storia delle modifiche, e può lavorare sia offline sia online.
+Git è un sistema di controllo di versione che permette di gestire e tenere traccia delle modifiche al codice di un progetto. Ogni sviluppatore ha una copia completa del repository, compresa la cronologia delle modifiche, e può lavorare sia offline che online. Questo rende il lavoro di squadra più sicuro, organizzato ed efficiente.
+
+## Concetti chiave
+- **Repository (repo)**: Pensa a un repository (repo) come una cartella speciale per il tuo progetto. Questa cartella non contiene solo i tuoi file, ma anche tutta la storia delle modifiche che hai fatto. Ne esistono due tipi:
+    - Locale: La copia del progetto che hai sul tuo computer.
+    - Remota: La copia del progetto che si trova su un server online (come GitHub), utile per collaborare con altri o per avere un backup.
+- **Commit**: Ogni volta che "salvi" il tuo lavoro in Git con un commit, è come se scattassi una "fotografia" (snapshot) del tuo progetto in quel preciso momento. Questa foto cattura lo stato di tutti i tuoi file così come sono in quel commit.
+
+## Aree di lavoro
+- **Working directory**: dove si modificano i file
+- **Staging area**: dove si preparano le modifiche da includere nel commit
+- **Repository locale**: dove Git salva definitivamente i commit
+
+## Flusso di lavoro base
+1. **Modificare i file** nella working directory
+2. **Aggiungere i file modificati** all’area di staging con ```git add```
+3. **Salvare le modifiche** con ```git commit``` con una descrizione appropriata
+4. **Sincronizzare con il repository** remoto usando ```git push``` (invia) e ```git pull``` (riceve)
+
+## Configurazione iniziale
+I comandi che seguono vanno eseguiti subito dopo la configurazione di Git per assicurare che ogni commit sia correttamente attribuito.
+```
+git config --global user.name "<nome>"
+git config --global user.email "<email>"
+```
+
+## Gestione dei branch (rami)
+
+Immaginiamo il nostro progetto (repo) come un albero: 
+
+- Il branch *main* è il tronco, ossia la versione stabile del progetto
+- I diversi branch (in italiano *rami*) sono copie indipendenti del progetto, dove è possibile implementare nuove funzionalità e testarle senza corrompere la versione stabile
+
+Creazione di un branch
+```
+git branch <nome-branch>
+```
+
+Spostarsi in un branch
+```
+git checkout <nome-branch>
+```
+
+Crea e si sposta in un nuovo branch
+```
+git checkout -b <nome-branch>
+```
+
+Caricare il nuovo branch su GitHub
+```
+git push -u origin <nome-branch>
+```
+
+Vedere i branch presenti
+```
+git branch -a
+```
+
+Fare il merge di un branch
+```
+git merge <nome-branch>
+```
+
+Eliminare un branch in locale
+```
+git branch -D <nome-branch>
+```
+
+Eliminare un branch in remoto
+```
+git push origin --delete <nome-branch>
+```
+
+## Comandi base
+Creare un repository
+```
+git init 
+```
+
+Clonare localmente un repository 
+```
+git clone <url-repo>
+```
+
+Mostrare lo stato dei file
+```
+git status
+```
+
+Preparare un file per il commit
+```
+git add <file>
+```
+
+Salvare le modifiche
+```
+git commit -m <messaggio>
+```
+
+Inviare le modifiche
+```
+git push
+```
+
+Aggiornare le modifiche
+```
+git pull
+```
+
+Visualizzare la cronologia
+```
+git log
+```
+
+mostra le differenze tra due versioni (file non aggiunti o tra commit)
+```
+git diff
+```
 
 ## Risoluzione dei conflitti
 
@@ -18,25 +135,20 @@ error: failed to push some refs to 'origin'
 hint: Updates were rejected because the tip of your current branch is behind
 ```
 
-## Concetti chiave
-- **Repository (repo)**: cartella che contiene i file del progetto e la cronologia delle modifiche, può essere locale o remoto
-- **Snapshot/Commit**: ogni volta che si salva il lavoro con un commit, Git crea uno snapshot dello stato attuale dei file
-- **Checksum SHA-1**: Git usa un codice univoco per identificare ogni commit e file, garantendo l’integrità dei dati
+#### Passi da seguire:
+- Eseguire una pull dal main (o dal branch in cui si sta lavorando)
 
-## Aree di lavoro
-- **Working directory**: dove si modificano i file
-- **Staging area**: dove si preparano le modifiche da includere nel commit
-- **Repository locale**: dove Git salva definitivamente i commit
-
-## Flusso di lavoro base
-1. **Modificare i file** nella working directory
-2. **Aggiungere le modifiche** all’area di staging con ```git add```
-3. **Salvare le modifiche** con ```git commit```
-4. **Sincronizzare con il repository** remoto usando ```git push``` (invia) e ```git pull``` (riceve)
-
-## Configurazione iniziale
-I comandi che seguono vanno eseguiti subito dopo la configurazione di Git per assicurare che ogni commit sia correttamente attribuito.
 ```
-git config --global user.name "<nome>"
-git config --global user.email "<email>"
+git pull origin main
+```
+
+- Si verifica un conflitto: durante il git pull, Git cercherà di unire i cambiamenti dell’utente A con quelli dell’utente B. Se entrambi hanno modificato la stessa parte dello stesso file, Git non può risolverlo automaticamente e mostrerà un messaggio tipo:
+```
+Auto-merging esempio.txt
+CONFLICT (content): Merge conflict in esempio.txt
+Automatic merge failed; fix conflicts and then commit the result.
+```
+
+- Aprire il file di testo
+Vedrai qualcosa del genere: 
 ```
