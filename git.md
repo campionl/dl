@@ -364,3 +364,28 @@ Hai cancellato per sbaglio un branch? Con `git reflog` puoi:
 - Vedere quando quel branch esisteva
 - Trovare l'ultimo commit che era su quel branch
 - **Recuperarlo!**
+
+Elenca i nomi dei repository remoti configurati
+```
+git remote
+```
+
+Elenca i remoti con gli URL di fetch e push
+```
+git remote -v
+```
+
+Aggiunge un nuovo repository remoto
+```
+git remote add <nome> <url>	
+```
+
+Rimuove un repository remoto
+```
+git remote remove <nome>	
+```
+
+Cambia il nome di un repository remoto
+```
+git remote rename <nome-vecchio> <nome-nuovo>	
+```
