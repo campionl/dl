@@ -51,8 +51,3 @@ progetto/
 - Mantenere nomi **descrittivi** e **minuscoli** con trattini (`-`) o underscore (`_`).
 - Evitare spazi nei nomi.
 - Commit frequenti aiutano a tracciare bene le modifiche.
-<<<<<<< HEAD
-
-
-=======
->>>>>>> git

@@ -21,16 +21,8 @@ Nel campo **"tipo"** possiamo avere:
 - `build` (modifiche a script di build);
 - `revert` (rollback di un commit precedente);
 
-<<<<<<< HEAD
 Nel campo **"ambito"** specifichiamo la parte del progetto coinvolta.  
 Per la **descrizione breve** inseriamo un testo conciso (circa 50 caratteri), dove spieghiamo cosa abbiamo fatto. Solitamente si usa l'imperativo e non si mettono punti alla fine.  
 Nel **corpo del commit** spieghiamo cosa abbiamo fatto e perchè e solitamente si usa un elenco puntato.  
 Il **footer** è opzionale e si utilizza per riferimenti esterni.  
 E' consigliato separare le modifiche, per esempio non eseguire un fix e un feat nello stesso commit.
-=======
-Nel campo **"ambito"** specifichiamo la parte del progetto coinvolta.
-Per la **descrizione breve** inseriamo un testo conciso (circa 50 caratteri), dove spieghiamo cosa abbiamo fatto. Solitamente si usa l'imperativo e non si mettono punti alla fine.  
-Nel **corpo del commit** spieghiamo cosa abbiamo fatto e perchè e solitamente si usa un elenco puntato.
-Il **footer** è opzionale e si utilizza per riferimenti esterni.  
-E' consigliato separare le modifiche, per esempio non eseguire un fix e un feat nello stesso commit.
->>>>>>> git
