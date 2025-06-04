@@ -1,14 +1,14 @@
 # TO DO 
 
-- git diff
-- Approfondire i branch: 
-	- crearlo dal main, 
-	- crearlo da un altro branch, 
-	- gestione/cancellazione sia locali che remoti, 
-	- gestione dei merge,
-- Gitflow (Atlassian)
-- Convenzioni descrizioni commit
-- Documentazione gestione file e cartelle progetto Git
-- Risoluzione conflitti nei push
-- Aggiungere parte login (conf. iniziale Git da cli)
-- SSH Github
+- [x] git diff
+- [x] Approfondire i branch: 
+	- [x] crearlo dal main, 
+	- [x] crearlo da un altro branch, 
+	- [x] gestione/cancellazione sia locali che remoti, 
+	- [x] gestione dei merge,
+- [x] Gitflow (Atlassian)
+- [x] Convenzioni descrizioni commit
+- [x] Documentazione gestione file e cartelle progetto Git
+- [x] Risoluzione conflitti nei push
+- [ ] Aggiungere parte login (conf. iniziale Git da cli)
+- [ ] SSH Github

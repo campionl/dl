@@ -32,7 +32,7 @@ Quando abbiamo finito di lavorare ad una feature **e** abbiamo ottenuto l'approv
 `git flow feature finish feature_branch`  
 oppure senza:  
 `git checkout develop`  
-`git merge feature_branch`  
+[`git merge feature_branch`](https://github.com/campionl/dl/blob/4edf30cc6e715a677dc493fe65a291c02501e2b1/git.md?plain=1#L42)  
 
 ### Quando devo rilasciare il programma come mi preparo?  
 
@@ -44,3 +44,39 @@ Per creare il branch `release` come sempre abbiamo due modi:
 - Con libreria git-flow:
   `git flow release start 0.1.0`
   l'ultimo numero è correlato alla versione del software
+- Senza libreria:
+  `git checkout develop`
+  `git checkout -b release/0.1.0`
+  
+Ovviamente quando saremo arrivati al giorno del rilascio dovremo unire il branch `release` al `main` per poi cancellare `release` quindi:  
+- Con lib:
+  `git flow release finish '0.1.0'`
+- Senza lib:
+  `git checkout main`
+  `git merge release/0.1.0`
+
+### Se ho fatto un breve errore è voglio correggerlo rapidamente?  
+
+Ci sono ovviamente casi in qui il software potrebbe riscontrare degli errori, per sistemare tali errori abbiamo a disposizione il branch `hotfix`.  
+- `hotfix` serve per manutenzioni rapide, ha differenza di `release` e `feature` questo viene creato sotto il `main` o `master`.
+
+Avere una linea di sviluppo separata permette di gestire i ticket senza intaccare il resto del flusso di lavoro  
+
+Per creare un branch hotfix:  
+- Con lib:
+  `git flow hotfix start hotfix_branch`
+- Senza lib:
+  `git checkout main`
+  `git checkout -b hotfix_branch`  
+
+Infine quando abbiamo finito di riparare i bug possiamo fare il merge dei branch,  
+N.B: il merge va fatto sia su `main` che su `develop`:  
+
+- Con lib:
+ `git flow hotfix finish hotfix_branch`
+- Senza lib:
+  `git checkout main`
+  `git merge hotfix_branch`
+  `git checkout develop`
+  `git merge hotfix_branch`
+  `git branch -D hotfix_branch`
