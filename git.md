@@ -1,3 +1,4 @@
+
 # Git
 ---
 ## Cos’è Git
@@ -21,12 +22,18 @@ Git è un sistema di controllo di versione che permette di gestire e tenere trac
 4. **Sincronizzare con il repository** remoto usando ```git push``` (invia) e ```git pull``` (riceve)
 
 ## Configurazione iniziale
-I comandi che seguono vanno eseguiti subito dopo la configurazione di Git per assicurare che ogni commit sia correttamente attribuito.
+I comandi che seguono vanno eseguiti subito dopo la configurazione di Git.
+Questi comandi servono per "firmare" i commit su git.  
+**Non** è un login.
 ```
 git config --global user.name "<nome>"
 git config --global user.email "<email>"
 ```
+## Login su Git
+Per fare il login su Github esistono due modi.
+### HTTPS e Token Personale
 
+### SSH
 ## Gestione dei branch (rami)
 
 Immaginiamo il nostro progetto (repo) come un albero: 
@@ -62,16 +69,6 @@ git branch -a
 Fare il merge di un branch
 ```
 git merge <nome-branch>
-```
-
-Eliminare un branch in locale
-```
-git branch -D <nome-branch>
-```
-
-Eliminare un branch in remoto
-```
-git push origin --delete <nome-branch>
 ```
 
 ## Comandi base
@@ -154,3 +151,21 @@ Vedrai qualcosa del genere:
 
 PRoVA
 ```
+<<<<<<< HEAD  
+Contenuto modificato da Utente B  
+=======
+Contenuto modificato da Utente A  
+\>>>>>>> origin/main  
+```
+- Risolvi il conflitto manualmente.  
+Decidi come vuoi unire i due contenuti. Puoi:
+	- Tenere la versione dell’utente B
+	- Tenere la versione dell’utente A
+	- Fondere le modifiche manualmente
+
+Esempio di fusione manuale:
+Contenuto modificato da Utente A
+Contenuto modificato da Utente B
+Poi rimuovi i segni speciali (<<<<<<<, =======, >>>>>>>).
+
+- Concludi con le istruzioni di add, commit e push
