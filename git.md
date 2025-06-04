@@ -170,9 +170,9 @@ Fare il merge di un branch
 ```
 git merge <nome-branch>
 ```
-```
+
 Eliminare un branch in locale
-```
+
 ```
 git branch -D <nome-branch>
 ```
@@ -258,16 +258,6 @@ Mette da parte temporaneamente tutte le modifiche non committate
 ```  
 git stash  
 ```  
-
-
-## Risoluzione dei conflitti
-
-### Scenario:
-
-- Entrambi gli utenti, nominati A e B, eseguono un git pull correttamente.
-- Entrambi modificano **lo stesso file**.
-- L'**utente A** esegue git add e git push correttamente.
-- L'**utente B** prova a fare git push, ma riceve un errore in quanto è presente un conflitto fra la versione locale e quella nel repository remoto.
 
 Per abbreviare i comandi (alias)
 
