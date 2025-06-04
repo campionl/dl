@@ -64,6 +64,16 @@ Fare il merge di un branch
 git merge <nome-branch>
 ```
 
+Eliminare un branch in locale
+```
+git branch -D <nome-branch>
+```
+
+Eliminare un branch in remoto
+```
+git push origin --delete <nome-branch>
+```
+
 ## Comandi base
 Creare un repository
 ```
