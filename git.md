@@ -149,7 +149,6 @@ Automatic merge failed; fix conflicts and then commit the result.
 - Aprire il file di testo
 Vedrai qualcosa del genere: 
 
-PRoVA
 ```
 <<<<<<< HEAD  
 Contenuto modificato da Utente B  
