@@ -180,17 +180,45 @@ mostra le differenze tra due versioni (file non aggiunti o tra commit)
 git diff
 ```
 
+<<<<<<< HEAD
+Mette da parte temporaneamente tutte le modifiche non committate  
+```  
+git stash  
+```  
+
+
+## Risoluzione dei conflitti
+
+### Scenario:
+
+- Entrambi gli utenti, nominati A e B, eseguono un git pull correttamente.
+- Entrambi modificano **lo stesso file**.
+- L'**utente A** esegue git add e git push correttamente.
+- L'**utente B** prova a fare git push, ma riceve un errore in quanto è presente un conflitto fra la versione locale e quella nel repository remoto.
+
+=======
 Per abbreviare i comandi (alias)
+>>>>>>> 9c985346765e62feee00cd21df6b5c3b69cb8abf
 ```
 git config --global alias.<comando-abbreviato> '<comando-da-abbreviare>'
+git rebase
+```
+
+Trova il commit che ha introdotto un bug
+```
+git bisect start
+git bisect good [nome di un commit senza bug]
+git bad [nome del commit con bug]
+# per ogni commit indicare:
+git bisect good		# se il bug non è presente
+git bisect bad		# se il bug è presente
 ```
 
 Esempio:
 ```
 git config --global alias.del-branch 'branch -d'
 git del-branch nome-branch
-```  
-
+```
 Unisce i branch ma si ottiene una cronologia più pulita rispetto al merge come se fosse sempre stato sullo stesso branch
 ```
 git rebase
@@ -205,12 +233,11 @@ Annullare le modifiche tornando indietro a un commit specifico
 ```
 git reset
 ```   
-
 Mette da parte temporaneamente tutte le modifiche non committate  
-
 ```  
 git stash  
 ```  
+<<<<<<< HEAD
 
 Sinconizza i cambiamenti remoti senza modificare i file  
 ```
@@ -345,3 +372,5 @@ Hai cancellato per sbaglio un branch? Con `git reflog` puoi:
 - Vedere quando quel branch esisteva
 - Trovare l'ultimo commit che era su quel branch
 - **Recuperarlo!**
+=======
+>>>>>>> 3722cdb7361fb0615c08d956062b9f9160d2f370
