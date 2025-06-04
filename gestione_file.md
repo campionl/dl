@@ -38,13 +38,13 @@ git mv vecchio_nome nuovo_nome
 ### Organizzazione Consigliata del Progetto  
 progetto/
 │
-├── README.md
-├── .gitignore
-├── src/
-│   ├── main/
-│   └── utils/
-├── tests/
-├── docs/
+├── README.md  
+├── .gitignore  
+├── src/  
+│   ├── main/  
+│   └── utils/  
+├── tests/  
+├── docs/  
 └── build/   ← da ignorare   
 
 #### Best Practice  
