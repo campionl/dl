@@ -122,4 +122,4 @@ REBASE/MERGE
 rebase: git sincronizza il mio branch con il remoto e poi applica le modifiche fatte. Altera il mio branch locale perché porta l'history del branch develop al branch locale
 merge: più adatto a gruppi di lavoro numerosi
 
-Da VSCode 
+Da VSCode possibile visualizzare il grafico dello storico tramite estensione Gitlens
