@@ -70,3 +70,56 @@ git branch -a
 
 ```
 
+per annullare l'ultima modifica:
+```
+git checkout README.md
+```
+
+Da Github:
+New issue: per creare delle attività da fare sul progetto
+Tutti possono commentare e fare attività.
+
+## Attività
+
+Programmatore A
+Per le attività si apre un nuovo branch (esempio: `documentazione`) per poi fare `merge` in seguito
+
+A modifica README.md
+Esegue il commit
+
+```
+git checkout develop
+git merge documentazione
+git branch -d documentazione  #viene eliminato il branch
+git branch -a
+```
+
+Programmatore B
+
+```
+git branch hotfixes
+git checkout hotfixes
+# modifica README.md dove lo ha modificato A
+git commit -m "Modifica documentazione"
+git checkout develop
+git merge hotfixes
+git branch -d hotfixes
+git pull  # genera conflitto
+git status
+git add README.md
+git commit
+git status
+git push
+```
+
+Programmatore A: aggiorna modifiche
+
+```
+git pull
+```
+
+REBASE/MERGE
+rebase: git sincronizza il mio branch con il remoto e poi applica le modifiche fatte. Altera il mio branch locale perché porta l'history del branch develop al branch locale
+merge: più adatto a gruppi di lavoro numerosi
+
+Da VSCode 
