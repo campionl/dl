@@ -100,6 +100,11 @@ Visualizzare la cronologia
 git log
 ```
 
+mostra le differenze tra due versioni (file non aggiunti o tra commit)
+```
+git diff
+```
+
 ## Risoluzione dei conflitti
 
 ### Scenario:
