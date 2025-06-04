@@ -289,10 +289,6 @@ e4f5g6h HEAD@{1}: checkout: moving from main to feature-branch
 
 - Vedere tutte le operazioni eseguite nel repository
 
-###  Debug
-
-- Capire quando e come è stato introdotto un bug
-
 ---
 
 ##  Esempi pratici
