@@ -21,10 +21,70 @@ Git è un sistema di controllo di versione che permette di gestire e tenere trac
 4. **Sincronizzare con il repository** remoto usando ```git push``` (invia) e ```git pull``` (riceve)
 
 ## Configurazione iniziale
-I comandi che seguono vanno eseguiti subito dopo la configurazione di Git per assicurare che ogni commit sia correttamente attribuito.
+I comandi che seguono vanno eseguiti subito dopo la configurazione di Git.
+Questi comandi servono per "firmare" i commit su git.  
+**Non** è un login.
 ```
 git config --global user.name "<nome>"
 git config --global user.email "<email>"
+```
+## Login su Git
+Per fare il login su Github esistono due modi.
+### HTTPS e Token Personale
+Per accedere a repository GitHub tramite HTTPS:  
+GitHub richiede un *Token di Accesso Personale (PAT)* per motivi di sicurezza:  
+- Maggiore protezione contro attacchi brute-force  
+- Controllo granulare sui permessi (es. accesso solo ai repository)  
+- Integrazione con sistemi di autenticazione a due fattori  
+
+Il token funge da "super password temporanea" e va generato manualmente.  
+Ecco come procedere:
+1. Crea il tuo token cliccando [qui](https://github.com/settings/tokens) *(è necessario essere loggati con il proprio account GitHub)*.
+2. Clicca su **Generate new token (classic)**, dopo:
+	- Scegliere una scadenza per il token (30 o 90 giorni).
+	- Selezionare i permessi del token in base a cosa bisogna fare (per lavorare con repository spuntare **repo**).
+3.  Quando GitHub chiede **username e password**:
+	- Username: *il tuo nome utente GitHub*
+    - Password: *Token generato*
+### SSH
+La chiave SSH fornisce numerosi vantaggi:
+- Non devi ricordare token o password
+- Accesso automatico a ogni operazione      
+- Sicuro come una cassaforte bancaria
+
+Per funzionare viene creato un **lucchetto** (detto chiave pubblica) e una **chiave** (detta chiave privata).
+- La chiave **PUBBLICA**  viene data a GitHub.
+- La chiave **PRIVATA** resta sul computer.
+
+1. Genera una chiave SSH
+```
+ssh-keygen -t ed25519 -C "<email>"
+```
+
+2. Avvia l'agente
+```
+eval "$(ssh-agent -s)"
+```
+
+3. Aggiungi la chiave all'agente
+```
+ssh-add ~/.ssh/id_ed25519
+```
+
+4. Copia la chiave pubblica
+```
+cat ~/.ssh/id_ed25519.pub
+```
+
+5. Aggiungi la chiave al tuo account GitHub
+    1. Vai sulle impostazioni di github e clicca su "SSH and GPG keys"
+    2. Clicca su "New SSH key"
+    3. Incolla la chiave
+    4. Dagli un nome e salvala
+
+6. Testa la connessione
+```
+ssh -T git@github.com
 ```
 
 ## Gestione dei branch (rami)
@@ -120,6 +180,7 @@ mostra le differenze tra due versioni (file non aggiunti o tra commit)
 git diff
 ```
 
+<<<<<<< HEAD
 Mette da parte temporaneamente tutte le modifiche non committate  
 ```  
 git stash  
@@ -135,26 +196,29 @@ git stash
 - L'**utente A** esegue git add e git push correttamente.
 - L'**utente B** prova a fare git push, ma riceve un errore in quanto è presente un conflitto fra la versione locale e quella nel repository remoto.
 
+=======
+Per abbreviare i comandi (alias)
+>>>>>>> 9c985346765e62feee00cd21df6b5c3b69cb8abf
 ```
-! [rejected]        main -> main (non-fast-forward)
-error: failed to push some refs to 'origin'
-hint: Updates were rejected because the tip of your current branch is behind
-```
-
-#### Passi da seguire:
-- Eseguire una pull dal main (o dal branch in cui si sta lavorando)
-
-```
-git pull origin main
+git config --global alias.<comando-abbreviato> '<comando-da-abbreviare>'
 ```
 
-- Si verifica un conflitto: durante il git pull, Git cercherà di unire i cambiamenti dell’utente A con quelli dell’utente B. Se entrambi hanno modificato la stessa parte dello stesso file, Git non può risolverlo automaticamente e mostrerà un messaggio tipo:
+Esempio:
 ```
-Auto-merging esempio.txt
-CONFLICT (content): Merge conflict in esempio.txt
-Automatic merge failed; fix conflicts and then commit the result.
+git config --global alias.del-branch 'branch -d'
+git del-branch nome-branch
+
+Unisce i branch ma si ottiene una cronologia più pulita rispetto al merge come se fosse sempre stato sullo stesso branch
+```
+git rebase
 ```
 
-- Aprire il file di testo
-Vedrai qualcosa del genere: 
+Annullare le modifiche introdotte da un commit, creando un nuovo commit  
+```
+git revert
+```
+
+Annullare le modifiche tornando indietro a un commit specifico  
+```
+git reset
 ```
