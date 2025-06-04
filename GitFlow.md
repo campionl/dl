@@ -67,4 +67,16 @@ Per creare un branch hotfix:
   `git flow hotfix start hotfix_branch`
 - Senza lib:
   `git checkout main`
-  `git checkout -b hotfix_branch`
+  `git checkout -b hotfix_branch`  
+
+Infine quando abbiamo finito di riparare i bug possiamo fare il merge dei branch,  
+N.B: il merge va fatto sia su `main` che su `develop`:  
+
+- Con lib:
+ `git flow hotfix finish hotfix_branch`
+- Senza lib:
+  `git checkout main`
+  `git merge hotfix_branch`
+  `git checkout develop`
+  `git merge hotfix_branch`
+  `git branch -D hotfix_branch`
