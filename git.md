@@ -142,7 +142,6 @@ git diff
 
 Unisce i branch ma si ottiene una cronologia più pulita rispetto al merge come se fosse sempre stato sullo stesso branch
 ```
-
 git rebase
 ```
 
