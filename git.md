@@ -145,3 +145,13 @@ Unisce i branch ma si ottiene una cronologia più pulita rispetto al merge come 
 
 git rebase
 ```
+
+Annullare le modifiche introdotte da un commit, creando un nuovo commit  
+```
+git revert
+```
+
+Annullare le modifiche tornando indietro a un commit specifico  
+```
+git reset
+```
