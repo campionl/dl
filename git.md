@@ -180,7 +180,6 @@ mostra le differenze tra due versioni (file non aggiunti o tra commit)
 git diff
 ```
 
-<<<<<<< HEAD
 Mette da parte temporaneamente tutte le modifiche non committate  
 ```  
 git stash  
@@ -196,9 +195,8 @@ git stash
 - L'**utente A** esegue git add e git push correttamente.
 - L'**utente B** prova a fare git push, ma riceve un errore in quanto è presente un conflitto fra la versione locale e quella nel repository remoto.
 
-=======
 Per abbreviare i comandi (alias)
->>>>>>> 9c985346765e62feee00cd21df6b5c3b69cb8abf
+
 ```
 git config --global alias.<comando-abbreviato> '<comando-da-abbreviare>'
 git rebase
@@ -237,7 +235,6 @@ Mette da parte temporaneamente tutte le modifiche non committate
 ```  
 git stash  
 ```  
-<<<<<<< HEAD
 
 Sinconizza i cambiamenti remoti senza modificare i file  
 ```
@@ -320,7 +317,6 @@ e4f5g6h HEAD@{1}: checkout: moving from main to feature-branch
 
 - Capire quando e come è stato introdotto un bug
 
----
 
 ##  Esempi pratici
 
