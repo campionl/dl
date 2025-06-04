@@ -180,25 +180,7 @@ mostra le differenze tra due versioni (file non aggiunti o tra commit)
 git diff
 ```
 
-<<<<<<< HEAD
-Mette da parte temporaneamente tutte le modifiche non committate  
-```  
-git stash  
-```  
-
-
-## Risoluzione dei conflitti
-
-### Scenario:
-
-- Entrambi gli utenti, nominati A e B, eseguono un git pull correttamente.
-- Entrambi modificano **lo stesso file**.
-- L'**utente A** esegue git add e git push correttamente.
-- L'**utente B** prova a fare git push, ma riceve un errore in quanto è presente un conflitto fra la versione locale e quella nel repository remoto.
-
-=======
 Per abbreviare i comandi (alias)
->>>>>>> 9c985346765e62feee00cd21df6b5c3b69cb8abf
 ```
 git config --global alias.<comando-abbreviato> '<comando-da-abbreviare>'
 git rebase
@@ -218,7 +200,8 @@ Esempio:
 ```
 git config --global alias.del-branch 'branch -d'
 git del-branch nome-branch
-```
+```  
+
 Unisce i branch ma si ottiene una cronologia più pulita rispetto al merge come se fosse sempre stato sullo stesso branch
 ```
 git rebase
@@ -233,7 +216,9 @@ Annullare le modifiche tornando indietro a un commit specifico
 ```
 git reset
 ```   
+
 Mette da parte temporaneamente tutte le modifiche non committate  
+
 ```  
 git stash  
 ```  
