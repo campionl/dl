@@ -212,3 +212,17 @@ Mette da parte temporaneamente tutte le modifiche non committate
 git stash  
 ```  
 
+Sinconizza i cambiamenti remoti senza modificare i file  
+```
+git fetch
+```
+
+Configura le impostazioni di Git  
+```
+git config
+```
+
+Cancella i file non tracciati in locale  
+```
+git clean
+```
