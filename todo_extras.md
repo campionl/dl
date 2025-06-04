@@ -6,8 +6,8 @@
 - [x] git stash
 - [x] git revert
 - [x] git reset
-- [ ] git reflog
-- [ ] git bisect
-- [ ] git fetch
-- [ ] git config
-- [ ] git clean
+- [x] git reflog
+- [x] git bisect
+- [x] git fetch
+- [x] git config
+- [x] git clean
