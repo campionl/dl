@@ -1,4 +1,3 @@
-aaaa
 # Git
 ---
 ## Cos’è Git
