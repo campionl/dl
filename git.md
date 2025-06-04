@@ -1,3 +1,4 @@
+
 # Git
 ---
 ## Cos’è Git
@@ -21,11 +22,16 @@ Git è un sistema di controllo di versione che permette di gestire e tenere trac
 4. **Sincronizzare con il repository** remoto usando ```git push``` (invia) e ```git pull``` (riceve)
 
 ## Configurazione iniziale
-I comandi che seguono vanno eseguiti subito dopo la configurazione di Git per assicurare che ogni commit sia correttamente attribuito.
+I comandi che seguono vanno eseguiti subito dopo la configurazione di Git.
+Questi comandi servono per "firmare" i commit su git.  
+**Non** è un login.
 ```
 git config --global user.name "<nome>"
 git config --global user.email "<email>"
 ```
+## Login su Git
+Per fare il login su Github esistono due modi.
+### HTTPS e Token Personale
 
 ## Connessione SSH
 
@@ -95,16 +101,6 @@ git branch -a
 Fare il merge di un branch
 ```
 git merge <nome-branch>
-```
-
-Eliminare un branch in locale
-```
-git branch -D <nome-branch>
-```
-
-Eliminare un branch in remoto
-```
-git push origin --delete <nome-branch>
 ```
 
 ## Comandi base
@@ -195,6 +191,7 @@ Automatic merge failed; fix conflicts and then commit the result.
 
 - Aprire il file di testo
 Vedrai qualcosa del genere: 
+
 ```
 <<<<<<< HEAD  
 Contenuto modificato da Utente B  
