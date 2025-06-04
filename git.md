@@ -181,9 +181,6 @@ Fare il merge di un branch
 git merge <nome-branch>
 ```
 
-<<<<<<< HEAD
-  
-=======
 Eliminare un branch in locale
 ```
 git branch -D <nome-branch>
@@ -193,7 +190,6 @@ Eliminare un branch in remoto
 ```
 git push origin --delete <nome-branch>
 ```
->>>>>>> 5233b4d6f5391460b657e94f03f5e438efbbbcb2
 
 ## Comandi base
 
@@ -266,25 +262,12 @@ mostra le differenze tra due versioni (file non aggiunti o tra commit)
 
 ```
 git diff
-<<<<<<< HEAD
-```
-=======
 ```
 
 Mette da parte temporaneamente tutte le modifiche non committate  
 ```  
 git stash  
 ```  
-
-
-## Risoluzione dei conflitti
-
-### Scenario:
-
-- Entrambi gli utenti, nominati A e B, eseguono un git pull correttamente.
-- Entrambi modificano **lo stesso file**.
-- L'**utente A** esegue git add e git push correttamente.
-- L'**utente B** prova a fare git push, ma riceve un errore in quanto è presente un conflitto fra la versione locale e quella nel repository remoto.
 
 Per abbreviare i comandi (alias)
 
@@ -488,4 +471,4 @@ Cambia il nome di un repository remoto
 ```
 git remote rename <nome-vecchio> <nome-nuovo>	
 ```
->>>>>>> 5233b4d6f5391460b657e94f03f5e438efbbbcb2
+
