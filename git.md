@@ -142,6 +142,15 @@ git diff
 
 Unisce i branch ma si ottiene una cronologia più pulita rispetto al merge come se fosse sempre stato sullo stesso branch
 ```
-
 git rebase
+```
+
+Trova il commit che ha introdotto un bug
+```
+git bisect start
+git bisect good [nome di un commit senza bug]
+git bad [nome del commit con bug]
+# per ogni commit indicare:
+git bisect good		# se il bug non è presente
+git bisect bad		# se il bug è presente
 ```
