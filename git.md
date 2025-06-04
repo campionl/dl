@@ -21,11 +21,41 @@ Git è un sistema di controllo di versione che permette di gestire e tenere trac
 4. **Sincronizzare con il repository** remoto usando ```git push``` (invia) e ```git pull``` (riceve)
 
 ## Configurazione iniziale
-I comandi che seguono vanno eseguiti subito dopo la configurazione di Git per assicurare che ogni commit sia correttamente attribuito.
+I comandi che seguono vanno eseguiti subito dopo la configurazione di Git.
+Questi comandi servono per "firmare" i commit su git.  
+**Non** è un login.
 ```
 git config --global user.name "<nome>"
 git config --global user.email "<email>"
 ```
+## Login su Git
+Per fare il login su Github esistono due modi.
+### HTTPS e Token Personale
+Per accedere a repository GitHub tramite HTTPS:  
+GitHub richiede un *Token di Accesso Personale (PAT)* per motivi di sicurezza:  
+- Maggiore protezione contro attacchi brute-force  
+- Controllo granulare sui permessi (es. accesso solo ai repository)  
+- Integrazione con sistemi di autenticazione a due fattori  
+
+Il token funge da "super password temporanea" e va generato manualmente.  
+Ecco come procedere:
+1. Crea il tuo token cliccando [qui](https://github.com/settings/tokens) *(è necessario essere loggati con il proprio account GitHub)*.
+2. Clicca su **Generate new token (classic)**, dopo:
+	- Scegliere una scadenza per il token (30 o 90 giorni).
+	- Selezionare i permessi del token in base a cosa bisogna fare (per lavorare con repository spuntare **repo**).
+3.  Quando GitHub chiede **username e password**:
+	- Username: *il tuo nome utente GitHub*
+    - Password: *Token generato*
+### SSH
+La chiave SSH fornisce numerosi vantaggi:
+- Non devi ricordare token o password
+- Accesso automatico a ogni operazione      
+- Sicuro come una cassaforte bancaria
+
+Per funzionare viene creato un **lucchetto** (detto chiave pubblica) e una **chiave** (detta chiave privata).
+- La chiave **PUBBLICA**  viene data a GitHub.
+- La chiave **PRIVATA** resta sul computer.
+    
 
 ## Gestione dei branch (rami)
 
@@ -62,16 +92,6 @@ git branch -a
 Fare il merge di un branch
 ```
 git merge <nome-branch>
-```
-
-Eliminare un branch in locale
-```
-git branch -D <nome-branch>
-```
-
-Eliminare un branch in remoto
-```
-git push origin --delete <nome-branch>
 ```
 
 ## Comandi base
