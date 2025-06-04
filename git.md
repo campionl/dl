@@ -189,6 +189,7 @@ Esempio:
 ```
 git config --global alias.del-branch 'branch -d'
 git del-branch nome-branch
+```  
 
 Unisce i branch ma si ottiene una cronologia più pulita rispetto al merge come se fosse sempre stato sullo stesso branch
 ```
@@ -203,6 +204,27 @@ git revert
 Annullare le modifiche tornando indietro a un commit specifico  
 ```
 git reset
+```   
+
+Mette da parte temporaneamente tutte le modifiche non committate  
+
+```  
+git stash  
+```  
+
+Sinconizza i cambiamenti remoti senza modificare i file  
+```
+git fetch
+```
+
+Configura le impostazioni di Git  
+```
+git config
+```
+
+Cancella i file non tracciati in locale  
+```
+git clean
 ```
 
 ## Git Reflog – Registro delle Attività
