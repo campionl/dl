@@ -6,7 +6,7 @@
 - [x] git stash
 - [x] git revert
 - [x] git reset
-- git reflog
-- git bisect
+- [ ] git reflog
+- [ ] git bisect
 
 
