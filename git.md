@@ -233,13 +233,28 @@ git log
 ```
 
 Mostra le differenze tra due versioni (file non aggiunti o tra commit)
-```
+```  
 git diff
 ```
 
 Mette da parte temporaneamente tutte le modifiche non committate  
 ```  
 git stash  
+```  
+
+Ripristina le modifiche e cancella lo stash
+```   
+git stash pop
+```  
+
+Ripristina le modifiche mantenendole nello stash
+```  
+git stash apply
+```
+
+Mostra tutti gli stash salvati
+```  
+git stash list
 ```  
 
 Per abbreviare i comandi (alias)
