@@ -8,5 +8,6 @@
 - [x] git reset
 - [ ] git reflog
 - [ ] git bisect
-
-
+- [ ] git fetch
+- [ ] git config
+- [ ] git clean
