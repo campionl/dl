@@ -201,6 +201,17 @@ Per abbreviare i comandi (alias)
 >>>>>>> 9c985346765e62feee00cd21df6b5c3b69cb8abf
 ```
 git config --global alias.<comando-abbreviato> '<comando-da-abbreviare>'
+git rebase
+```
+
+Trova il commit che ha introdotto un bug
+```
+git bisect start
+git bisect good [nome di un commit senza bug]
+git bad [nome del commit con bug]
+# per ogni commit indicare:
+git bisect good		# se il bug non è presente
+git bisect bad		# se il bug è presente
 ```
 
 Esempio:
@@ -226,6 +237,7 @@ Mette da parte temporaneamente tutte le modifiche non committate
 ```  
 git stash  
 ```  
+<<<<<<< HEAD
 
 Sinconizza i cambiamenti remoti senza modificare i file  
 ```
