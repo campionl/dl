@@ -294,13 +294,6 @@ Cancella i file non tracciati in locale
 git clean
 ```
 
-## Git Reflog – Registro delle Attività
-
-Immagina il `reflog` come il **registro delle attività** del tuo progetto Git.  
-È come un diario che tiene traccia di tutto quello che fai con i tuoi branch e commit.
-
----
-
 ##  Cosa registra il reflog?
 
 Tutte le tue **azioni importanti**, tra cui:
@@ -345,36 +338,6 @@ e4f5g6h HEAD@{1}: checkout: moving from main to feature-branch
 
 ---
 
-## Casi d'uso principali
-
-### Recupero di commit persi
-
-- Hai eliminato un branch per sbaglio
-- Hai fatto un `reset --hard` e vuoi tornare indietro
-
-### Analisi della cronologia
-
-- Vedere tutte le operazioni eseguite nel repository
-
-###  Debug
-
-- Capire quando e come è stato introdotto un bug
-
-
-##  Esempi pratici
-
-### Per vedere tutte le modifiche a HEAD:
-
-```bash
-git reflog
-```
-
-### Per vedere le modifiche a un branch specifico:
-
-```bash
-git reflog show feature-branch
-```
-
 ### Per tornare a uno stato precedente:
 
 ```bash
@@ -408,14 +371,30 @@ git reset --hard HEAD@{5}
 - Aggiunge il messaggio del commit (se applicabile)
 
 ---
-##  Esempio pratico
 
-Hai cancellato per sbaglio un branch? Con `git reflog` puoi:
+Elenca i nomi dei repository remoti configurati
+```
+git remote
+```
 
-- Vedere quando quel branch esisteva
-- Trovare l'ultimo commit che era su quel branch
-- **Recuperarlo!**
+Elenca i remoti con gli URL di fetch e push
+```
+git remote -v
+```
 
+Aggiunge un nuovo repository remoto
+```
+git remote add <nome> <url>	
+```
+
+Rimuove un repository remoto
+```
+git remote remove <nome>	
+```
+
+Cambia il nome di un repository remoto
+```
+git remote rename <nome-vecchio> <nome-nuovo>
 Elenca i nomi dei repository remoti configurati
 ```
 git remote
