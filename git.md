@@ -44,6 +44,11 @@ Spostarsi in un branch
 git checkout <nome-branch>
 ```
 
+Crea e si sposta in un nuovo branch
+```
+git checkout -b <nome-branch>
+```
+
 Caricare il nuovo branch su GitHub
 ```
 git push -u origin <nome-branch>
