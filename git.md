@@ -55,7 +55,37 @@ La chiave SSH fornisce numerosi vantaggi:
 Per funzionare viene creato un **lucchetto** (detto chiave pubblica) e una **chiave** (detta chiave privata).
 - La chiave **PUBBLICA**  viene data a GitHub.
 - La chiave **PRIVATA** resta sul computer.
-    
+
+1. Genera una chiave SSH
+```
+ssh-keygen -t ed25519 -C "<email>"
+```
+
+2. Avvia l'agente
+```
+eval "$(ssh-agent -s)"
+```
+
+3. Aggiungi la chiave all'agente
+```
+ssh-add ~/.ssh/id_ed25519
+```
+
+4. Copia la chiave pubblica
+```
+cat ~/.ssh/id_ed25519.pub
+```
+
+5. Aggiungi la chiave al tuo account GitHub
+    1. Vai sulle impostazioni di github e clicca su "SSH and GPG keys"
+    2. Clicca su "New SSH key"
+    3. Incolla la chiave
+    4. Dagli un nome e salvala
+
+6. Testa la connessione
+```
+ssh -T git@github.com
+```
 
 ## Gestione dei branch (rami)
 
@@ -92,6 +122,16 @@ git branch -a
 Fare il merge di un branch
 ```
 git merge <nome-branch>
+```
+
+Eliminare un branch in locale
+```
+git branch -D <nome-branch>
+```
+
+Eliminare un branch in remoto
+```
+git push origin --delete <nome-branch>
 ```
 
 ## Comandi base
@@ -138,4 +178,15 @@ git log
 mostra le differenze tra due versioni (file non aggiunti o tra commit)
 ```
 git diff
+```
+
+Per abbreviare i comandi (alias)
+```
+git config --global alias.<comando-abbreviato> '<comando-da-abbreviare>'
+```
+
+Esempio:
+```
+git config --global alias.del-branch 'branch -d'
+git del-branch nome-branch
 ```
