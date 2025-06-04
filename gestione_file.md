@@ -41,8 +41,8 @@ progetto/
 ├── README.md  
 ├── .gitignore  
 ├── src/  
-│   ├── main/  
-│   └── utils/  
+│     ├── main/  
+│     └── utils/  
 ├── tests/  
 ├── docs/  
 └── build/   ← da ignorare   
