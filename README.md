@@ -4,7 +4,7 @@ Il Deep Learning è un ramo dell'intelligenza artificiale (IA) che si concentra 
 
 ## Documentazione propedeutica
 
+- [markdown](./markdown.md)
+- [git](./git.md)
 - [esempio di sessione di lavoro con git](./docs/git-example.md)
 - [GitFlow](./GitFlow.md)
-- [git](./git.md)
-- [markdown](./markdown.md)
