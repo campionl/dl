@@ -10,9 +10,9 @@ Git è un sistema di controllo di versione che permette di gestire e tenere trac
 
 -  **Repository (repo)**: Pensa a un repository (repo) come una cartella speciale per il tuo progetto. Questa cartella non contiene solo i tuoi file, ma anche tutta la storia delle modifiche che hai fatto. Ne esistono due tipi:
 
-- **Locale**: La copia del progetto che hai sul tuo computer.
+	- **Locale**: La copia del progetto che hai sul tuo computer.
 
-- **Remota**: La copia del progetto che si trova su un server online (come GitHub), utile per collaborare con altri o per avere un backup.
+	- **Remota**: La copia del progetto che si trova su un server online (come GitHub), utile per collaborare con altri o per avere un backup.
 
 -  **Commit**: Ogni volta che "salvi" il tuo lavoro in Git con un commit, è come se scattassi una "fotografia" (snapshot) del tuo progetto in quel preciso momento. Questa foto cattura lo stato di tutti i tuoi file così come sono in quel commit.
 
