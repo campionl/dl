@@ -9,14 +9,14 @@ Le reti neurali **cercano di imitare il funzionamento del cervello umano**, dove
 
 ### Il Neurone di McCulloch-Pitts (1943)
 
-Nel 1943, Warren McCulloch e Walter Pitts proposero il primo modello matematico di neurone artificiale. Questo modello era estremamente semplice, concepito per eseguire computazioni binarie: riceveva più input binari (0 o 1) e produceva un singolo output binario se la somma degli input raggiungeva o superava una soglia predefinita. La loro innovazione dimostrò come strutture neurali potessero elaborare operazioni logiche fondamentali, rappresentando funzioni booleane come AND, OR, NOT, NOR e NAND. Geometricamente, queste funzioni potevano essere visualizzate come confini di decisione lineari, ad esempio, una linea per AND e OR in uno spazio bidimensionale.  
+Nel 1943, Warren McCulloch e Walter Pitts proposero il primo modello matematico di neurone artificiale. Questo modello era estremamente semplice, concepito per eseguire computazioni binarie: riceveva più input binari (0 o 1) e produceva un singolo output binario contenente se la somma degli input raggiungeva o superava una soglia predefinita (T/F). La loro innovazione dimostrò come strutture neurali potessero elaborare operazioni logiche fondamentali, rappresentando funzioni booleane come AND, OR, NOT, NOR e NAND. Geometricamente, queste funzioni potevano essere visualizzate come confini di decisione lineari, ad esempio, una linea per AND e OR in uno spazio bidimensionale.  
 
 Presentava però molti limiti: non aveva meccanismi di apprendimento, in quanto le soglie erano impostate tutte manualmente, e trattava gli input tutti allo stesso modo senza ponderazione.
 Era quindi impossibile risolvere problemi di natura non lineare. 
 
 ### La Regola di Hebb (1949)
 
-Un passo concettuale fondamentale fu la "Regola di Hebb", proposta da Donald Hebb nel 1949 nel suo libro The Organization of Behavior. Questa regola postulava che quando due neuroni si attivano contemporaneamente e ripetutamente, la connessione sinaptica tra di essi si rafforza. Hebb suggerì che questo meccanismo fosse alla base dell'apprendimento e della memoria nel cervello. Per le reti neurali artificiali, ciò significò l'introduzione del concetto di "pesi" per gli input, permettendo che alcuni input avessero un'influenza maggiore o minore sulla somma totale che determinava l'attivazione del neurone.  
+Un passo concettuale fondamentale fu la "Regola di Hebb", proposta da Donald Hebb nel 1949 nel suo libro *The Organization of Behavior*. Questa regola postulava che quando due neuroni si attivano contemporaneamente e ripetutamente, la connessione sinaptica tra di essi si rafforza. Hebb suggerì che questo meccanismo fosse alla base dell'apprendimento e della memoria nel cervello. Per le reti neurali artificiali, ciò significò l'introduzione del concetto di **pesi** per gli input, permettendo che alcuni input avessero un'influenza maggiore o minore sulla somma totale che determinava l'attivazione del neurone.  
 
 ### Il Perceptron di Rosenblatt (1958)
 
@@ -29,7 +29,7 @@ La narrazione di questo periodo mostra una chiara progressione: McCulloch-Pitts 
 Il concetto alla base delle reti neurali è la modellazione matematica di un **neurone umano**.  
 Il **neurone artificiale** così costruito risulta un classificatore binario che calcola l'uscita attraverso la seguente **funzione lineare**:  
 
-$z = \chi(\sum_{i=0}^{m} w_i x_i + b)$
+$$z = \chi(\sum_{i=0}^{m} w_i x_i + b)$$
 
 dove:  
 $
