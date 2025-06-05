@@ -185,7 +185,7 @@ Le reti neurali sono addestrate per risolvere problemi specifici ma si sta punta
 - Efficienza energetica e ambientale  
 Le reti neurali consumano quantità enormi di energia per restare in funzione, l'obbiettivo e di creare modelli più efficienti in futuro.
 - Comprensione
-Come detto prima *<-inserire link a black box* è difficile capire come ragiona un modello, motivo per qui si lavora su tecniche di **Explainable AI** per aumentarne fiducia e trasparenza.
+Come detto [prima](https://github.com/campionl/dl/blob/79f4f9d479d5689e8db2aaa4a023ad94f78562f1/reti_neurali_tm.md?plain=1#L150) è difficile capire come ragiona un modello, motivo per qui si lavora su tecniche di **Explainable AI** per aumentarne fiducia e trasparenza.
 - Sicurezza  
 Vengono studiati metodi per rendere i modelli più sicuri e meno soggetti ad attacchi.
 - Bias e giustizia algoritmica  
