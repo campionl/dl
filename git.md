@@ -1,5 +1,5 @@
 # Git
----
+
 ## Cos’è Git
 
 Git è un sistema di controllo di versione che permette di gestire e tenere traccia delle modifiche al codice di un progetto. Ogni sviluppatore ha una copia completa del repository, compresa la cronologia delle modifiche, e può lavorare sia offline che online. Questo rende il lavoro di squadra più sicuro, organizzato ed efficiente.
@@ -123,104 +123,104 @@ Creazione di un branch
 git branch <nome-branch>
 ```
 
-Spostarsi in un branch
+Spostamento in un branch
 ```
 git checkout <nome-branch>
 ```
 
-Crea e si sposta in un nuovo branch
+Creazione e spostamento in un nuovo branch
 ```
 git checkout -b <nome-branch>
 ```
 
-Caricare il nuovo branch su GitHub
+Caricamento il nuovo branch su GitHub
 ```
 git push -u origin <nome-branch>
 ```
 
-Vedere i branch presenti
+Visualizzazione dei branch presenti
 ```
 git branch -a
 ```
 
-Fare il merge di un branch
+Merge di un branch
 ```
 git merge <nome-branch>
 ```
 
-Eliminare un branch in locale
+Eliminazione un branch in locale
 ```
 git branch -D <nome-branch>
 ```
 
-Eliminare un branch in remoto
+Eliminazione un branch in remoto
 ```
 git push origin --delete <nome-branch>
 ```
 
 ## Comandi base
 
-Creare un repository
+Creazione di un repository
 ```
 git init
 ```
 
-Clonare localmente un repository
+Clonazione locale di un repository
 ```
 git clone <url-repo>
 ```
 
-Mostrare lo stato dei file
+Visualizzazione dello stato dei file
 ```
 git status
 ```
 
-Preparare un file per il commit
+Preparazione di un file per il commit
 ```
 git add <file>
 ```
 
-Salvare le modifiche
+Salvataggio delle modifiche
 ```
 git commit -m <messaggio>
 ```
 
-Inviare le modifiche
+Invio delle modifiche al repo remoto
 ```
 git push
 ```
 
-Aggiornare le modifiche
+Aggiornamento delle modifiche
 ```
 git pull
 ```
 
-Visualizzare la cronologia
+Visualizzazione della cronologia
 ```
 git log
 ```
 
-Mostra le differenze tra due versioni (file non aggiunti o tra commit)
+Visualizzazione delle differenze tra due versioni (file non aggiunti o tra commit)
 ```  
 git diff
 ```
 
-Mette da parte temporaneamente tutte le modifiche non committate  
+Salvataggio temporaneo locale di tutte le modifiche non committate  
 ```  
 git stash  
 ```  
 
-Ripristina le modifiche e cancella lo stash
+Ripristino delle modifiche e cancella lo stash
 ```   
 git stash pop
 ```  
 
-Ripristina le modifiche mantenendole nello stash
+Ripristino delle modifiche mantenute nello stash
 ```  
 git stash apply
 ```
 
-Mostra tutti gli stash salvati
+Visualizzazione di tutti gli stash salvati
 ```  
 git stash list
 ```  
@@ -236,7 +236,7 @@ git config --global alias.del-branch 'branch -d'
 git del-branch nome-branch
 ```
 
-Trova il commit che ha introdotto un bug
+Ricerca del commit che ha introdotto un bug
 ```
 git bisect start
 git bisect good [nome di un commit senza bug]
@@ -246,136 +246,41 @@ git bisect good		# se il bug non è presente
 git bisect bad		# se il bug è presente
 ```
 
-Unisce i branch ma si ottiene una cronologia più pulita rispetto al merge come se fosse sempre stato sullo stesso branch
+Unione dei branch ma ottenendo una cronologia più pulita rispetto al merge come se fosse sempre stato sullo stesso branch
 ```
 git rebase
 ```
 
-Annullare le modifiche introdotte da un commit, creando un nuovo commit  
+Annullamento delle modifiche introdotte da un commit, creando un nuovo commit  
 ```
 git revert
 ```
 
-Annullare le modifiche tornando indietro a un commit specifico  
+Annullamento delle modifiche tornando indietro a un commit specifico  
 ```
 git reset
 ```
 
-Sinconizza i cambiamenti remoti senza modificare i file  
+Sinconizzazione dei cambiamenti remoti senza modificare i file  
 ```
 git fetch
 ```
 
-Configura le impostazioni di Git  
+Configurazione delle impostazioni di Git  
 ```
 git config
 ```
 
-Cancella i file non tracciati in locale  
+Cancellazione dei file non tracciati in locale  
 ```
 git clean
 ```
 
-##  Cosa registra il reflog?
-
-Tutte le tue **azioni importanti**, tra cui:
-- Quando cambi branch (`git checkout`)
-- Quando fai nuovi commit (`git commit`)
-- Quando unisci branch (`git merge`)
-- Quando cancelli o modifichi commit (`git reset`, `git rebase`)
----
-
-##  A cosa serve?
-
-- È come il **"Ctrl+Z"** di Git: se fai un errore, puoi tornare indietro
-- Ti mostra la **storia completa** di tutto quello che hai fatto
-- Ti aiuta a **ritrovare commit** che pensavi di aver perso
-
----
-
-## Sintassi base
-
+VIsualizzazione delle informazioni dettagliate sul lavoro eseguito nel repo
 ```
 git reflog
 git reflog show <branch>  # Mostra il reflog per un branch specifico
-```
-
----
-
-## Output tipico
-
-L'output mostra righe nel formato:
-
-```
-<checksum> HEAD@{<n>}: <azione>: <messaggio>
-```
-
-**Esempio:**
-
-```
-a1b2c3d HEAD@{0}: commit: Aggiorna documentazione
-e4f5g6h HEAD@{1}: checkout: moving from main to feature-branch
-```
-
----
-
-### Per tornare a uno stato precedente:
-
-```
-git reset --hard HEAD@{5}
-```
-
----
-
-##  Importanti note
-
-- Il reflog è **locale** al tuo repository
-- Le voci **scadono dopo 90 giorni** (configurabile)
-- Il reflog **non viene pushato** sul repository remoto
-- È un **meccanismo di sicurezza**, non un sostituto per i commit
-
----
-
-## Dettagli aggiuntivi
-
-### Dove eri e dove vai:
-
-- Ricorda qual era il tuo commit precedente
-- Registra a quale nuovo commit sei arrivato
-
-> Esempio:  
-> "Sei passato dal commit `ABC123` al commit `DEF456`"
-
-### Cosa hai fatto esattamente:
-
-- Scrive se hai fatto un commit, un merge, un reset, ecc.
-- Aggiunge il messaggio del commit (se applicabile)
-
----
-
-Elenca i nomi dei repository remoti configurati
-```
-git remote
-```
-
-Elenca i remoti con gli URL di fetch e push
-```
-git remote -v
-```
-
-Aggiunge un nuovo repository remoto
-```
-git remote add <nome> <url>	
-```
-
-Rimuove un repository remoto
-```
-git remote remove <nome>	
-```
-
-Cambia il nome di un repository remoto
-```
-git remote rename <nome-vecchio> <nome-nuovo>
+git reset --hard HEAD@{5}  # Per tornare a uno stato precedente:
 ```
 
 Elenca i nomi dei repository remoti configurati
