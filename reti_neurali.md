@@ -32,14 +32,14 @@ Il **neurone artificiale** così costruito risulta un classificatore binario che
 $$z = \chi(\sum_{i=0}^{m} w_i x_i + b)$$
 
 dove:  
-```latex
-z = uscita\
-m = numero\ di\ ingressi\ 
-x_i = segnale\
-w_i = peso\ del\ segnale\
-b = bias\ (termine\ costante\ indipendente)\
-\chi = funzione\ di\ output\
-```
+
+$z =$ uscita
+$m =$ numero di ingressi
+$x_i =$ segnale
+$w_i =$ peso del segnale
+$b =$ bias (termine costante indipendente)
+$\chi =$ funzione di output
+
 
 ![schema](./images/perceptron.jpg)  
 
