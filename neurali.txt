@@ -1,0 +1,1011 @@
+TESTO 1:
+# Rete Neurale
+Una rete neurale è un sistema matematico ispirato al cervello umano, utilizzato nel machine learning per risolvere problemi complessi.
+
+Una rete neurale è composta da:
+
+- Neuroni: Le unità di elaborazione fondamentali.
+- Sinapsi Artificiali: I collegamenti tra i neuroni, che trasmettono segnali con un'intensità definita da un peso.
+- Strati: Raggruppamenti di neuroni organizzati in livelli specifici.
+## Neurone
+Un neurone artificiale è l'unità fondamentale di una rete neurale.  
+Il neurone per funzionare ha bisogno di:
+- **Input**: dati ricevuti e da elaborare.  
+    - Se il neurone appartiene al primo strato, il suo input è il dataset.
+    - Altrimenti, i suoi input sono le informazioni del neurone precedente. 
+    > Esempio:  
+    > In un sistema di riconoscimento immagini, ogni pixel di un'immagine potrebbe essere un input.  
+- **Peso**: valore numerico associato ad ogni connessione (*sinapsi*) tra due neuroni, indica l'importanza di un determinato input per un neurone.  
+Durante l'apprendimento della rete neurale, questi pesi vengono continuamente aggiustati per permettere alla rete di fare previsioni più accurate.
+    > Esempio:  
+    > Mettiamo caso un neurone A che deve decidere se l'immagine è una mela.  
+    > Per il neurone A sarà molto più importante il neurone B che dice se il frutto è rosso, piuttosto che il neurone C, che determina se il gambo è verde o meno.  
+
+- **Bias**: valore numerico fisso che viene aggiunto alla somma pesata degli input all'interno di un neurone. Il bias permette al neurone di "attivarsi" anche quando tutti gli input sono zero o molto bassi.
+
+### Come funziona un Neurone
+Il processo di elaborazione è composto principalmente da due passaggi:
+
+- **Somma pesata degli input**  
+Ogni input che arriva al neurone viene moltiplicato per un peso, la *sinapsi artificiale*.  
+I risultati vengono sommati tra loro, alla somma si aggiunge un valore fisso chiamato bias.  
+
+- **Funzione di attivazione**  
+Il risultato della somma pesata viene inviato ad una funzione di attivazione. La funzione decide se il neurone deve "attivarsi" (cioè, trasmettere un segnale) e in che misura.  
+È questo passaggio che introduce la capacità della rete di apprendere relazioni complesse e non lineari.
+
+## Sinapsi Artificiale
+Le sinapsi artificiali sono i "collegamenti" tra neuroni. Sono rappresentati da pesi (numeri che indicano quanto un input influisce sull'output).
+
+
+## Strati
+Una rete neurale è tipicamente organizzata in strati, ovvero raggruppamenti di neuroni. Ogni strato ha un compito specifico nel processo di elaborazione dell'informazione:
+
+- Strato di Input (Input Layer): Il primo strato della rete. I neuroni raccolgono dati dal dataset.
+
+- Strato Nascosto (Hidden Layer) Situato tra lo strato di input e quello di output.  
+Qui che avviene la vera elaborazione e l'estrazione di caratteristiche sempre più complesse dai dati.  
+Ogni neurone in uno strato nascosto riceve input dallo strato precedente, esegue la sua somma pesata e applica la funzione di attivazione, inviando poi l'output allo strato successivo.
+- Strato di Output (Output Layer): L'ultimo strato della rete.  
+Lo strato di output prende gli input elaborati dagli strati nascosti e li trasforma nella decisione finale della rete.  
+Non ha strati successivi a cui passare l'informazione, quindi il suo output è il prodotto conclusivo della rete.
+
+### 1. McCulloch & Pitts (1943): Il Primo Neurone Artificiale
+
+#### Cosa Proposero
+
+Un modello binario ispirato ai neuroni biologici:
+
+- Input: Segnali binari (0 o 1) da altri neuroni.
+- Pesi: Valori fissi (non apprendibili).
+- Attivazione: Output 1 se la somma pesata supera una soglia θ
+
+#### Esempio:
+
+Input: x1 = 1 x2 = 1
+Pesi: w1 = 1 w2=-1
+Soglia θ: 0.5
+Calcolo:  (1⋅1)+(−1⋅1)=0 → Output = 0.
+
+#### Limiti
+
+- Nessun apprendimento: I pesi w erano fissi (no training)
+- Solo logica booleana: Poteva simulare porte AND/OR, ma non era "adattivo".
+
+
+### 2. Hebb (1949): La Prima Idea di Apprendimento
+
+ Legge di Hebb (Plasticità Sinaptica): Se due neuroni si attivano insieme, la connessione tra loro si rafforza.
+
+#### Esempio Pratico
+
+Immagina di allenare un neurone a riconoscere il pattern "gatto":
+
+Se un pixel xi  si attiva spesso quando l'output è "gatto", il peso wi aumenta
+
+#### Limiti
+
+- Nessuna regola per ridurre i pesi (solo rafforzamento).
+- Non gestisce casi complessi (es: input contraddittori).
+
+
+### 3. Rosenblatt (1958): Il Perceptron – Il Primo Modello Addestrabile
+
+Immagina di voler insegnare a un bambino a distinguere due tipi di frutta: mele (classe 0) e banane (classe 1).
+Input: Due caratteristiche:
+
+- x1: Dolcezza (da -1 a 1).
+- x2: Colore (da -1 = verde a 1 = giallo).
+
+#### Come Funziona il Perceptron
+
+1. Pesi iniziali: Assegna pesi casuali alle caratteristiche (es: w1=0.5, w2=−0.5).
+- Pensa ai pesi come all'importanza che diamo a dolcezza e colore.
+
+2. Decisione:
+
+- Calcola:Score=(x1​ ⋅ w1)+(x2 ⋅ w2).
+- Se Score > soglia (es: 0.5) → "Banana", altrimenti → "Mela".
+
+3. Apprendimento:
+
+- Se sbaglia, aggiusta i pesi per ridurre l’errore.
+- Esempio:
+	- Se scambia una banana per una mela, aumenta w1 e w2 per dare più peso a dolcezza e colore giallo.
+
+#### Il Problema dello XOR: Il "Muro" del Perceptron
+
+Ora proviamo a distinguere due gruppi di numeri:
+XOR (O Esclusivo):
+
+- Classifica (0,0) e (1,1) come 0.
+- Classifica (0,1) e (1,0) come 1.
+
+#### Perché il Perceptron Fallisce?
+
+Con una retta: È impossibile separare i due gruppi.
+Serve una curva: Per risolvere XOR, servono due rette (cioè uno strato nascosto).
+Il perceptron a un solo strato non può farlo.
+
+
+#### La Soluzione?
+
+Servono più chef (neuroni) che lavorino insieme in strati nascosti per combinare le regole in modo non lineare. **Questo sarà il cuore delle reti neurali moderne!**
+
+### La Crisi del Perceptron (1969): Perché quasi uccise l’AI
+
+Nel 1969, Marvin Minsky e Seymour Papert pubblicarono il libro "Perceptrons", dimostrando matematicamente che:
+
+- Un singolo perceptron può risolvere SOLO funzioni linearmente separabili.
+- Lo XOR è un problema non linearmente separabile → Impossibile per un perceptron a 2 input.
+- Risultato → crollano del tutto gli investimenti per le reti neurali
+
+
+### Backpropagation (1986): Il motore segreto del Deep Learning
+
+L’algoritmo di backpropagation (error backpropagation) fu reso popolare da Rumelhart, Hinton e Williams nel 1986, ma l’idea originale è di Paul Werbos (1974 nella tesi di dottorato).
+Come funziona in 3 passi:
+
+1. ##### Forward Pass (Prova a indovinare)
+
+- Mostri una foto al bambino (input)
+- Lui osserva le caratteristiche (orecchie a punta? muso lungo?) e fa una guess: "Penso sia un gatto!" (output)
+
+3. ##### Calcolo dell'errore (Quanto ha sbagliato?)
+
+- Se la foto era davvero di un cane, diciamo: "No, era un cane! L'errore è X"
+- L'errore si misura come la differenza tra la risposta data e quella corretta
+
+3. ##### Backward Pass (Impara dagli errori)
+
+- Il bambino chiede: "Dove ho sbagliato?"
+- Analizziamo insieme:
+
+	- "Hai dato troppo peso alle orecchie a punta (che però anche alcuni cani hanno)"
+	- "Non hai considerato abbastanza la forma del muso"
+
+- Aggiustiamo l'importanza (pesi) data a ogni caratteristica
+
+#### Il problema del Vanishing Gradient (Perché non impara bene)
+
+- Se usiamo certi tipi di "ragionamenti" troppo complessi (funzioni sigmoide), le correzioni diventano microscopiche man mano che torniamo indietro
+- Risultato: le prime caratteristiche (es. "ha 4 zampe") non vengono mai aggiustate!
+
+#### La soluzione ReLU (Il trucco per far imparare meglio)
+
+- Usiamo un metodo più semplice e diretto:
+"Se questa caratteristica è importante? Sì/No" (come un interruttore)
+- Così le correzioni rimangono chiare e forti in tutti gli strati
+
+
+### AlexNet (2012): La "Big Bang" del Deep Learning Moderno
+
+#### Contesto:
+
+- Nel 2010, il miglior algoritmo su ImageNet (classificazione immagini) aveva un error rate del 26%.
+- Nel 2012, AlexNet (Krizhevsky, Sutskever, Hinton) ridusse l’errore al 15.3%, rivoluzionando il campo.
+
+#### Innovazioni tecniche:
+
+- GPU NVIDIA GTX 580: Addestramento parallelo su 2 GPU (5 giorni vs. mesi su CPU).
+- ReLU: Risolse il vanishing gradient per reti profonde (8 strati) (ReLU è il megafono che mantiene il messaggio forte e chiaro, strato dopo strato).
+- Dropout (Srivastava et al.): Spegnimento casuale del 50% dei neuroni durante il training → riduce l’overfitting (Serve imparare a ragionare, non a ripetere).
+- Data Augmentation: Rotazione/riflessione delle immagini per aumentare i dati.
+
+#### Effetto domino:
+
+- Nel 2015, ResNet (He et al.) portò l’error rate a 3.57% (meglio degli umani!).
+- Nacque la corsa alle architetture sempre più profonde (VGG, Inception, EfficientNet).
+
+
+### Transformers (2017): La rivoluzione silenziosa
+
+Introdotti da Vaswani et al. nel paper "Attention is All You Need", i transformers hanno soppiantato RNN e LSTM nel NLP.
+
+#### Perché sono superiori:
+
+- Self-Attention: Calcola l’importanza di ogni parola nel contesto.
+- Parallelizzabile: Addestramento molto più veloce delle RNN (dipendenti dalla sequenza).
+
+#### Impatto esplosivo:
+
+- BERT (2018): Pre-training bidirezionale → SOTA in 11 task NLP.
+- GPT-3 (2020): 175 miliardi di parametri → testo coerente a livello umano.
+- Oggi: Sono alla base di ChatGPT, Gemini, Claude.
+
+TESTO 2:
+# **Le Reti Neurali**
+
+##  **Introduzione generale alle reti neurali**
+
+Le **reti neurali artificiali** (Artificial Neural Networks, ANN) sono modelli computazionali ispirati al cervello umano, utilizzati in ambito informatico per risolvere problemi complessi come riconoscimento vocale, visione artificiale, traduzione automatica e molti altri.
+
+Le reti neurali **cercano di imitare il funzionamento del cervello umano**, dove milioni di neuroni biologici comunicano tra loro attraverso connessioni chiamate **sinapsi**. Allo stesso modo, in una ANN ci sono **unità di calcolo artificiali** (i neuroni) collegate tra loro da **pesi sinaptici** che trasmettono e trasformano le informazioni.
+
+---
+
+###  **Definizione di rete neurale artificiale (ANN)**
+
+Una rete neurale artificiale è un **insieme di nodi interconnessi** (i neuroni artificiali), organizzati in **strati**:
+
+1. **Strato di input**: riceve i dati iniziali (ad esempio pixel di un'immagine o valori numerici).
+2. **Strati nascosti**: elaborano l'informazione, trasformandola attraverso funzioni matematiche.
+3. **Strato di output**: fornisce il risultato finale (ad esempio, la previsione di una classe o un valore numerico).
+
+Ogni connessione tra neuroni ha un **peso** che determina l’importanza del segnale. I pesi vengono **aggiustati** durante l'apprendimento grazie a un processo chiamato **addestramento** o **training**.
+
+---
+
+###  **Ispirazione biologica: neuroni e sinapsi**
+
+* **Neurone biologico**: riceve segnali elettrici da altri neuroni, li elabora, e se il segnale è abbastanza forte, lo trasmette ad altri neuroni.
+* **Neurone artificiale**: riceve dei numeri (input), li somma in base ai pesi associati, applica una **funzione di attivazione** (es. ReLU, Sigmoid, Tanh), e restituisce un output.
+
+#### Componenti base di un neurone artificiale:
+
+* **Input**: i valori in entrata.
+* **Pesi (weights)**: numeri che modulano l'importanza degli input.
+* **Sommatore**: calcola la somma pesata degli input.
+* **Funzione di attivazione**: decide se "attivare" il neurone (cioè se trasmettere il segnale).
+* **Output**: il valore in uscita dal neurone.
+
+I neuroni vengono **collegati in strati**: ogni neurone di uno strato è collegato a tutti i neuroni dello strato successivo (in una rete completamente connessa, detta *fully connected*).
+
+---
+
+###  **Tecnologie usate per costruire reti neurali**
+
+Le reti neurali vengono implementate con **librerie di programmazione** e **framework** come:
+
+* **TensorFlow** (Google)
+* **PyTorch** (Meta/Facebook)
+* **Keras** (alto livello, spesso usato sopra TensorFlow)
+* **Scikit-learn** (per modelli più semplici)
+
+Il linguaggio più usato è **Python**, grazie alla sua semplicità e alla ricchezza di librerie per il machine learning.
+
+Il calcolo viene spesso accelerato tramite **GPU** (unità di elaborazione grafica), perché le operazioni matematiche richieste sono molto pesanti.
+
+---
+
+###  **Perché studiare le reti neurali? Applicazioni e importanza**
+
+Studiare le reti neurali è fondamentale per entrare nel mondo dell’**Intelligenza Artificiale (IA)** moderna. Le ANN sono alla base del **Deep Learning**, che ha rivoluzionato molti settori:
+
+###  **Applicazioni pratiche**:
+
+* **Riconoscimento facciale e oggetti** (es. nei social o videocamere di sicurezza)
+* **Auto a guida autonoma**
+* **Diagnosi medica assistita**
+* **Assistenti vocali** (come Alexa, Siri)
+* **Traduttori automatici** (es. Google Translate)
+* **Raccomandazioni personalizzate** (Netflix, YouTube, Spotify)
+* **Giochi e intelligenza artificiale nei videogiochi**
+
+###  **Importanza**:
+
+* Le reti neurali permettono di **automatizzare** compiti complessi senza dover scrivere regole rigide.
+* Sono **adattabili**: possono migliorare nel tempo imparando dai dati.
+* Sono alla base di **innovazioni future** in campo medico, industriale, educativo e oltre.
+
+
+
+##  **Le origini delle reti neurali (anni '40–'60)**  
+
+Le reti neurali artificiali nascono dall’idea di imitare il cervello umano. I primi studi cercavano di creare modelli in grado di simulare il comportamento dei **neuroni biologici**, trasformando segnali in uscita sulla base di input ricevuti.
+
+---
+
+### **McCulloch e Pitts (1943)**
+
+Questi due studiosi proposero il **primo modello matematico di neurone artificiale**. Il loro neurone:
+
+* Riceve input binari (0 o 1),
+* Somma gli input,
+* Confronta la somma con una soglia,
+* Restituisce 1 se supera la soglia, altrimenti 0.
+
+Era un modello **statico**, non in grado di imparare, ma fu fondamentale per avviare il campo delle reti neurali.
+
+---
+
+###  **Il perceptron di Frank Rosenblatt (1958)**
+
+Rosenblatt sviluppò il **perceptron**, un modello più avanzato:
+
+* Ogni input è moltiplicato per un **peso**,
+* La somma pesata passa attraverso una **funzione di attivazione** (solitamente una soglia),
+* Se l’output è sbagliato, i **pesi vengono aggiornati** per correggere l’errore.
+
+È stato il primo modello di rete neurale **capace di apprendere dai dati**.
+
+---
+
+### **Limitazioni: il problema dell’XOR**
+
+Il perceptron può risolvere solo problemi **linearmente separabili**. Ad esempio, **non può risolvere il problema logico XOR**, dove i dati non si possono dividere con una singola retta.
+
+Questa limitazione fu dimostrata da **Minsky e Papert** nel 1969, causando un periodo di **declino dell’interesse** verso le reti neurali, noto come *“inverno dell’IA”*.
+
+---
+
+
+##  **Periodo di stagnazione: il “winter” delle reti neurali (anni ’70–’80)**
+
+Negli anni ’70, le reti neurali entrarono in una fase di **crisi e rallentamento**, nota come **“AI winter”** (inverno dell’intelligenza artificiale).
+
+---
+
+###  **Il libro di Minsky e Papert (1969)**
+
+Nel 1969, Marvin **Minsky** e Seymour **Papert** pubblicarono *Perceptrons*, un testo molto influente in cui **dimostravano matematicamente i limiti** del perceptron:
+
+* Non poteva risolvere problemi **non linearmente separabili**, come l’**XOR**.
+* Mancavano strumenti per creare modelli più complessi a più strati.
+
+Questa critica **scoraggiò molti ricercatori** e **fermò i finanziamenti** in questo ambito.
+
+---
+
+###  **Calo dell’interesse e dei fondi**
+
+A causa di queste limitazioni, l’interesse verso le reti neurali **crollò**:
+
+* Molti progetti furono abbandonati.
+* I finanziamenti pubblici e privati si spostarono verso altri settori.
+
+Questo periodo fu chiamato “AI winter” proprio perché la ricerca in intelligenza artificiale **rallentò drasticamente**.
+
+---
+
+###  **Un periodo comunque utile**
+
+Nonostante la stagnazione, questo periodo fu **importante per la riflessione teorica**:
+
+* Si iniziarono a studiare reti più complesse (a più strati),
+* Si prepararono le basi teoriche per lo sviluppo futuro, come la **backpropagation** e l’ottimizzazione.
+
+In breve: fu un momento difficile, ma **necessario per maturare nuove idee** che rilanceranno le reti neurali negli anni ’80.
+
+---
+
+##  **Rinascita con il backpropagation (anni ’80)**
+
+Dopo il periodo di stagnazione, le reti neurali tornarono al centro dell’attenzione grazie a un'importante scoperta: **l’algoritmo di backpropagation** (retropropagazione del gradiente).
+
+---
+
+###  **Riscoperta del backpropagation (1986)**
+
+Nel 1986, **Rumelhart**, **Hinton** e **Williams** pubblicarono un lavoro fondamentale in cui **riscoprirono e applicarono l’algoritmo di backpropagation** per addestrare reti neurali con più strati.
+
+### Cos'è il backpropagation?
+
+È un **algoritmo di apprendimento supervisionato** che:
+
+* Calcola l’**errore tra output reale e desiderato**,
+* Propaga l’errore all’indietro attraverso la rete,
+* **Aggiorna i pesi** di ogni neurone in base al contributo all’errore,
+* Utilizza il **metodo del gradiente** per trovare pesi migliori passo dopo passo.
+
+---
+
+### ️ **Multi-layer Perceptron (MLP)**
+
+Grazie al backpropagation, fu possibile **addestrare reti a più strati** (MLP), superando i limiti del perceptron singolo:
+
+* I MLP possono rappresentare **funzioni non lineari complesse**,
+* Riescono a **risolvere problemi come l’XOR**.
+
+Questo segnò una **svolta fondamentale** nello sviluppo dell’intelligenza artificiale.
+
+---
+
+###  **Verso problemi più complessi**
+
+Con questa nuova capacità, le reti neurali iniziarono ad affrontare:
+
+* Riconoscimento di immagini e suoni,
+* Previsioni,
+* Classificazione di dati non lineari.
+
+Fu l’inizio di una **nuova era per le reti neurali**, più potente e promettente.
+
+---
+
+## **Limitazioni e sfide (anni ’90 – primi 2000)**
+
+Nonostante i progressi degli anni ’80, le reti neurali **non si affermarono subito** come tecnologia dominante. Negli anni ’90 e nei primi anni 2000, affrontarono vari problemi.
+
+---
+
+### **Problemi di scalabilità**
+
+* Le reti neurali di allora erano **piccole** (pochi strati, pochi neuroni).
+* L’**hardware** disponibile (CPU e RAM) non permetteva di gestire reti profonde o grandi quantità di dati.
+* L’addestramento richiedeva **molto tempo** e spesso portava a risultati deludenti su problemi reali.
+
+---
+
+### **Overfitting e generalizzazione**
+
+* Le reti tendevano a **memorizzare i dati di addestramento** (overfitting), perdendo capacità di **generalizzare su nuovi dati**.
+* Mancavano tecniche avanzate di regolarizzazione come il **dropout** o l’**early stopping**, oggi comuni.
+
+---
+
+### **Concorrenza di altri algoritmi**
+
+In questo periodo, altri metodi di machine learning **ottenevano migliori risultati** con meno risorse:
+
+* **SVM (Support Vector Machines)**: ottimi per classificazione e separazione di dati.
+* **Random Forest e alberi decisionali**: più semplici da addestrare e da interpretare.
+* **k-NN, Naive Bayes, boosting**, ecc.
+
+Questi metodi erano più **affidabili**, **veloci** e **facili da usare**, per cui vennero preferiti per molti anni.
+
+---
+
+Nonostante ciò, la ricerca sulle reti neurali **continuò in sottofondo**, in attesa di nuove idee e, soprattutto, di **hardware più potente**.
+
+---
+
+## **Il grande salto qualitativo: Deep Learning e Big Data (dal 2010 in poi)**
+
+Dopo anni di studio e sperimentazione, a partire dal 2010 le reti neurali hanno fatto un salto di qualità grazie alla convergenza di **tre fattori principali**:
+
+1. **Deep Neural Networks (DNN)**,
+2. **Potenza di calcolo (GPU, TPU)**,
+3. **Grandi quantità di dati (Big Data)**.
+
+---
+
+### **Cosa sono le reti neurali profonde (DNN)**
+
+Le **Deep Neural Networks** sono reti neurali con **molti strati nascosti** (hidden layers), in grado di modellare relazioni molto complesse tra input e output.
+
+#### Composizione di una DNN moderna:
+
+* **Strato di input**: riceve i dati grezzi (immagini, testo, audio, ecc.).
+* **Strati nascosti**: composti da **neuroni artificiali** che applicano trasformazioni non lineari ai dati. Più strati → maggiore astrazione.
+* **Strato di output**: fornisce il risultato (classe prevista, valore numerico, testo generato, ecc.).
+
+I neuroni in ogni strato calcolano:
+**output = attivazione(∑(peso × input) + bias)**
+
+Ogni connessione tra neuroni ha un **peso**, che viene appreso durante l’addestramento.
+
+---
+
+### **Perché il Deep Learning ha avuto successo?**
+
+#### **Hardware potenziato**
+
+* L’uso delle **GPU** (e successivamente **TPU** di Google) ha permesso di **addestrare reti complesse in tempi gestibili**.
+* Le GPU eseguono calcoli in parallelo, perfetti per le **matrici e vettori** usati nelle reti neurali.
+
+#### **Big Data**
+
+* Servono **tanti esempi** per far apprendere bene una rete profonda.
+* Grazie a internet, social, immagini, video, sensori, ecc., oggi abbiamo enormi dataset (es. ImageNet, COCO, Common Crawl, ecc.).
+
+---
+
+### **Algoritmi e tecniche chiave**
+
+Per far funzionare bene le DNN, sono state sviluppate tecniche avanzate:
+
+#### **ReLU (Rectified Linear Unit)**
+
+* Nuova funzione di attivazione: `ReLU(x) = max(0, x)`.
+* È **semplice** e **evita problemi** di saturazione presenti nelle funzioni sigmoide/tanh.
+* Aiuta la rete a **convergere più velocemente** durante l’allenamento.
+
+#### **Dropout**
+
+* Durante l’addestramento, disattiva casualmente alcuni neuroni per evitare l’**overfitting**.
+* Forza la rete a **non dipendere da un singolo neurone**.
+
+#### **Batch Normalization**
+
+* Normalizza le attivazioni tra gli strati.
+* Stabilizza e **accelera il training**, riducendo anche il rischio di overfitting.
+
+---
+
+### **Come funziona il training nelle reti moderne**
+
+1. La rete riceve **input** (es. un'immagine).
+2. Calcola un **output** (es. "gatto").
+3. Confronta l’output con l’etichetta corretta e calcola l’**errore** (loss).
+4. Propaga l’errore all’indietro (backpropagation).
+5. Aggiorna i **pesi** usando algoritmi di ottimizzazione come **SGD**, **Adam**, ecc.
+6. Ripete questo processo su **milioni di esempi** fino a migliorare l’accuratezza.
+
+---
+
+### **Successi nei vari campi**
+
+Le DNN hanno avuto enormi successi in molti settori:
+
+#### **Visione artificiale**
+
+* Riconoscimento immagini (es. classificare animali, volti, oggetti),
+* Reti come **CNN (Convolutional Neural Networks)**,
+* Applicazioni: guida autonoma, diagnostica medica, sorveglianza.
+
+#### **Linguaggio naturale (NLP)**
+
+* Traduzione automatica, chatbot, assistenti vocali,
+* Modelli come **Transformer**, **BERT**, **GPT**,
+* Capacità di comprendere e generare **linguaggio umano**.
+
+#### **Gioco e decisione**
+
+* **AlphaGo** (DeepMind, 2016): ha battuto campioni umani nel gioco del Go usando **reti neurali + reinforcement learning**.
+* Oggi: applicazioni in robotica, economia, strategia.
+
+---
+
+### **Modelli avanzati di oggi (oltre le DNN)**
+
+Negli ultimi anni si usano modelli ancora più potenti:
+
+**CNN (Convolutional Neural Networks)**: per immagini e video.  
+**RNN / LSTM / GRU**: per sequenze e testi (ora superate dai Transformer).  
+**Transformer**: base per i modelli di linguaggio attuali come **GPT**, **ChatGPT**, **BERT**, **T5**, ecc.  
+**LLM (Large Language Models)**: modelli enormi, pre-addestrati su terabyte di testi, capaci di generare, tradurre, riassumere, rispondere a domande, programmare e molto altro.
+## Architettura innovative delle reti neurali
+
+- Feedforward Neural Netword (FNN)
+    Struttura: Input → Layer Nascosti → Output.  
+    Funzione: Approssimare funzioni (es. classificare immagini).  
+    Limite: Non gestisce sequenze o dati con struttura spaziale.
+
+- Convolutional Neural Netword (CNN)
+    Struttura: Usa filtri convoluzionali per estrarre feature (es. bordi, texture).  
+    Per cosa: Immagini, video.  
+    Key: Pooling riduce le dimensioni mantenendo le info importanti.
+
+- Recurrent Neural Network (RNN)
+    Struttura: Ha uno stato nascosto che "ricorda" le info precedenti.  
+    Per cosa: Sequenze (testo, serie temporali).  
+    Problema: Vanishing gradient (dimentica le info lunghe).
+
+- Long Short-Term Memory (LSTM)
+    Migliora le RNN: Usa cancelli (input, output, forget) per controllare il flusso di memoria.  
+    Per cosa: Traduzione, previsioni complesse.
+
+- Generative Adversarial Network (GAN)  
+    Struttura: Due reti in competizione:
+    - Generatore: Crea dati falsi.
+    - Discriminatore: Cerca di distinguere vero/falso.  
+    
+    Per cosa: Generare immagini, video, musica realistici.
+
+- Trasformers (2017)  
+	Portò una rivoluzione nel NLP (natural language processing), ideati da Google analizza le relazioni tra tutte le parole in parallelo  superando i limiti del RNN (recurrent neural network), utilizza un'architettura encoder-decoder
+- Diffusion Models (2020)   
+	Generazione di immagini e audio ad alta qualità.
+	Il suo funzionamento consiste nel distruggere i dati aggiungendo rumore e poi impara a ricostruirli, supera le GAN (generative adversarial network)
+- Neural Radiance Field (NeRF, 2020)  
+	Ricostruzione 3D da immagini 2D
+	Grazie a foto multiple di un oggetto/scena in input realizza in output un modello 3D ad alta fedeltà, con rendering fotorealistico da qualsiasi angolazione
+- Mixture of Experts (MoE, 2021)  
+	Consiste in varie reti sparse per poter scalare modelli enormi, questo è possibile grazie a delle sottoreti (chiamate "esperti") che vengono attivati per ogni input, riducendo cosi i costi computazionali.
+- Liquid Neural Networks (LNN, 2021)  
+	Reti ispirate ai sistemi dinamici, ha alcune differenze rispetto ai classici RNN:
+	- usano equazioni differenziali per modellare stati continui;
+	- più efficienti in compiti sequenziali lunghi
+- Reti Neurali su Grafi (GNN)  
+	Utilizzato per dati strutturati come grafi, utilizzato in chimica per la predizione di proprietà molecolari, per il social network analysis e per i recommendation system (algoritmi che suggeriscono contenuti personalizzati agli utenti)
+- Spiking Neural Networks (SNN)  
+	Simulano neuroni biologici (event-based). Sono efficienti energeticamente e adatte a dati temporali ma sono difficili da allenare
+- Modelli Multimodali (2023)  
+	Consiste in una fusione di testi, immagini, audio in un unico modello  
+    Nel futuro si tenderà a utilizzare reti più piccole ma efficienti, AI unito alla neuroscienza per creare modelli più simili al cervello umano e i Quantum Machine Learning.
+
+## Hardware e infrastrutture
+
+Hardware specializzato per il deep learning
+- GPU (Graphics Processing Units)  
+    Accelerano le operazioni di algebra lineare (matrici e tensori) grazie a migliaia di core paralleli.
+    Sono essenziali perchè riducono il tempo di training da settimane a ore e supportano librerie come CUDA e cuDNN per ottimizzare le operazioni
+- TPU (Tensor Processing Units)  
+    Progettate da Google specificamente per il machine learning. Il suo vantaggio è l'ottimizzazione per operazioni su tensori (strutture matematiche usate per rappresentare dati in più dimensioni).
+- AI Accelerators (ASIC/FPGA)
+    Sono hardware specializzati progettati per eseguire più velocemente i calcoli necessari per l'addestramento o l'uso di modelli gia addestrati per fare previsioni o prendere decisioni.
+
+## Infrastrutture Cloud e Distributed Computing
+
+Per l'addestramento e il suo utilizzo una rete neurale necessita di numerosi componenti hardware e solitamente si fa uso del cloud computing per il noleggio per esempio delle GPU. Il cloud è scalabile, il costo dipende dal suo utilizzo e consente il Data Parallelism, il Model Parallelism e il Pipeline Parallelism  
+
+
+## Ottimizzazione per l'inference 
+Edge AI e Hardware Efficiente  
+necessità di eseguire i modelli su dispositivi con risorse limitate, per risolverlo si cerca di ridurre la precisione dei pesi (esempio da 32 bit a 8 bit), rimuovere connessioni non critiche nella rete e cercando di utilizzare hardware dedicato  
+Runtime Ottimizzati  
+TensorRT  
+ONNX Runtime  
+TfLite  
+
+## Sfide e limiti hardware
+Costi elevati delle componenti hardware  
+Consumo elevato  
+Richiesta elevata di VRAM  
+Richiesta di hardware a bassissima latenza  
+
+## Futuro hardware per AI  
+Chip neuromorfici che imitano il cervello umano  
+Quantum Machine Learning  
+3D chip stacking: aumento della densita di transistor nell'hardware  
+Photonic Computing: utilizzo della luce invece degli elettroni per operazioni ottimizzate
+
+## Spiegabilità e Interpretabilità dei Modelli
+Solitamente quando si utilizza una rete neurale non è chiaro come prendano decisioni, il che lo rende inaffidabile in contesti critici  
+Si stanno cercando delle soluzioni:
+- Feature Attribution: tecniche come SHAP, LIME per capire quali input influenzano l'output
+- Attention Visualization: usata in Trasformer per vedere a quali parole il modello "presta attenzione"
+- Reti Neuro-Simboliche: combinano deep learning con logica simbolica
+- Regolamentazione: GDPR e UE AI Act    richiedono trasparenza nei sistemi  automatizzati  
+
+Sfide future: 
+- Rendere interpretabili modelli con miliardi di parametri
+- Sviluppare standard universali per l'XAI
+
+Efficienza Energetica e Modelli leggeri  
+Approcci promettenti:
+- Quantizzazione: ridurre la precisione dei pesi (es da 32 bit a 8 bit)
+- Pruning: eliminare neuroni non essenziali
+- Knowledge Distillation: addestrare un modello piccolo ("studente") a imitare uno grande ("maestro")
+- Modelli sparse (es Mixture of Experts): Attivano solo parti della rete
+
+Reti Neurali biologicamente plausibili e Neuromorphic Computing  
+Le reti tradizionali (ANN, Artificial Neural Network) sono lontane dal cervello biologico in termini di energia e apprendimento.
+Approcci innovativi:
+- Spiking neural network: simulano i potenziali d'azione dei neuroni biologici
+- Plasticità sinaptica: modelli che replicano l'apprendimento Hebbiano (se i neuroni si attivano allo stesso momento, si connettono tra loro)  
+- Neuromorphic Hardware: chip event-driven
+
+Integrazione con altre tecnologie:
+- Robotica
+- Realtà aumentata/virtuale
+- AGI (Artificial General Intelligence)
+
+TESTO 3:
+# RETI NEURALI
+
+## Le Fondamenta Teoriche e i Primi Modelli (Anni '40 - '60)
+
+Una **rete neurale** (o *rete neurale artificiale*, ANN - Artificial Neural Network) è un modello computazionale ispirato alla struttura e al funzionamento dei neuroni biologici presenti nel cervello umano. È composta da unità interconnesse chiamate **neuroni artificiali** (o *nodi*), organizzati in strati, che elaborano **segnali** attraverso connessioni pesate.
+
+### Il Neurone di McCulloch-Pitts (1943)
+
+Nel 1943, Warren McCulloch e Walter Pitts proposero il primo modello matematico di neurone artificiale. Questo modello era estremamente semplice, concepito per eseguire computazioni binarie: riceveva più input binari (0 o 1) e produceva un singolo output binario se la somma degli input raggiungeva o superava una soglia predefinita. La loro innovazione dimostrò come strutture neurali potessero elaborare operazioni logiche fondamentali, rappresentando funzioni booleane come AND, OR, NOT, NOR e NAND. Geometricamente, queste funzioni potevano essere visualizzate come confini di decisione lineari, ad esempio, una linea per AND e OR in uno spazio bidimensionale.  
+
+Presentava però molti limiti: non aveva meccanismi di apprendimento, in quanto le soglie erano impostate tutte manualmente, e trattava gli input tutti allo stesso modo senza ponderazione.
+Era quindi impossibile risolvere problemi di natura non lineare. 
+
+### La Regola di Hebb (1949)
+
+Un passo concettuale fondamentale fu la "Regola di Hebb", proposta da Donald Hebb nel 1949 nel suo libro The Organization of Behavior. Questa regola postulava che quando due neuroni si attivano contemporaneamente e ripetutamente, la connessione sinaptica tra di essi si rafforza. Hebb suggerì che questo meccanismo fosse alla base dell'apprendimento e della memoria nel cervello. Per le reti neurali artificiali, ciò significò l'introduzione del concetto di "pesi" per gli input, permettendo che alcuni input avessero un'influenza maggiore o minore sulla somma totale che determinava l'attivazione del neurone.  
+
+### Il Perceptron di Rosenblatt (1958)
+
+Basandosi sui lavori di McCulloch-Pitts e sulle intuizioni di Hebb, Frank Rosenblatt sviluppò il Perceptron nel 1958. Questa fu la prima vera rete neurale artificiale capace di apprendere. Il Perceptron era un modello feedforward con uno strato di input e un nodo di output, e i suoi pesi sinaptici erano dinamici, permettendo alla macchina di apprendere in modo elementare. Il suo campo di applicazione iniziale era il riconoscimento di forme e la classificazione binaria. Nonostante il suo potenziale e l'iniziale entusiasmo, il Perceptron ereditava la limitazione fondamentale del modello di McCulloch-Pitts: l'incapacità di risolvere problemi non lineari come il problema XOR.  
+
+La narrazione di questo periodo mostra una chiara progressione: McCulloch-Pitts ha stabilito l'unità computazionale di base, Hebb ha introdotto il concetto cruciale di apprendimento attraverso la modifica della forza sinaptica, e Rosenblatt ha combinato queste intuizioni per creare la prima rete neurale "apprendente". Questa non è una serie di scoperte isolate, ma una costruzione continua in cui ogni idea ha informato e abilitato la successiva, evidenziando la natura cumulativa del progresso scientifico. L'iniziale ottimismo per il Perceptron, che "rivitalizzò lo studio delle ANN" e "dimostrò il potenziale delle macchine di mimare certi aspetti del processo decisionale umano" , fu rapidamente temperato dalle sue limitazioni. Questo stabilisce un modello ricorrente nel campo: l'entusiasmo iniziale e le affermazioni audaci spesso superano le attuali capacità tecnologiche, portando a periodi di disillusione che prefigurano gli "inverni dell'IA".  
+
+### Il concetto alla base
+
+Il concetto alla base delle reti neurali è la modellazione matematica di un **neurone umano**.  
+Il **neurone artificiale** così costruito risulta un classificatore binario che calcola l'uscita attraverso la seguente **funzione lineare**:  
+
+$z = \chi(\sum_{i=0}^{m} w_i x_i + b)$
+
+dove:  
+$
+z = uscita\
+m = numero\ di\ ingressi\ 
+x_i = segnale\
+w_i = peso\ del\ segnale\
+b = bias\ (termine\ costante\ indipendente)\
+\chi = funzione\ di\ output\
+$
+
+![schema](./images/perceptron.jpg)  
+
+N.B.: Generalmente la funzione di output (nel disegno *activation funcion*) è:  
+$\chi(y) = sign(y)\ oppure\\ \chi(y) = y \Theta(y)\ oppure\\ \chi(y) = y$  
+dove $\Theta(y)$ è la funzione di Heaviside.
+
+È possibile creare reti neurali complesse unendo più neuroni assieme, e concatenando le uscite di un gruppo di neuroni agli ingressi del successivo. 
+
+
+## Il Primo "Inverno dell'IA" e le Sue Cause (Anni '70 - '80)
+
+Nonostante l'iniziale fervore, il campo delle reti neurali e dell'intelligenza artificiale in generale subì un periodo di forte disillusione, noto come il primo "Inverno dell'IA". Questo periodo fu caratterizzato da un drastico calo di interesse e finanziamenti, in gran parte dovuto a promesse non mantenute e limiti tecnologici.
+
+### Le Critiche di Minsky e Papert (1969)
+
+Un colpo significativo all'entusiasmo per le reti neurali arrivò nel 1969 con la pubblicazione del libro "Perceptrons" di Marvin Minsky e Seymour Papert. Essi evidenziarono i limiti fondamentali delle prime reti neurali, in particolare l'incapacità del Perceptron di modellare pattern complessi e di risolvere problemi non linearmente separabili come il problema XOR. La loro critica, estremamente influente, contribuì in modo significativo a una riduzione dei finanziamenti e dell'interesse per la ricerca sulle reti neurali. Il libro di Minsky e Papert non fu solo una critica, ma un colpo devastante che reindirizzò la ricerca lontano dalle reti neurali per anni. Questo dimostra come influenti critiche accademiche, anche se in seguito parzialmente superate, possano avere un impatto profondo sui finanziamenti e sul focus della ricerca.  
+
+### Limitazioni Computazionali e Tagli ai Finanziamenti
+
+Il periodo dal 1974 al 1980 è riconosciuto come il primo "Inverno dell'IA", segnato da un declino generale dell'interesse e dei finanziamenti. Le cause includevano aspettative eccessive che non venivano soddisfatte, progetti che si rivelavano più complessi del previsto e una mancanza di un significativo ritorno sull'investimento. Il "Lighthill Report" del 1973 nel Regno Unito criticò le promesse dell'IA, portando a drastici tagli ai finanziamenti per la ricerca. Contemporaneamente, la DARPA (Defense Advanced Research Projects Agency) ridusse i suoi finanziamenti per la ricerca accademica sull'IA tra il 1973 e il 1974. Inoltre, i primi approcci all'IA, come i sistemi esperti, si basavano su regole codificate manualmente, rendendoli rigidi e difficili da adattare, contribuendo alla disillusione. Il "paradosso di Moravec" sottolinea ulteriormente questa discrepanza: compiti facili per gli umani (come il riconoscimento di oggetti) sono difficili per le macchine, e viceversa, contribuendo a generare aspettative non realistiche.  
+
+Il concetto di "Inverno dell'IA" non è solo un evento storico, ma un modello ricorrente. L'eccessivo entusiasmo iniziale e le aspettative irrealistiche dopo scoperte come il Perceptron, uniti a limitazioni tecnologiche e rapporti critici, hanno portato alla disillusione e ai tagli ai finanziamenti. Ciò suggerisce un "ciclo dell'hype" intrinseco nello sviluppo dell'IA, dove il divario tra il potenziale percepito e la capacità effettiva causa periodiche contrazioni. Questo modello è cruciale per comprendere la traiettoria del campo e gestire le aspettative future. L'inverno dell'IA non fu dovuto solo a limitazioni teoriche; fu fortemente influenzato anche da vincoli computazionali  e dagli alti costi di costruzione e manutenzione dei primi sistemi esperti. Questo indica che il progresso dell'IA, e delle reti neurali in particolare, non riguarda solo gli algoritmi, ma anche l'hardware sottostante e la fattibilità economica delle soluzioni proposte.  
+
+## La Rinascita e la Rivoluzione della Retropropagazione (Anni '80 - '90)
+
+Dopo un periodo di stagnazione, la ricerca sulle reti neurali conobbe una vigorosa rinascita negli anni '80 e '90, guidata da scoperte algoritmiche fondamentali e dall'emergere di nuove architetture.
+
+### Il Perceptron Multistrato (MLP)
+
+Il passo successivo all'architettura del Perceptron fu lo sviluppo del Perceptron Multistrato (MLP). A differenza del suo predecessore a strato singolo, l'MLP incorporava uno o più "strati nascosti" tra lo strato di input e quello di output. Questa innovazione permise agli MLP di superare le limitazioni dei percettroni a strato singolo, inclusa la capacità di risolvere il problema XOR, e di computare qualsiasi funzione, rendendoli reti feedforward non lineari con connessioni multiple.  
+
+### L'Algoritmo di Retropropagazione (Backpropagation, 1986)
+
+Sebbene descritto per la prima volta nella tesi di dottorato di Paul Werbos nel 1974, l'algoritmo di retropropagazione (Error Back-Propagation, EBP) fu reso popolare e perfezionato nel 1986 da Geoffrey Hinton, David Rumelhart e Ronald Williams. Questo algoritmo rappresentò una svolta cruciale, poiché consentì l'addestramento efficace delle reti neurali multistrato. La retropropagazione funziona propagando l'errore all'indietro attraverso la rete, permettendo di aggiustare i pesi delle connessioni tra i nodi in modo da minimizzare l'errore e perfezionare l'apprendimento automatico. Questo breakthrough rivitalizzò l'interesse per le reti neurali e aprì la strada a numerose applicazioni pratiche negli anni '90.  
+
+L'enfasi ricorrente sulla retropropagazione come algoritmo che "rivoluzionò" o "abilitò l'addestramento delle reti neurali multistrato" è cruciale. Non fu solo un algoritmo; fu l'algoritmo che risolse il problema fondamentale di come addestrare efficacemente le reti con strati nascosti, superando così la limitazione XOR che affliggeva i modelli precedenti. Ciò evidenzia che le scoperte teoriche negli algoritmi di apprendimento sono altrettanto vitali quanto le innovazioni architettoniche o i progressi hardware, trasformando le reti neurali da curiosità teoriche in strumenti pratici.
+L'Emergere delle Reti Ricorrenti (RNN) e delle Reti di Hopfield
+
+Nello stesso periodo, emersero nuove architetture specializzate. Le Reti di Hopfield, proposte da John J. Hopfield nel 1982, introducevano architetture feedback, dove le informazioni potevano viaggiare in qualsiasi direzione (avanti, indietro, tra nodi dello stesso strato). Queste reti si basavano su un modello energetico per il riconoscimento di pattern, anche con dati incompleti o distorti, e influenzarono la comprensione neuroscientifica della memoria associativa. Le Reti Neurali Ricorrenti (RNN), sebbene introdotte negli anni '80, guadagnarono prominenza negli anni '90. Sono specializzate nell'analisi di sequenze temporali (testi, suoni, dati storici) grazie alla loro "memoria" interna che tiene conto del contesto precedente. Un modello ricorrente significativo fu quello progettato da Jeffrey Elman nel 1990, che aggiunse nodi di contesto per migliorare l'elaborazione delle sequenze temporali. Inoltre, Teuvo Kohonen progettò nel 1982 le Self-Organizing Maps (SOM), un tipo di rete neurale con architettura sia feedforward che feedback, nota per la sua capacità di modificare la configurazione dei nodi in base ai pesi degli input, utile per il clustering.  
+
+L'emergere di MLP, reti di Hopfield, reti di Elman e SOM in questo periodo segna un cambiamento cruciale da un singolo modello generale (Perceptron) a una diversificazione delle architetture. Ogni nuovo tipo è stato progettato per affrontare sfide computazionali o tipi di dati specifici (ad esempio, dati sequenziali per le RNN, memoria associativa per Hopfield). Ciò indica una maturazione del campo, dove i ricercatori iniziarono a riconoscere che era necessario un design specializzato per spingere i confini delle capacità dell'IA. Questa diversificazione ha gettato le basi per le architetture di deep learning altamente specializzate che si osservano oggi. È anche degno di nota che innovazioni significative, come la retropropagazione descritta da Werbos nel 1974 ma resa popolare solo nel 1986, o le RNN introdotte negli anni '80 ma prominenti negli anni '90, a volte impiegano anni, persino decenni, per essere pienamente apprezzate o per trovare la potenza computazionale o la disponibilità di dati necessaria a dimostrare il loro valore. Questo "riconoscimento ritardato" è un tema comune nella storia scientifica.
+## L'Era del Deep Learning: Potenza Computazionale e Grandi Dati (Anni 2000 - Oggi)
+
+Il XXI secolo ha segnato l'inizio della "Rivoluzione del Deep Learning", un'era caratterizzata da un'esplosione di progressi nelle reti neurali, resa possibile dalla convergenza di potenza computazionale, disponibilità di grandi dataset e innovazioni algoritmiche.  
+
+### L'Impatto delle GPU e l'Avvento di AlexNet (2012)
+
+Storicamente, la potenza di calcolo era il "tallone d'Achille" delle reti neurali, con addestramenti che richiedevano giorni o settimane anche per i modelli più semplici. Sebbene processori come l'Intel 80386 (1985) e la GeForce 256 (fine millennio) abbiano segnato miglioramenti significativi nella velocità di calcolo, l'introduzione della piattaforma CUDA di NVIDIA ha rappresentato una "pietra miliare" per l'intelligenza artificiale moderna, fornendo la capacità di eseguire calcoli specializzati a velocità molto elevate. Il 2012 è stato un anno spartiacque: AlexNet, una rete neurale profonda addestrata su GPU, vinse l'ImageNet Large Scale Visual Recognition Challenge (ILSVRC), una competizione cruciale per il riconoscimento di immagini. Questa vittoria, con un margine significativo rispetto ai metodi precedenti, è ampiamente considerata il momento che ha scatenato il "boom del deep learning".  
+
+La "Rivoluzione del Deep Learning" non è stata un singolo evento, ma una confluenza di fattori: la disponibilità di grandi dataset , l'ascesa di potenti GPU  e il perfezionamento degli algoritmi (come la retropropagazione per gli MLP, e nuove architetture come CNN e LSTM). La vittoria di AlexNet è presentata come il punto di svolta, ma è stata resa possibile da questi progressi tecnologici sottostanti. Ciò evidenzia una relazione causale cruciale: i progressi algoritmici teorici spesso rimangono latenti fino a quando la potenza computazionale e la scala dei dati non li raggiungono, creando un circolo virtuoso di innovazione. Il "tallone d'Achille" delle prime reti è stato direttamente affrontato da questi salti nell'hardware.  
+
+### Le Reti Neurali Convoluzionali (CNN)
+
+Le Reti Neurali Convoluzionali (CNN o ConvNets) sono diventate i modelli di deep learning di riferimento per l'elaborazione di dati con topologia a griglia, come le immagini. Sono alla base della maggior parte delle moderne applicazioni di visione artificiale, capaci di rilevare caratteristiche e pattern visivi (bordi, forme) e di apprendere automaticamente gerarchie spaziali di caratteristiche. La loro architettura include strati convoluzionali, di pooling e completamente connessi, che permettono di estrarre pattern dettagliati e complessi.  
+
+Tra i tipi chiave di CNN si annoverano:
+
+- LeNet (1989) di Yann LeCun: Una delle prime CNN di successo, progettata per il riconoscimento di cifre scritte a mano, ha gettato le basi per la visione artificiale moderna.
+- AlexNet (2012): La rete che ha vinto ImageNet, composta da diversi strati convoluzionali, di pooling e completamente connessi.  
+- ResNet (Residual Networks): Progettate per addestrare reti molto profonde senza overfitting, grazie all'introduzione di "skip connections".
+- GoogleNet (InceptionNet): Nota per l'alta precisione con meno parametri, capace di apprendere caratteristiche a diverse scale.  
+- VGG: Utilizza piccoli filtri convoluzionali impilati per creare strutture profonde e uniformi.  
+
+Le applicazioni delle CNN sono vaste e includono la classificazione di immagini, il rilevamento di oggetti, la segmentazione di immagini, l'analisi video, il riconoscimento facciale e le diagnosi mediche da immagini. I loro vantaggi principali sono l'alta precisione, l'efficienza (specialmente su GPU), la robustezza al rumore e l'adattabilità. Tuttavia, presentano svantaggi quali l'essere computazionalmente esigenti (richiedono molte GPU), la loro natura di "black box" e la necessità di esperti altamente qualificati per la loro configurazione e ottimizzazione.  
+
+### Le Reti Ricorrenti Avanzate (LSTM)
+
+Per affrontare le sfide legate all'elaborazione di sequenze temporali lunghe e il problema del "vanishing gradient" nelle RNN tradizionali, furono sviluppate le reti Long-Short-Term Memory (LSTM) negli anni '90 da Sepp Hochreiter e Jürgen Schmidhuber. Le LSTM, con la loro architettura specializzata che include "celle di memoria", si sono dimostrate estremamente efficaci nel catturare dipendenze a lungo termine nei dati sequenziali. Le loro applicazioni spaziano dal riconoscimento vocale e la modellazione del linguaggio alle previsioni finanziarie e di vendita, e alla generazione automatica di testi o musica.  
+
+Le descrizioni dettagliate delle CNN e delle LSTM rivelano una tendenza verso architetture specializzate progettate per tipi di dati specifici (immagini per le CNN, sequenze per le LSTM). Inoltre, la capacità delle CNN di "apprendere gerarchie spaziali di caratteristiche"  e delle LSTM di catturare dipendenze a lungo termine  indica un passaggio da modelli più generici a sistemi che possono estrarre informazioni sempre più complesse e astratte dai dati. Questa specializzazione e l'apprendimento gerarchico sono stati fondamentali per le prestazioni eccezionali raggiunte nel deep learning.  
+
+### I Contributi dei Pionieri Moderni: John J. Hopfield e Geoffrey E. Hinton (Premio Nobel per la Fisica 2024)
+
+Il riconoscimento dell'impatto fondamentale delle reti neurali ha raggiunto il suo apice nel 2024, quando John J. Hopfield e Geoffrey E. Hinton sono stati insigniti del Premio Nobel per la Fisica per i loro contributi pionieristici.  
+
+John J. Hopfield: Ha introdotto la Rete di Hopfield nel 1982, un modello per la memoria associativa capace di salvare e ricostruire pattern anche da dati incompleti o corrotti. Questo modello, basato su concetti della fisica statistica, ha influenzato profondamente sia lo sviluppo delle reti neurali ricorrenti (RNN) che la comprensione delle reti neurali biologiche.  
+
+Geoffrey E. Hinton: Ha sviluppato la Macchina di Boltzmann, una rete neurale stocastica che impiega principi della fisica statistica per elaborare informazioni autonomamente, introducendo il concetto di apprendimento non supervisionato. Hinton è riconosciuto come uno dei pionieri del deep learning e ha ricevuto il Turing Award nel 2018, il "Nobel dell'informatica", per il suo contributo rivoluzionario. Le loro ricerche non solo hanno gettato le basi teoriche, ma hanno anche portato a innovazioni pratiche che influenzano quotidianamente la vita delle persone, dal riconoscimento vocale all'analisi automatica dei dati medici e scientifici.  
+
+Il conferimento del Premio Nobel per la Fisica a Hopfield e Hinton simboleggia il riconoscimento accademico dell'impatto profondo e pervasivo delle reti neurali. Le loro scoperte hanno trasceso i confini della ricerca pura, diventando il fondamento di tecnologie onnipresenti come il riconoscimento vocale, i chatbot e i sistemi di raccomandazione. Questo sottolinea come l'IA, e in particolare le reti neurali, siano passate da un concetto teorico a una realtà pratica e indispensabile, profondamente integrata nella vita quotidiana e nel panorama economico.  
+
+## Applicazioni Attuali e Impatto Trasformativo
+
+Le reti neurali artificiali trovano impiego in numerosi e eterogenei settori scientifici e industriali, dalla biomedicina al data mining, e il loro utilizzo è in crescita. I continui progressi permettono di ottenere circuiti sempre più sofisticati, rendendo le macchine capaci di osservare, ascoltare, comprendere e persino anticipare i bisogni umani.  
+
+I principali settori di applicazione includono:
+
+- Finanza: Previsioni sull'andamento dei mercati (inclusi quelli valutari), analisi del rischio di credito e analisi del portafoglio.   
+- Riconoscimento ed elaborazione delle immagini e visione artificiale: Utilizzate per compiti come il riconoscimento facciale, la classificazione di oggetti, l'analisi di scene, le diagnosi mediche da immagini e le auto a guida autonoma.  
+- Analisi del parlato e riconoscimento vocale: Permettono la trascrizione automatica del parlato, il riconoscimento del parlante e la comprensione del linguaggio naturale, come negli assistenti vocali (Siri, Alexa).  
+- Diagnosi mediche: Includono l'analisi di referti di TAC e risonanze magnetiche, contribuendo alla diagnosi di malattie e migliorando l'accuratezza diagnostica.  
+- Simulazione di sistemi biologici: Dalle simulazioni intracellulari alle reti neurali stesse.  
+- Robotica: Controllo e navigazione di robot.  
+- Controllo di qualità su scala industriale: Monitoraggio e miglioramento dei processi produttivi, con le reti neurali ricorrenti particolarmente utili per monitorare i flussi di produzione e analizzare grandi quantità di dati da sensori.  
+- Data mining: Estrazione di pattern e informazioni da grandi insiemi di dati.  
+- Simulazioni di varia natura: Anche quelle che comprendono un fattore temporale.  
+- Sistemi di raccomandazione: Suggeriscono contenuti personalizzati basati sui comportamenti e preferenze degli utenti (es. suggerimenti di film su piattaforme di streaming, prodotti su e-commerce).  
+- IA Generativa e Modelli Linguistici (GPT): Le reti neurali alimentano sistemi avanzati come quelli alla base dell'IA Generativa e dei modelli linguistici, come ChatGPT.  
+
+Le reti ricorrenti (come SOM e Hopfield) sono più adatte per simulazioni e classificazioni, mentre le reti feedforward (MLP) sono valide in applicazioni come l'OCR (Optical Character Recognition). Le reti neurali hanno rivoluzionato il modo in cui si interagisce con il web, rendendo le esperienze online più efficienti, intuitive e personalizzate. Di conseguenza, l'Intelligenza Artificiale si è trasformata in uno strumento di uso quotidiano, spesso senza nemmeno rendersene conto. Questa onnipresenza dell'IA nella vita quotidiana sottolinea la necessità di consapevolezza sui suoi meccanismi e implicazioni.  
+
+Le aziende che adottano queste tecnologie ottengono un vantaggio competitivo, prendendo decisioni più informate, automatizzando compiti complessi e sviluppando nuovi prodotti e servizi che rispondono meglio alle esigenze del mercato. Questo posiziona l'IA come un motore fondamentale di innovazione e competitività, trasformando il modo in cui le organizzazioni affrontano la complessità e sfruttano i dati.  
+
+## Limiti e Sfide Future
+
+Nonostante i loro vantaggi e il loro impatto trasformativo, le reti neurali artificiali presentano alcuni limiti significativi, e non è certo se potranno essere completamente eliminati o attenuati nel tempo.  
+
+I più importanti sono:
+- Funzionamento a "black box": Un notevole svantaggio è che la loro computazione non è completamente analizzabile. Le reti neurali possono fornire output corretti, ma non permettono di esaminare i singoli stadi di elaborazione che li determinano. Questo problema di interpretabilità è una sfida cruciale per l'accettazione e l'affidabilità, specialmente in settori sensibili come la medicina o la finanza, dove la comprensione delle decisioni è fondamentale.   
+- Incertezza sulla risoluzione del problema: Non è possibile avere la certezza a priori che un problema sarà risolto.  
+- Output non sempre perfetti: Gli output forniti spesso non rappresentano la soluzione perfetta, anche se in molti casi questo non è necessario.  
+- Periodo di apprendimento variabile: Il periodo di apprendimento può essere più o meno lungo, dipendendo da fattori come il numero e la complessità delle variabili di input e l'algoritmo utilizzato.  
+- Inidoneità per determinate categorie di problemi: Le reti neurali non sono adatte a risolvere tutti i tipi di problemi, come ad esempio quelli con un elevato numero di variabili categoriche in input.  
+- Costi computazionali elevati: L'addestramento e l'esecuzione di modelli di deep learning, specialmente quelli di grandi dimensioni, richiedono enormi quantità di risorse computazionali (GPU) e, di conseguenza, costi significativi in termini di tempo e budget. Questo solleva questioni di sostenibilità energetica e accessibilità, poiché la tecnologia potrebbe rimanere appannaggio di pochi grandi attori.  
+
+Le lezioni degli "inverni dell'IA" passati insegnano l'importanza di gestire le aspettative e di adottare un approccio equilibrato allo sviluppo dell'IA. Sebbene l'IA contemporanea sia più avanzata e integrata rispetto al passato, il rischio di delusione persiste se le promesse di marketing superano le capacità effettive. È fondamentale comunicare chiaramente i limiti reali dei sistemi AI per evitare futuri cicli di "hype" e disillusione.  
+
+## Conclusioni
+
+La storia delle reti neurali artificiali è un racconto di persistenza, innovazione e cicli di entusiasmo e disillusione. Dalle prime intuizioni biologiche e dai modelli computazionali rudimentali di McCulloch-Pitts e Rosenblatt, il campo ha affrontato sfide significative, culminate nei periodi noti come "inverni dell'IA", innescati da limiti tecnologici e aspettative non realistiche. Il problema della separabilità lineare, esemplificato dal problema XOR, ha agito da catalizzatore, spingendo la ricerca verso architetture multistrato e algoritmi di apprendimento più sofisticati come la retropropagazione.
+
+La vera rivoluzione è giunta con la convergenza di potenza computazionale (soprattutto tramite le GPU), la disponibilità di vasti dataset e l'emergere di architetture specializzate come le Reti Neurali Convoluzionali (CNN) per le immagini e le Reti Ricorrenti con LSTM per i dati sequenziali. Il riconoscimento con il Premio Nobel per la Fisica a John J. Hopfield e Geoffrey E. Hinton nel 2024 ha sancito l'impatto fondamentale di queste scoperte, che hanno trasformato l'IA da un concetto teorico in una realtà pervasiva.
+
+Oggi, le reti neurali sono al centro di innumerevoli applicazioni che vanno dalla finanza alla medicina, dal riconoscimento vocale alla guida autonoma, rendendo l'IA uno strumento quotidiano. Tuttavia, permangono sfide significative, in particolare la natura "black box" di molti modelli, i requisiti computazionali elevati e la necessità di gestire le aspettative per evitare futuri "inverni". La traiettoria futura delle reti neurali richiederà un continuo equilibrio tra innovazione tecnologica, comprensione dei loro limiti e un approccio etico e sostenibile al loro sviluppo.
+
+TESTO 4:
+# Reti neurali
+Le reti neurali artificiali (**ANN**, Artificial Neural Networks) sono modelli matematici ispirati al cervello umano. Sono una parte fondamentale dell’intelligenza artificiale e vengono utilizzate per riconoscere schemi, prendere decisioni e risolvere problemi complessi in modo automatico.
+
+## Definizione
+Una rete neurale è composta da neuroni artificiali, organizzati in strati:
+- Uno strato di **input** (*dati in ingresso*),
+- Uno o più strati **nascosti** (*elaborazione*),
+- Uno strato di **output** (*risultato*).
+
+Ogni connessione ha un peso, che regola quanto un'informazione è importante. Durante l’addestramento, la rete impara modificando questi pesi per migliorare i risultati.
+
+## Ispirazione biologica
+Questo modello si ispira al cervello umano, dove i neuroni comunicano tra loro tramite sinapsi. Infatti anche nelle reti neurali i neuroni artificiali ricevono segnali, li elaborano e trasmettono il risultato. Sebbene molto semplificata, questa struttura consente di simulare meccanismi di apprendimento simili a quelli biologici.
+
+## Perché studiare le reti neurali?
+Le reti neurali sono oggi molto usate perché possono apprendere direttamente dai dati. Le loro applicazioni sono ovunque:
+- **Medicina**: diagnosi da immagini (radiografie, TAC)
+- **Tecnologia**: assistenti vocali, riconoscimento facciale
+- **Industria**: manutenzione predittiva, controllo qualità
+- **Finanza**: analisi di mercato, prevenzione frodi
+- **Automobili**: guida autonoma
+
+Studiare le reti neurali significa capire come rendere i computer più intelligenti e capaci di imparare, contribuendo all’innovazione in molti settori.
+
+## Nascita delle reti neurali
+Le reti neurali artificiali nascono tra gli anni '40 e '60, grazie ai primi studi che cercavano di imitare il cervello umano usando modelli matematici. Tra i primi studiosi troviamo:
+- **Warren McCulloch e Walter Pitts**: nel 1943 propongono il primo modello di neurone artificiale. Questo modello era molto semplice:
+    - Riceveva segnali in **ingresso**,
+    - Li **sommava**,
+    - E se superavano una certa soglia, generava un **output** (come un “sì” o “no”).
+
+    È il primo tentativo di rappresentare il funzionamento di un neurone biologico in modo matematico.
+- **Frank Rosenblatt**: Nel 1958 sviluppa il perceptron, un modello un pò più avanzato.
+Il perceptron è una rete neurale molto semplice, con:
+    - Uno strato di **input**,
+    - Uno strato di **output**,
+    - Un **algoritmo** per apprendere dai dati modificando i pesi.
+
+È il primo vero modello di rete neurale in grado di imparare.
+
+## Limitazioni iniziali
+Nonostante l'entusiasmo iniziale, il perceptron aveva un grosso limite: non riusciva a risolvere problemi non linearmente separabili, come il famoso problema **XOR** (dove non basta tracciare una linea per separare le due classi).  
+Questo portò a una fase di stallo (chiamato AI winter) nella ricerca sulle reti neurali, fino agli anni ’80, quando vennero introdotti modelli più complessi con strati nascosti e nuovi algoritmi di apprendimento.
+
+## Il periodo di stallo
+Uno dei motivi principali di questa crisi fu la pubblicazione del libro **"Perceptrons"** di Marvin Minsky e Seymour Papert nel 1969.  
+Nel libro, gli autori dimostrarono matematicamente i limiti del perceptron, spiegando che:
+- Non può risolvere problemi **non linearmente separabili** (come il già citato problema XOR),
+- E che non era possibile superare questi limiti con la **struttura semplice del perceptron a uno strato**.
+
+Anche se le loro critiche erano corrette solo per i modelli più semplici, molti interpretarono il messaggio come: **le reti neurali non funzionano** e quindi molti ricercatori e agenzie di finanziamento persero fiducia nelle reti neurali spostando l'attenzione su altri approcci (come la logica simbolica e i sistemi esperti). Questo provocò una vera e propria pausa nello sviluppo pratico delle reti neurali per quasi due decenni.  
+In questo periodo ci fu comunque un'importante riflessione teorica:
+- Si compresero meglio i **limiti** delle reti semplici.
+- Si iniziò a esplorare l’idea di reti con **più strati**.
+- Si gettarono le **basi** per lo sviluppo futuro di algoritmi come il **backpropagation**, che avrebbe rilanciato l’interesse negli anni ’80.
+
+## Il backpropagation 
+Negli anni '80, le reti neurali tornarono al centro dell’attenzione grazie a una scoperta fondamentale: l’algoritmo di retropropagazione del gradiente, noto anche come **backpropagation**.  
+Nel 1986 **David Rumelhart**, **Geoffrey Hinton** e **Ronald Williams** pubblicano un articolo che mostra come usare il backpropagation per addestrare reti con più strati (multi-layer perceptron). Anche se l’algoritmo era noto da prima, questa pubblicazione ne ha mostrato l’efficacia in pratica, rendendolo popolare e utile.  
+Grazie a questo algoritmo diventa possibile:
+- Usare reti con **più strati nascosti**,
+- **Regolare i pesi** in ogni strato in modo efficiente,
+- Risolvere problemi **non lineari** (come il problema XOR), cosa che il perceptron semplice non riusciva a fare.
+
+Questo ha segnato un enorme passo avanti per l’intelligenza artificiale e questo permise di affrontare problemi più realistici e complessi come:
+- **Riconoscimento vocale**,
+- **Classificazione di immagini**,
+- **Previsione di dati complessi**.
+
+## Nuove limitazioni
+Anche se il backpropagation aveva riacceso l’interesse negli anni ’80, negli anni ’90 e nei primi 2000 le reti neurali hanno incontrato nuovi ostacoli, che ne hanno limitato la diffusione come ad esempio:
+- **Problemi di scalabilità**: le reti neurali di quel periodo erano spesso **piccole** (poche decine o centinaia di neuroni) perché:
+    - I computer erano **lenti**,
+    - La memoria era **limitata**,
+    - Gli algoritmi erano **troppo lenti** per reti grandi.
+
+    Questo rendeva difficile applicarle a problemi reali su larga scala (es. immagini ad alta risoluzione o grandi dataset).
+
+- **Overfitting e generalizzazione**: le reti imparavano **troppo bene** i dati di addestramento, ma poi **non riuscivano a generalizzare** su nuovi dati. In pratica: sembravano “intelligenti” in fase di test, ma “fallivano” con dati mai visti prima. Questo rendeva le reti **poco affidabili** in molti casi pratici.
+
+Questo periodo è stato utile per:
+- **Migliorare** le basi teoriche,
+- **Sviluppare** nuove tecniche per prevenire **l’overfitting** (es. regularizzazione),
+- **Preparare** il campo alla grande **rinascita** del deep learning nel 2010, grazie a dati, hardware e algoritmi migliori.
+
+## Il grande salto qualitativo
+Dopo anni di sviluppo teorico e progresso tecnologico, dagli anni 2010 in poi le reti neurali hanno fatto un grande balzo in avanti. Questo periodo segna l’inizio dell’era del **Deep Learning**. Si svilupparono quindi le **reti neurali profonde** (reti con molti strati nascosti) che permettono di:
+- Imparare **caratteristiche complesse** dai dati,
+- Affrontare problemi **non lineari e ad alta dimensione**,
+- Raggiungere **prestazioni molto elevate** in compiti difficili.
+
+Questa **rivoluzione** è stata possibile grazie a **due fattori chiave**:
+- **Big Data**: grandi quantità di dati disponibili (*immagini, testo, audio, ecc.*)
+- **Hardware più potenti**: uso di GPU e TPU che accelerano enormemente l’addestramento delle reti neurali.
+
+Per migliorare le prestazioni e risolvere vecchi problemi (come l’overfitting), sono stati introdotti nuovi strumenti:
+- **ReLU**: funzione di attivazione **semplice ma efficace**;
+- **Dropout**: spegne casualmente alcuni neuroni durante l’addestramento per **migliorare la generalizzazione**;
+- **Batch Normalization**: **stabilizza e velocizza** l’apprendimento.
+
+Grazie al deep learning, le reti neurali hanno raggiunto **risultati straordinari** in molti settori:
+- **Riconoscimento immagini**: reti CNN per classificazione visiva;
+- **Linguaggio naturale**: traduzioni, chatbot, assistenti vocali;
+- **Gioco e intelligenza strategica**: AlphaGo di DeepMind (che ha battuto campioni umani nel gioco del Go);
+- **Medicina, finanza, robotica** e molto altro.
+
+## Architetture innovative e il loro impatto
+
+Negli ultimi 10-15 anni c'è stata un esplosione di nuove architetture cambiando il modo di affrontare l'inteligenza artificiale.
+Queste nuove architetture inolte hanno portato ad un miglioramento in termini di prestazioni, capacità applicative e applicazioni pratiche.  
+Le architetture principali sono:
+- **Reti convoluzionali (*CNN*)**: specializzate per elaborare dati con **struttura spaziale** (*immagini e video*);
+- **Reti ricorrenti (RNN) e LSTM/GRU**: specializzate per elaborare **dati sequenziali** (*audio, testo, segnali temporali*), avevano il problema del **vanishing gradient** ovvero difficolta ad apprendere le dipendenze a lungo termine ma LSTM e GRU risolvono il problema, in generale questi sono utili per riconoscimento vocale e traduzione automatica;
+- **Trasformers**: abbandonano la struttura ricorrente per una **chiamata self-attention**, permettono di parallelizzare il calcolo e sono a oggi giorno tra i più utilizzati (*ChatGPT, Alexa, assistente Google, Google translate*);
+- **Reti neurali su Grafi (GNN)**: le reti neurali sono nate per eseguire operazioni complesse sui grafi invece che su testi o immagini.
+Questa architettura viene usata in:  
+    - **Chimica** per prevedere le proprietà di molecole;
+    - **Social** per raccomandazioni o rilevamento di fake news;
+    - **Trasporti** per ottimizzazioni logistiche;
+    - **Finanza** per analisi di reti di transazioni;
+    - **Informatica** per analisi del codice.
+- **Architetture ibride**: queste sono architetture che fondono i concetti delle precedenti alcuni esempi sono le GAN per la generazione di immagini, auto encoder, variational encoder (VAE), permettono poi reti neurali quantistiche e reti biologicamente ispirate
+
+## Il ruolo dell'hardware
+Con l'evoluzione dell'AI c'è stato bisogno anche per l'hardware di evolversi, questo legame porta ad un parallelismo tra i due.  
+Le **CPU** ovvero i normali processori non erano abbastanza potenti e veloci per gestire le migliaia di operazioni parallele, d'altro canto le **GPU** ovvero le schede video nate per i videogiochi erano perfette per il calcolo parallelo dei dati.  
+Possiamo affermare che in questo campo **NVIDIA** è il campione indiscusso, assieme al suo **CUDA** infatti fù capace di ridurre il tempo degli addestramenti da quelli che prima erano giorni o settimane in ore.  
+Le **GPU** servono quindi ad addestrare i modelli ed eseguire inferenze in tempo reale. Le TPU, creazione di google, sono state create **specificatamente** per il machine learning. Sono poi stati creati servizi in cloud come AWS, Google Cloud, OpenAI e Azure che permettono di addestrare un modello senza il bisogno di possedere un supercomputer.
+
+## Problemi etici e sociali
+Le reti neurali apprendono il comportamento umano, ma così facendo apprendono anche i **pregiudizi** e li amplificano penalizzando per esempio individui con nomi stranieri, anche se non c'è intenzione creando così problemi etici come:
+- **Mancanza di trasparenza**: i ragionamenti di un algoritmo non sono sempre spiegabili essendo che operano con logica propria, il che non ci permette di capire chiaramente perchè il modello abbia fatto una scelta invece che un altra e rende difficile capire se ci siano state manipolazioni interne.
+Ciò mina la fiducia che si può arrecare ad un modello di intelligenza artificiale.
+- **Impatto sul lavoro**: vista la rapida crescita nella potenza dell'ai essa può sostituire gran parte dei lavori umani, in particolare quelli ripetitivi ciò porta a disoccupazione.
+- **Privacy**: la privacy è un problema dell'ai in quanto analizza ogni giorno una valanga di dati personali come foto, video, chat, comportamenti e questo porta a rischi come tracciamento di massa, profilazione aggressiva e manipolazione politica.
+- **Disinformazione**: le reti neurali generative (*GAN*) sono in grado di creare immagini e video che oggigiorno sono diventati alquanto realistici, l'uso di questi prodotti dell'ai, i deepfake, può portare a fake news, rovina di reputazioni e contenuti pericolosi.
+- **Chi ne ha il controllo?**: I modelli più potenti di IA sono sviluppati da grandi aziende come OpenAI, google, meta, etc. Questo porta a una centralizzazione del potere centrologico e rende meno accessibile l'ai per i paesi poveri.
+- **Abuso militare**: le reti neurali vengono utilizzate per:
+    - Droni autonomi da guerra
+    - Sorveglianza predittiva
+    - Simulazioni belliche avanzate
+
+## Sfide e possibili futuri sviluppi
+Le reti neurali sono già molto avanzate ma restano in continua evoluzione e nuove sfide da affrontare per migliorarle ulteriormente. I principali miglioramenti che si vogliono apportare alle reti neurali sono:
+- **Generalizzazione**: e reti neurali sono addestrate per risolvere problemi specifici ma si sta puntando alla creazione di un modello capace di risolvere problemi di vario tipo.
+- **Efficienza energetica e ambientale**: le reti neurali consumano quantità enormi di energia per restare in funzione, l'obbiettivo e di creare modelli più efficienti in futuro.
+- **Comprensione**: come detto [prima](https://github.com/campionl/dl/blob/79f4f9d479d5689e8db2aaa4a023ad94f78562f1/reti_neurali_tm.md?plain=1#L150) è difficile capire come ragiona un modello, motivo per qui si lavora su tecniche di **Explainable AI** per aumentarne fiducia e trasparenza.
+- **Sicurezza**: vengono studiati metodi per rendere i modelli più sicuri e meno soggetti ad attacchi.
+- **Bias e giustizia algoritmica**: si cerca di creare modelli che non assorbano i pregiudizi per renderli più equi.
+- **Apprendimento continuo**: si tenta di ideare modelli capaci di ricordare dalle vecchie versioni e di imparare da soli.
+- **Apprendimento con pochi dati**: si vuole creare modelli che non richiedono migliaia di dati per imparare un compito.
+- **Coesistenza con l'essere umano**: uno dei passi più importanti è anche capire il modo in qui l'ai potrà collaborare con l'essere umano se come copiloti inteligenti o solo sistemi che potenziano invece che sostituire.
+
+## Conclusione
+Le reti neurali artificiali, nate da idee semplici negli anni ‘60, hanno compiuto un percorso straordinario fino a diventare oggi il cuore pulsante dell’intelligenza artificiale moderna. La svolta degli ultimi anni — grazie a big data, nuove architetture come i Transformer e una potenza di calcolo mai vista prima — ha permesso di ottenere risultati prima impensabili, come la traduzione automatica fluida, la generazione di immagini e testi realistici, e la diagnosi medica assistita.
+
+Tuttavia, insieme a queste opportunità emergono sfide profonde: il bisogno di modelli più sostenibili, equi e interpretabili; la gestione dei rischi legati all’uso improprio; e la ricerca di un equilibrio tra innovazione tecnologica e responsabilità etica.
+
+Il futuro dell’IA non sarà solo una questione di quanto sarà potente, ma anche di come verrà guidata e integrata nella società. Le reti neurali continueranno ad evolversi, ma sarà il nostro approccio umano a determinarne l’impatto.
+# Regressione lineare
+
+La regressione lineare è il modello più basilare che esiste di intelligenza artificiale, questo permette di risolvere problemi lineari prendendo in input dei valori con output assegnato in precedenza, l'insieme di questi valori lo chiamiamo dataset, l'intelligienza prendera poi i valori è gli assegnera coordinate (input, output) su un piano cartesiano, il modello fara una media dei valori per poi creare una retta che cerca di passare il più vicino possibile a tutti i punti in modo equo.
+```
+La formula è: y = m1x1 + ... + mixi + q
+```
+il problema di questo modello è che se diamo in input un valore 1 con output 3 non è detto che chiedendo al modello che valore sia stato attribuito a 1 ci dia come output 3 ma potrebbe darci 2,97 o 2,54 etc...
+
+![Piano cartesiano](https://upload.wikimedia.org/wikipedia/commons/b/be/Normdist_regression.png)
+
+Siccome la maggior parte dei problemi non è lineare usiamo più spesso le reti neurali che si adattano al problema specifico.
