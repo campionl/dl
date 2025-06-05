@@ -1,6 +1,4 @@
 # Reti neurali
-
-## Introduzione
 Le reti neurali artificiali (**ANN**, Artificial Neural Networks) sono modelli matematici ispirati al cervello umano. Sono una parte fondamentale dell’intelligenza artificiale e vengono utilizzate per riconoscere schemi, prendere decisioni e risolvere problemi complessi in modo automatico.
 
 ## Definizione
