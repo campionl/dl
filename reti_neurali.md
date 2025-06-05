@@ -73,6 +73,8 @@ Grazie al backpropagation, fu possibile **addestrare reti a più strati** (MLP),
 
 Questo segnò una **svolta fondamentale** nello sviluppo dell’intelligenza artificiale.
 
+![schema](https://github.com/campionl/dl/blob/ac/images/nodeNeural.jpg)  
+
 #### Il Problema dello XOR: Il "Muro" del Perceptron
 
 Ora proviamo a distinguere due gruppi di numeri:
