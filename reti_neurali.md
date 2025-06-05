@@ -40,7 +40,7 @@ $w_i =$ peso del segnale
 $b =$ bias (termine costante indipendente)  
 $\chi =$ funzione di output  
 
-![schema](./images/perceptron.jpg)  
+![schema](https://github.com/campionl/dl/blob/ac/images/perceptron.jpg)  
 
 N.B.: Generalmente la funzione di output (nel disegno *activation funcion*) è:  
 $\chi(y) = sign(y)\ oppure\\ \chi(y) = y \Theta(y)\ oppure\\ \chi(y) = y$  
