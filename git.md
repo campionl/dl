@@ -1,6 +1,4 @@
 # Git
-aggiungo un divisore!
----
 
 ## Cos’è Git
 
