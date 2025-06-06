@@ -73,3 +73,126 @@ qui sotto c'è una guida per queste decisioni.
 - Aggiungi **layer** quando il problema richiede più passi astratti o logici.
 - Evita di farlo a caso: valuta con **validazione e curve di apprendimento**.
 
+---
+
+# 🧠 Tutti i Layer delle Reti Neurali - Spiegati in modo semplice
+
+> Ogni layer è come una fase della lavorazione di un'informazione. Vediamo cosa fanno.
+
+---
+
+## 🔷 Funzioni di Attivazione (usate nei neuroni)
+
+### 1. ReLU (Rectified Linear Unit)
+- Formula: `f(x) = max(0, x)`
+- Fa passare solo i valori positivi, azzera i negativi.
+- ✅ Veloce e usatissima nelle CNN e MLP.
+
+### 2. Sigmoid
+- Formula: `f(x) = 1 / (1 + e^(-x))`
+- Trasforma l'input in un numero tra 0 e 1.
+- ✅ Ottima per classificazione binaria.
+- ⚠️ Tende a saturare (i gradienti diventano piccoli).
+
+### 3. Tanh (Tangente iperbolica)
+- Formula: `f(x) = (e^x - e^-x)/(e^x + e^-x)`
+- Output tra -1 e 1.
+- ⚠️ Simile a sigmoid, ma centrata su 0.
+
+### 4. Softmax
+- Converte una lista di numeri in **probabilità** che sommano a 1.
+- Usata nell'**ultimo layer per classificazione multi-classe**.
+
+---
+
+## 🔷 Layer di Costruzione
+
+### 5. Dense / Fully Connected
+- Ogni neurone è connesso a tutti quelli del layer precedente.
+- Usato in classificatori e MLP.
+
+### 6. Conv2D (Convolutional Layer)
+- Applica un **filtro** per trovare pattern in immagini.
+- Usato nelle CNN per riconoscere bordi, texture, ecc.
+
+### 7. MaxPooling2D
+- Riduce la dimensione dell’immagine, mantenendo le info più importanti.
+- Esempio: da 4x4 a 2x2 prendendo il valore massimo.
+
+### 8. Dropout
+- Spegne casualmente alcuni neuroni durante l’allenamento.
+- Aiuta a prevenire l’**overfitting**.
+
+### 9. Flatten
+- Appiattisce un'immagine 2D in un vettore 1D.
+- Utile prima di passare da CNN a Dense.
+
+### 10. Batch Normalization
+- Normalizza i valori nel layer per stabilizzare e velocizzare l’allenamento.
+
+### 11. Residual / Skip Connection
+- Permette di **saltare** uno o più layer e sommare direttamente l'input.
+- Usato nelle **ResNet** per reti molto profonde.
+
+---
+
+## 🔷 Layer per Sequenze o Testi
+
+### 12. RNN (Recurrent Neural Network)
+- Tiene memoria di ciò che è successo prima.
+- Usato per testi e audio.
+- ⚠️ Dimentica con sequenze troppo lunghe.
+
+### 13. LSTM (Long Short-Term Memory)
+- Variante avanzata dell'RNN.
+- Ha una “memoria lunga” ed è più resistente alla dimenticanza.
+
+### 14. GRU (Gated Recurrent Unit)
+- Simile all’LSTM, ma più veloce e semplice.
+
+### 15. Embedding Layer
+- Trasforma parole o simboli in vettori numerici.
+- Es: "gatto" → [0.1, 0.8, -0.5...]
+
+---
+
+## 🔷 Layer Moderni (Transformers)
+
+### 16. Transformer / Self-Attention
+- Ogni parola guarda tutte le altre e decide a chi dare peso.
+- Cuore di GPT, BERT, ChatGPT.
+- Gestisce bene sequenze lunghe.
+
+---
+
+## 🔷 Layer per Scopi Specifici
+
+| Layer                | Scopo                                                |
+|----------------------|------------------------------------------------------|
+| Conv1D / Conv3D      | Dati 1D (audio) o 3D (video, immagini volumetriche)  |
+| GlobalAveragePooling | Riduce ogni mappa a un solo valore medio            |
+| Upsampling2D         | Aumenta la dimensione di un'immagine (opposto del pooling) |
+| TransposedConv2D     | Generazione immagini (es. nei generatori GAN)       |
+
+---
+
+## 🎯 In Sintesi
+
+| Tipo di Layer       | Cosa Fa                                                |
+|---------------------|--------------------------------------------------------|
+| Dense               | Connessione completa tra neuroni                       |
+| Conv2D              | Estrae pattern da immagini                             |
+| MaxPooling2D        | Riduce dimensione prendendo il massimo                 |
+| ReLU / Sigmoid / Tanh | Funzioni di attivazione                              |
+| Softmax             | Converte in probabilità                                |
+| Dropout             | Evita overfitting spegnendo neuroni a caso            |
+| BatchNorm           | Stabilizza e accelera l’allenamento                    |
+| Flatten             | Appiattisce per passare a layer densi                  |
+| Embedding           | Codifica parole in numeri                              |
+| Transformer         | "Attenzione" tra elementi in una sequenza              |
+| LSTM / GRU          | Gestione memoria nel tempo per dati sequenziali        |
+
+---
+
+## ✅ Vuoi un esempio pratico in codice?
+Posso scriverti un esempio in PyTorch o Keras con questi layer, basta chiedere.
