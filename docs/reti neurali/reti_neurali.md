@@ -54,8 +54,7 @@ Ecco il disegno che spiega il problema XOR al percettrone:
   |   ----+----
 0 |    🔴 | 🟢
 ```
-- Prima linea verticale: separa 🟢 da 🔴
-- Seconda linea verticale: separa 🔵 da 🟡
+Una linea deve separare 🔴 da 🟢. Non è possibile, servono 2 linee.
 
 Per risolvere XOR servono almeno 2 linee (2 strati) che lavorino insieme!
 
