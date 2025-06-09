@@ -63,7 +63,7 @@ Per risolvere XOR servono almeno 2 linee (2 strati) che lavorino insieme!
 - Lo XOR è un problema non linearmente separabile → Impossibile per un percettrone a 2 input.
 - Crollano del tutto gli investimenti per le reti neurali.
 
-### Backpropagation - spiegazione
+### Backpropagation
 Backpropagation è un algoritmo che calcola l'errore commesso da una rete neurale, tornando indietro per capire dove e come ha sbagliato.  
 **Esempio concreto**: immagina di avere una ricetta a strati e il risultato finale è troppo salato.  
 Per correggere l'errore parte dal risultato finale (la torta è salata), analizza ogni strato uno per uno dall'ultimo al primo e aggiusta ogni passaggio per evitare l'errore.  
@@ -130,9 +130,12 @@ Immagina un filtro in una rete neurale che cerca bordi in un'immagine:
 ![schema](https://github.com/campionl/dl/blob/develop/assets/relu_function.png)  
 
 
-### RESNET - spiegazione
+### ResNet
 
-### GPU - spiegazione
+Il metodo **ResNet** è stato introdotto nel 2015 per eliminare il problema del **vanishing gradient**.
+Questo meccanismo consiste nel **saltare** blocchi di 2/3 layer durante il calcolo dei pesi tramite l'algoritmo di backpropagation, permettendo un aggiornamento dei pesi senza **perdite** e/o **esplosioni eccessive** di valori.
+
+### GPU
 ### **Perché le GPU hanno preso il sopravvento sulle CPU nell'addestramento delle reti neurali?**  
 
 Le **GPU** (Graphics Processing Unit) sono diventate fondamentali per l'addestramento delle reti neurali perché sono **superiori alle CPU** (Central Processing Unit) nel fare **migliaia di calcoli in parallelo** alla volta.  
