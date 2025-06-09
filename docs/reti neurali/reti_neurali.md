@@ -171,7 +171,10 @@ Risultato? **La GPU finisce in un colpo solo, mentre la CPU impiega 8 volte più
 Ogni strato di una rete neurale fa **milioni di operazioni** come queste. Senza GPU, addestrare un modello moderno (come ChatGPT o ResNet) richiederebbe **anni invece che giorni o ore**.  
 
 Ecco perché oggi **tutto il Deep Learning gira su GPU** (o su chip ancora più specializzati come i **TPU** di Google). Le CPU sono ancora utili, ma per l'IA le **GPU dominano** grazie alla loro capacità di **calcolo parallelo massiccio!** 🚀
-### DROPOUT - spiegazione
+### DROPOUT
+Una tecnica che consiste in "spegnere" casualmente alcuni neuroni durante l'addestramento per evitare l'overfitting
+E' utilizzato perchè altrimenti la rete impara a memoria e non generalizza.  
+**Analogia**: è come studiare per un esame coprendo casualmente parole nel libro: impari a capire i concetti, non a memorizzare le frasi.
 
 ## L'IA che cambia la nostra vita quotidiana  
 
