@@ -15,7 +15,7 @@ $w_i =$ peso del segnale
 $b =$ bias (termine costante indipendente)  
 $\chi =$ funzione di output  
 
-![schema](https://github.com/campionl/dl/blob/ac/images/percettrone.jpg)
+![schema](https://github.com/campionl/dl/blob/develop/assets/neur_art.jpg)
 
 
 ### Le origini delle reti neurali
