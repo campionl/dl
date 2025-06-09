@@ -40,7 +40,7 @@ $w_i =$ peso del segnale
 $b =$ bias (termine costante indipendente)  
 $\chi =$ funzione di output  
 
-![schema](./images/perceptron.jpg)  
+![schema](https://github.com/campionl/dl/blob/ac/images/perceptron.jpg)  
 
 N.B.: Generalmente la funzione di output (nel disegno *activation funcion*) è:  
 $\chi(y) = sign(y)\ oppure\\ \chi(y) = y \Theta(y)\ oppure\\ \chi(y) = y$  
@@ -72,6 +72,8 @@ Grazie al backpropagation, fu possibile **addestrare reti a più strati** (MLP),
 * Riescono a **risolvere problemi come l’XOR**.
 
 Questo segnò una **svolta fondamentale** nello sviluppo dell’intelligenza artificiale.
+
+![schema](https://github.com/campionl/dl/blob/ac/images/nodeNeural.jpg)  
 
 #### Il Problema dello XOR: Il "Muro" del Perceptron
 
@@ -172,26 +174,25 @@ Questo periodo è stato utile per:
 - **Sviluppare** nuove tecniche per prevenire **l’overfitting** (es. regularizzazione),
 - **Preparare** il campo alla grande **rinascita** del deep learning nel 2010, grazie a dati, hardware e algoritmi migliori.
 
-## Il grande salto qualitativo
-Dopo anni di sviluppo teorico e progresso tecnologico, dagli anni 2010 in poi le reti neurali hanno fatto un grande balzo in avanti. Questo periodo segna l’inizio dell’era del **Deep Learning**. Si svilupparono quindi le **reti neurali profonde** (reti con molti strati nascosti) che permettono di:
-- Imparare **caratteristiche complesse** dai dati,
-- Affrontare problemi **non lineari e ad alta dimensione**,
-- Raggiungere **prestazioni molto elevate** in compiti difficili.
+## Il grande salto qualitativo e il ruolo rivoluzionario delle GPU
+Dopo anni di sviluppo teorico e progressi tecnologici, a partire dagli anni 2010 le reti neurali hanno compiuto un balzo in avanti esponenziale. Questo periodo segna l'inizio dell'era del Deep Learning, una sotto-branca dell'intelligenza artificiale che si concentra sull'addestramento di reti neurali profonde – ovvero, reti con molti strati nascosti. Queste architetture complesse hanno permesso di:
 
-Questa **rivoluzione** è stata possibile grazie a **due fattori chiave**:
-- **Big Data**: grandi quantità di dati disponibili (*immagini, testo, audio, ecc.*)
-- **Hardware più potenti**: uso di GPU e TPU che accelerano enormemente l’addestramento delle reti neurali.
+- Imparare caratteristiche complesse e astratte direttamente dai dati grezzi, superando la necessità di estrazione manuale delle feature.
+- Affrontare problemi non lineari e ad alta dimensione, che erano insormontabili per gli algoritmi tradizionali.
+- Raggiungere prestazioni straordinarie, spesso superando le capacità umane, in compiti precedentemente considerati estremamente difficili.
+- Questa rivoluzione non è stata un singolo evento, ma il risultato della convergenza di due fattori chiave:
+  - Big Data: l'enorme e crescente disponibilità di dati digitali (immagini, testo, audio, video, ecc.) ha fornito alle reti neurali il "carburante" necessario per imparare e generalizzare.  
 
-Per migliorare le prestazioni e risolvere vecchi problemi (come l’overfitting), sono stati introdotti nuovi strumenti:
-- **ReLU**: funzione di attivazione **semplice ma efficace**;
-- **Dropout**: spegne casualmente alcuni neuroni durante l’addestramento per **migliorare la generalizzazione**;
-- **Batch Normalization**: **stabilizza e velocizza** l’apprendimento.
+### Le GPU: il motore dell'era del Deep Learning
+Il funzionamento di una rete neurale richiede una grande quantità di operazioni matematiche complesse e ripetitive.  
+Tali operazioni devono essere eseguite milioni o miliardi di volte, per ogni singolo dato di input e per ogni iterazione del processo di apprendimento.  
 
-Grazie al deep learning, le reti neurali hanno raggiunto **risultati straordinari** in molti settori:
-- **Riconoscimento immagini**: reti CNN per classificazione visiva;
-- **Linguaggio naturale**: traduzioni, chatbot, assistenti vocali;
-- **Gioco e intelligenza strategica**: AlphaGo di DeepMind (che ha battuto campioni umani nel gioco del Go);
-- **Medicina, finanza, robotica** e molto altro.
+Le CPU (Central Processing Units), i processori tradizionali che sono il "cervello" di ogni computer, sono progettate per gestire una vasta gamma di compiti in modo sequenziale.  
+Non sono adatte allo scopo.
+
+Le GPU invece offrono la possibilità di eseguire migliaia di calcoli contemporaneamente.
+
+Questa architettura parallela delle GPU si è rivelata perfettamente adatta alle esigenze di calcolo del Deep Learning.
 
 Negli ultimi 10-15 anni c'è stata un esplosione di nuove architetture cambiando il modo di affrontare l'inteligenza artificiale.
 Queste nuove architetture inolte hanno portato ad un miglioramento in termini di prestazioni, capacità applicative e applicazioni pratiche.  
