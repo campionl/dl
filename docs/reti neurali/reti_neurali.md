@@ -75,7 +75,7 @@ Grazie al backpropagation, fu possibile **addestrare reti a più strati** (MLP),
 
 Questo segnò una **svolta fondamentale** nello sviluppo dell’intelligenza artificiale.
 
-![schema](https://github.com/campionl/dl/blob/ac/images/nodeNeural.jpg)  
+![schema](https://github.com/campionl/dl/blob/develop/assets/MLP.jpg)  
 
 ## Nuove limitazioni
 Anche se il backpropagation aveva riacceso l’interesse negli anni ’80, negli anni ’90 e nei primi 2000 le reti neurali hanno incontrato nuovi ostacoli.
