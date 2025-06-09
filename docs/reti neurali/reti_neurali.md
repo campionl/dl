@@ -31,7 +31,7 @@ Il percettrone dimostrò che le macchine potevano migliorare con l'esperienza, s
 Questi primi decenni mostrano come il progresso scientifico sia un processo cumulativo, dove ogni scoperta, anche se imperfetta, apre la strada a sviluppi futuri.
 ### Il Problema del percettrone
 Ora proviamo a distinguere due gruppi di numeri:
-XOR (O Esclusivo):
+XOR (OR Esclusivo):
 - Classifica (0,0) e (1,1) come 0.
 - Classifica (0,1) e (1,0) come 1.
 ### Esempio visivo
