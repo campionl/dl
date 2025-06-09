@@ -64,7 +64,18 @@ Per risolvere XOR servono almeno 2 linee (2 strati) che lavorino insieme!
 - Crollano del tutto gli investimenti per le reti neurali.
 
 ### Backpropagation - spiegazione
-spiegare cosa è la backpropagation e come ha risolto la crisi del percettrone
+Backpropagation è un algoritmo che calcola l'errore commesso da una rete neurale, tornando indietro per capire dove e come ha sbagliato.  
+**Esempio concreto**: immagina di avere una ricetta a strati e il risultato finale è troppo salato.  
+Per correggere l'errore parte dal risultato finale (la torta è salata), analizza ogni strato uno per uno dall'ultimo al primo e aggiusta ogni passaggio per evitare l'errore.  
+**Come ha risolto il problema del percettrone?**
+- Con la backpropagation si sono potuti aggiungere strati nascosti, creando reti più potenti
+- Ha permesso di calcolare quanto ogni strato nascosto ha contribuito all'errore così tutti i pesi possono essere aggiustati per minimizzare l'errore
+- Grazie a questo meccanismo, le reti MLP hanno imparato a separare dati non linearmente divisibili  
+
+**Problematiche**  
+- Vanishing/Exploding Gradients: i gradienti (usati per aggiornare i pesi) diventavano troppo piccoli (vanishing) o troppo grandi (exploding) quando propagati attraverso molti strati.
+- Dipendenza dai Dati di Training
+- Overfitting: la rete memorizza i dati invece di generalizzare
 ### ️Multi-layer percettrone (MLP)
 È possibile creare reti neurali complesse unendo più neuroni assieme, e concatenando le uscite di un gruppo di neuroni agli ingressi del successivo.  
 
