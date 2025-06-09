@@ -131,6 +131,80 @@ Immagina un filtro in una rete neurale che cerca bordi in un'immagine:
 
 
 ### RESNET - spiegazione
+### **ResNet e Skip Connection - Spiegazione Super Semplice**
+
+**Cos'è ResNet?**  
+ResNet è un tipo speciale di rete neurale che può imparare anche con centinaia di strati, senza perdere efficacia. Il suo segreto? Le **skip connection** (scorciatoie intelligenti).
+
+---
+
+#### **Come funziona?**  
+Immagina di dover imparare a riconoscere una foto di gatto:
+
+1. **Nelle reti normali**:  
+   - L'immagine passa attraverso tutti gli strati uno dopo l'altro  
+   - Come un telefono senza fili: più strati ci sono, più il messaggio si distorce  
+
+2. **In ResNet**:  
+   - Ogni 2-3 strati c'è una **scorciatoia** che salta al livello successivo  
+   - Funziona così:  
+     ```  
+     Output = Trasformazione(strati) + Input originale  
+     ```  
+   - Come se ogni tanto controllassi la foto originale per non perderti  
+
+**Esempio numerico**:  
+- Input (foto originale): `5`  
+- Trasformazione dopo 3 strati: `+2`  
+- Output finale: `5 (input) + 2 (modifiche) = 7`  
+
+---
+
+#### **Perché è geniale?**  
+**Mantiene l'informazione originale**: Anche dopo 100 strati, la rete ricorda com'era la foto all'inizio  
+**Risolve il problema dei gradienti che scompaiono**: Le correzioni arrivano fino ai primi strati  
+**Permette reti super-profonde**: ResNet-152 ha 152 strati e funziona meglio di reti più corte  
+
+---
+
+#### **Skip Connection - Il Superpotere di ResNet**  
+**Cos'è?**  
+Una scorciatoia che permette all'informazione di:  
+1. Passare normalmente attraverso gli strati  
+2. **OPPURE** saltarli completamente e arrivare direttamente allo strato successivo  
+
+**Come un atleta intelligente**:  
+- Se il percorso è utile, lo fa tutto (impara nuove cose)  
+- Se è inutile, salta gli ostacoli (risparmia energia)  
+
+**Esempio pratico**:  
+Riconoscere un gatto in una foto sfocata:  
+- Gli strati profondi analizzano i dettagli (occhi, orecchie)  
+- Se non trovano nulla, usano l'input originale (la foto grezza) tramite skip connection  
+
+---
+
+#### **Perché ha cambiato il Deep Learning?**  
+Prima del 2015:  
+- Le reti neurali diventavano **peggiori** oltre i 20 strati  
+- Impossibile addestrare reti complesse  
+
+Dopo ResNet:  
+- Reti con **1000+ strati** addestrabili  
+- Migliori prestazioni in:  
+  - Riconoscimento immagini (Google Photos)  
+  - Auto a guida autonoma  
+  - Sistemi come ChatGPT (usano skip connection simili)  
+
+---
+
+#### **Esempio nella Vita Reale**  
+Pensa a quando studi per un esame:  
+- **Senza skip**: Rileggi tutto il libro 100 volte → alla fine non capisci più nulla  
+- **Con skip**: Ogni 3 capitoli confronti con gli appunti originali → mantieni il filo logico  
+
+![schema](https://github.com/campionl/dl/blob/develop/assets/RESNET.png)  
+
 
 ### GPU
 Tutto iniziò con un problema semplice ma cruciale: le reti neurali, soprattutto quelle profonde, richiedevano un’enorme potenza di calcolo per essere addestrate.  
