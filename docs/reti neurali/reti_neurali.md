@@ -39,9 +39,9 @@ Ecco il disegno che spiega il problema XOR al percettrone:
 
 ```
   Y 
- 1|     🟢(0,1)       🔵(1,1)
+ 1|     🟢(0,1)       🔴(1,1)
   |
- 0|     🔴(0,0)       🟡(1,0)
+ 0|     🔴(0,0)       🟢(1,0)
   |
   +-----------------------> X
          0             1
@@ -50,9 +50,9 @@ Ecco il disegno che spiega il problema XOR al percettrone:
 ### Soluzione?
 ```
        
-1 |    🟢 | 🔵
+1 |    🟢 | 🔴
   |   ----+----
-0 |    🔴 | 🟡
+0 |    🔴 | 🟢
 ```
 - Prima linea verticale: separa 🟢 da 🔴
 - Seconda linea verticale: separa 🔵 da 🟡
