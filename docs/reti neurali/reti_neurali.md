@@ -2,7 +2,7 @@
 Le reti neurali artificiali nacquero dall'idea di replicare il funzionamento del cervello umano, dove i neuroni comunicano attraverso sinapsi. Questi modelli computazionali avrebbero poi rivoluzionato campi come il riconoscimento vocale e la visione artificiale.
 ### Il concetto alla base
 Il concetto alla base delle reti neurali è la modellazione matematica di un **neurone umano**.  
-Il **neurone artificiale** così costruito risulta un classificatore binario che calcola l'uscita attraverso la seguente **funzione lineare**:  
+Il **neurone artificiale** così costruito risulta un classificatore binario che calcola l'uscita attraverso la seguente **funzione non lineare**:  
 
 $$z = \chi(\sum_{i=0}^{m} w_i x_i + b)$$
 
