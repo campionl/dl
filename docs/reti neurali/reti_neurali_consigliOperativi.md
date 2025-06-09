@@ -81,98 +81,95 @@ qui sotto c'è una guida per queste decisioni.
 
 ---
 
-## 🔷 Funzioni di Attivazione (usate nei neuroni)
+# 📚 Keras Layers – Guida Completa
 
-### 1. ReLU (Rectified Linear Unit)
-- Formula: `f(x) = max(0, x)`
-- Fa passare solo i valori positivi, azzera i negativi.
-- ✅ Veloce e usatissima nelle CNN e MLP.
+## 🧱 1. Core Layers
 
-### 2. Sigmoid
-- Formula: `f(x) = 1 / (1 + e^(-x))`
-- Trasforma l'input in un numero tra 0 e 1.
-- ✅ Ottima per classificazione binaria.
-- ⚠️ Tende a saturare (i gradienti diventano piccoli).
-
-### 3. Tanh (Tangente iperbolica)
-- Formula: `f(x) = (e^x - e^-x)/(e^x + e^-x)`
-- Output tra -1 e 1.
-- ⚠️ Simile a sigmoid, ma centrata su 0.
-
-### 4. Softmax
-- Converte una lista di numeri in **probabilità** che sommano a 1.
-- Usata nell'**ultimo layer per classificazione multi-classe**.
+| Layer                 | Descrizione                                                    | Uso                         |
+|-----------------------|----------------------------------------------------------------|-----------------------------|
+| `Dense(units)`        | Layer completamente connesso (fully connected).               | Classificatori, MLP         |
+| `Activation('relu')`  | Applica una funzione di attivazione.                          | Attivazioni standalone      |
+| `Dropout(rate)`       | Spegne neuroni casualmente durante il training.               | Regularizzazione            |
+| `Flatten()`           | Appiattisce un tensore multidimensionale in 1D.               | Da CNN a Dense              |
+| `Reshape(target_shape)`| Cambia la forma del tensore.                                 | Manipolazione della forma   |
+| `Input(shape)`        | Definisce un tensore di input (solo in Functional API).       | Inizio rete funzionale      |
 
 ---
 
-## 🔷 Layer di Costruzione
+## 🧠 2. Convolutional Layers
 
-### 5. Dense / Fully Connected
-- Ogni neurone è connesso a tutti quelli del layer precedente.
-- Usato in classificatori e MLP.
-
-### 6. Conv2D (Convolutional Layer)
-- Applica un **filtro** per trovare pattern in immagini.
-- Usato nelle CNN per riconoscere bordi, texture, ecc.
-
-### 7. MaxPooling2D
-- Riduce la dimensione dell’immagine, mantenendo le info più importanti.
-- Esempio: da 4x4 a 2x2 prendendo il valore massimo.
-
-### 8. Dropout
-- Spegne casualmente alcuni neuroni durante l’allenamento.
-- Aiuta a prevenire l’**overfitting**.
-
-### 9. Flatten
-- Appiattisce un'immagine 2D in un vettore 1D.
-- Utile prima di passare da CNN a Dense.
-
-### 10. Batch Normalization
-- Normalizza i valori nel layer per stabilizzare e velocizzare l’allenamento.
-
-### 11. Residual / Skip Connection
-- Permette di **saltare** uno o più layer e sommare direttamente l'input.
-- Usato nelle **ResNet** per reti molto profonde.
+| Layer                  | Descrizione                                             | Uso                     |
+|------------------------|---------------------------------------------------------|--------------------------|
+| `Conv2D(filters, kernel_size)` | Applica convoluzioni su immagini 2D.        | Visione artificiale      |
+| `Conv1D` / `Conv3D`     | Convoluzioni su dati 1D o 3D.                         | Audio, video             |
+| `SeparableConv2D`       | Convoluzione più leggera e veloce.                   | MobileNet, reti leggere  |
+| `DepthwiseConv2D`       | Convoluzione per canale.                             | Architetture avanzate    |
 
 ---
 
-## 🔷 Layer per Sequenze o Testi
+## 🌀 3. Pooling Layers
 
-### 12. RNN (Recurrent Neural Network)
-- Tiene memoria di ciò che è successo prima.
-- Usato per testi e audio.
-- ⚠️ Dimentica con sequenze troppo lunghe.
-
-### 13. LSTM (Long Short-Term Memory)
-- Variante avanzata dell'RNN.
-- Ha una “memoria lunga” ed è più resistente alla dimenticanza.
-
-### 14. GRU (Gated Recurrent Unit)
-- Simile all’LSTM, ma più veloce e semplice.
-
-### 15. Embedding Layer
-- Trasforma parole o simboli in vettori numerici.
-- Es: "gatto" → [0.1, 0.8, -0.5...]
+| Layer                      | Descrizione                                          | Uso                           |
+|----------------------------|------------------------------------------------------|-------------------------------|
+| `MaxPooling2D(pool_size)`  | Seleziona il valore massimo da ogni finestra.       | Riduce dimensioni spaziali    |
+| `AveragePooling2D`         | Calcola la media in ogni regione.                   | Alternativa più stabile       |
+| `GlobalMaxPooling2D()`     | Ritorna il max di ogni feature map.                 | Classificatore compatto       |
+| `GlobalAveragePooling2D()` | Media globale per ogni feature map.                 | Molto usato in MobileNet      |
 
 ---
 
-## 🔷 Layer Moderni (Transformers)
+## 📏 4. Normalizzazione e Rumore
 
-### 16. Transformer / Self-Attention
-- Ogni parola guarda tutte le altre e decide a chi dare peso.
-- Cuore di GPT, BERT, ChatGPT.
-- Gestisce bene sequenze lunghe.
+| Layer                     | Descrizione                                            | Uso                        |
+|---------------------------|--------------------------------------------------------|-----------------------------|
+| `BatchNormalization()`    | Normalizza attivazioni batch per batch.               | Stabilizzazione e velocità  |
+| `LayerNormalization()`    | Normalizza per ogni campione.                         | NLP, RNN                    |
+| `GaussianNoise(stddev)`   | Aggiunge rumore casuale.                              | Regularizzazione            |
+| `GaussianDropout(rate)`   | Versione rumorosa di Dropout.                         | Alternativa avanzata        |
 
 ---
 
-## 🔷 Layer per Scopi Specifici
+## ⏳ 5. Reti Ricorrenti (RNN)
 
-| Layer                | Scopo                                                |
-|----------------------|------------------------------------------------------|
-| Conv1D / Conv3D      | Dati 1D (audio) o 3D (video, immagini volumetriche)  |
-| GlobalAveragePooling | Riduce ogni mappa a un solo valore medio            |
-| Upsampling2D         | Aumenta la dimensione di un'immagine (opposto del pooling) |
-| TransposedConv2D     | Generazione immagini (es. nei generatori GAN)       |
+| Layer                 | Descrizione                                  | Uso                |
+|-----------------------|----------------------------------------------|---------------------|
+| `SimpleRNN(units)`    | RNN base.                                    | Sequenze brevi      |
+| `LSTM(units)`         | Long Short-Term Memory.                      | Testi, serie temporali |
+| `GRU(units)`          | Variante efficiente di LSTM.                 | NLP, serie temporali |
+
+---
+
+## 🧩 6. Altri Layer Utili
+
+| Layer                       | Descrizione                                  | Uso                     |
+|-----------------------------|----------------------------------------------|--------------------------|
+| `Embedding(input_dim, output_dim)` | Codifica parole in vettori.        | NLP, testi               |
+| `RepeatVector(n)`           | Ripete un vettore n volte.                  | Encoder-Decoder          |
+| `TimeDistributed(layer)`    | Applica un layer nel tempo (frame per frame).| Insieme a RNN            |
+| `LeakyReLU(alpha)`          | Variante di ReLU con parte negativa.         | CNN avanzate             |
+| `PReLU()`                   | ReLU con pendenza appresa.                   | Ottimizzazioni           |
+| `ReLU(max_value, threshold, ...)` | Controllo dettagliato su ReLU.      | Versione configurabile   |
+
+---
+
+## 🔁 7. Functional API
+
+| Elemento                  | Descrizione                                 |
+|---------------------------|---------------------------------------------|
+| `Input(shape)`            | Crea l'input per una rete non-sequenziale.  |
+| `Model(inputs, outputs)`  | Definisce un modello da input a output.     |
+
+---
+
+## ✅ Consigli d'Uso
+
+- 🔹 Usa `Sequential()` per modelli semplici: `input_shape` va nel primo layer.
+- 🔸 Usa `Input()` solo se lavori con la **Functional API**.
+- ⚠️ In molti layer come `Conv2D` e `Dense`, puoi mettere direttamente l’attivazione con `activation='relu'`.
+
+---
+
+
 
 ---
 
