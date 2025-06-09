@@ -97,7 +97,44 @@ Le reti imparavano i dati di addestramento "a memoria", quindi nei test con dati
 ### RESNET - spiegazione
 
 ### GPU - spiegazione
+### **Perché le GPU hanno preso il sopravvento sulle CPU nell'addestramento delle reti neurali?**  
 
+Le **GPU** (Graphics Processing Unit) sono diventate fondamentali per l'addestramento delle reti neurali perché sono **superiori alle CPU** (Central Processing Unit) nel fare **migliaia di calcoli in parallelo** alla volta.  
+
+#### **CPU vs GPU: la differenza principale**  
+- Una **CPU** è come un **genio matematico** che risolve un problema alla volta, ma molto velocemente.  
+- Una **GPU** è come una **squadra di 1000 studenti** che lavorano insieme su tanti piccoli calcoli contemporaneamente.  
+
+Nelle reti neurali, dobbiamo fare **milioni di moltiplicazioni** (tra pesi e input) e somme in pochissimo tempo. Le CPU sono troppo lente perché fanno tutto in **sequenza**, mentre le GPU **parallelizzano** il lavoro, accelerando l'addestramento di **100x o più!**  
+
+---
+
+### **Esempio semplice per capire il parallelismo delle GPU**  
+Immagina di dover **moltiplicare due enormi liste di numeri**:  
+- **Lista A**: [1, 2, 3, 4, 5, 6, 7, 8]  
+- **Lista B**: [2, 2, 2, 2, 2, 2, 2, 2]  
+
+#### **Come lo farebbe una CPU?**  
+1. Calcola **1 × 2 = 2**  
+2. Poi **2 × 2 = 4**  
+3. Poi **3 × 2 = 6**  
+... e così via, **uno alla volta**.  
+
+#### **Come lo farebbe una GPU?**  
+La GPU **divide il lavoro tra tutti i suoi core** (i "piccoli cervelli" al suo interno) e fa **tutte le moltiplicazioni insieme**:  
+- Core 1: **1 × 2 = 2**  
+- Core 2: **2 × 2 = 4**  
+- Core 3: **3 × 2 = 6**  
+... e così via, **tutti nello stesso momento!**  
+
+Risultato? **La GPU finisce in un colpo solo, mentre la CPU impiega 8 volte più tempo!**  
+
+---
+
+### **Perché questo è fondamentale nelle reti neurali?**  
+Ogni strato di una rete neurale fa **milioni di operazioni** come queste. Senza GPU, addestrare un modello moderno (come ChatGPT o ResNet) richiederebbe **anni invece che giorni o ore**.  
+
+Ecco perché oggi **tutto il Deep Learning gira su GPU** (o su chip ancora più specializzati come i **TPU** di Google). Le CPU sono ancora utili, ma per l'IA le **GPU dominano** grazie alla loro capacità di **calcolo parallelo massiccio!** 🚀
 ### DROPOUT - spiegazione
 
 ## L'IA che cambia la nostra vita quotidiana  
