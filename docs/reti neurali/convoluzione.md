@@ -1,3 +1,4 @@
+# Convoluzione
 Immagina di avere un'immagine, come una foto del tuo gatto, e vuoi insegnare a una rete neurale a riconoscere se c'è un gatto nella foto. La **convoluzione** è uno degli strumenti più potenti per farlo, ed è alla base delle **reti neurali convoluzionali (CNN)**, molto usate nel deep learning per l'elaborazione di immagini, ma non solo.
 
 ### Cos'è la convoluzione?
