@@ -136,11 +136,6 @@ Immagina un filtro in una rete neurale che cerca bordi in un'immagine:
 Il metodo **ResNet** è stato introdotto nel 2015 per eliminare il problema del **vanishing gradient**.
 Questo meccanismo consiste nel **saltare** blocchi di 2/3 layer durante il calcolo dei pesi tramite l'algoritmo di backpropagation, permettendo un aggiornamento dei pesi senza **perdite** e/o **esplosioni eccessive** di valori.
 
-### GPU
-### **Perché le GPU hanno preso il sopravvento sulle CPU nell'addestramento delle reti neurali?**  
-
----
-
 #### **Come funziona?**  
 Immagina di dover imparare a riconoscere una foto di gatto:
 
@@ -229,6 +224,7 @@ Ogni strato di una rete neurale fa **milioni di operazioni** come queste.
 Senza GPU, addestrare un modello moderno (come ChatGPT o ResNet) richiederebbe **anni invece che giorni o ore**.  
 
 Ecco perché oggi **tutto il Deep Learning gira su GPU** (o su chip ancora più specializzati come i **TPU** di Google). Le CPU sono ancora utili, ma per l'IA le **GPU dominano** grazie alla loro capacità di **calcolo parallelo massiccio!** 🚀
+
 ### DROPOUT
 Una tecnica che consiste in "spegnere" casualmente alcuni neuroni durante l'addestramento per evitare l'overfitting
 E' utilizzato perchè altrimenti la rete impara a memoria e non generalizza.  
