@@ -244,4 +244,9 @@ Oggi le reti neurali sono ovunque e stanno trasformando il modo in cui viviamo e
 **Dalla fabbrica all'ospedale**  
 Nei laboratori simulano farmaci e malattie, nelle fabbriche controllano la qualità dei prodotti, mentre i robot imparano a muoversi in ambienti complessi. E con l'IA generativa (come ChatGPT), possiamo addirittura creare testi, immagini e musica originali!  
 
-Una rivoluzione silenziosa che, passo dopo passo, sta rendendo le macchine sempre più "intelligenti" e utili nella vita di tutti i giorni. 
+Una rivoluzione silenziosa che, passo dopo passo, sta rendendo le macchine sempre più "intelligenti" e utili nella vita di tutti i giorni.
+
+# Esempi di reti neurali
+- [Pari dispari](../../src/neurale_paridispari.ipynb): riconosce se un numero dato in input è pari o dispari;
+- [MNIST](../../src/Rete_mnist.ipynb): riconosce un numero dato in input;
+- [EMNIST](../../src/Rete_mnist.ipynb): riconosce una lettera data in input (maiuscola o minuscola).
