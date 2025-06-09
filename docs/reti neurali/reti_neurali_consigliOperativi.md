@@ -1,4 +1,4 @@
-# Consigli per la creazione di una rete neurale
+s# Consigli per la creazione di una rete neurale
 
 Quando creiamo una rete neurale è importante riconoscere quando creare un nuovo livello e quando aggiungere un neurone ad un livello,
 qui sotto c'è una guida per queste decisioni.
@@ -169,7 +169,53 @@ qui sotto c'è una guida per queste decisioni.
 
 ---
 
+## Overfitting e Underfitting
+- **Overfitting**: Il modello impara troppo bene i dati di training, includendo anche rumore e dettagli irrilevanti.  
+  - Sintomi: alta accuratezza su training, bassa su test/validazione.  
+  - Soluzioni: Dropout, regolarizzazione, aumentare dati, ridurre complessità.
 
+- **Underfitting**: Il modello è troppo semplice per catturare i pattern nei dati.  
+  - Sintomi: bassa accuratezza su training e test.  
+  - Soluzioni: aumentare neuroni/layer, addestrare più a lungo, usare modelli più complessi.
+
+---
+
+## Funzione di attivazione
+- Trasforma l’output di un neurone per introdurre non-linearità.  
+- Tipi comuni:
+  - **ReLU** (Rectified Linear Unit): `max(0, x)`, semplice e efficace, problema del "morto" solo neuroni.  
+  - **Leaky ReLU**: variante che evita neuroni morti con piccola pendenza per x < 0.  
+  - **Sigmoid**: utile per output binari, problema saturazione.  
+  - **Softmax**: per classificazione multi-classe, trasforma output in probabilità.
+
+---
+
+## Ottimizzatori
+- Aggiornano i pesi della rete per minimizzare la funzione di perdita.  
+- Esempi:
+  - **SGD** (Stochastic Gradient Descent): base, semplice.  
+  - **Adam**: combina momentum e adattamento del learning rate, più usato e performante.  
+  - **RMSprop**: adatta learning rate per ogni parametro.
+
+---
+
+## Regularizzazione
+- Tecniche per ridurre overfitting e migliorare generalizzazione.  
+- Tipi:
+  - **Dropout**: spegne casualmente neuroni durante il training.  
+  - **L1 e L2** (weight decay): penalizzano pesi grandi aggiungendo termine di regolarizzazione alla loss.  
+  - **Early stopping**: ferma il training quando la loss di validazione peggiora.
+
+---
+
+## Batch size e Epochs
+- **Batch size**: numero di esempi usati per calcolare un aggiornamento del modello.  
+  - Batch piccoli = aggiornamenti più rumorosi, possono aiutare ad evitare minimi locali ma rallentano il training.  
+  - Batch grandi = più stabili ma più costosi in memoria.
+
+- **Epoch**: un’epoca è il passaggio completo su tutto il dataset.  
+  - Troppe epoche = rischio overfitting.  
+  - Poche epoche = rischio underfitting.
 
 ---
 
