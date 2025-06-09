@@ -47,7 +47,7 @@ Ecco il disegno che spiega il problema XOR al percettrone:
          0             1
 ```
 
-**La soluzione?**
+### Soluzione?
 ```
        
 1 |    🟢 | 🔵
@@ -64,8 +64,8 @@ Per risolvere XOR servono almeno 2 linee (2 strati) che lavorino insieme!
 - Lo XOR è un problema non linearmente separabile → Impossibile per un percettrone a 2 input.
 - Crollano del tutto gli investimenti per le reti neurali.
 
-### Backpropagation
-
+### Backpropagation - spiegazione
+spiegare cosa è la backpropagation e come ha risolto la crisi del percettrone
 ### ️Multi-layer percettrone (MLP)
 È possibile creare reti neurali complesse unendo più neuroni assieme, e concatenando le uscite di un gruppo di neuroni agli ingressi del successivo.  
 
@@ -77,7 +77,6 @@ Grazie al backpropagation, fu possibile **addestrare reti a più strati** (MLP),
 Questo segnò una **svolta fondamentale** nello sviluppo dell’intelligenza artificiale.
 
 ![schema](https://github.com/campionl/dl/blob/ac/images/nodeNeural.jpg)  
-
 
 ## Nuove limitazioni
 Anche se il backpropagation aveva riacceso l’interesse negli anni ’80, negli anni ’90 e nei primi 2000 le reti neurali hanno incontrato nuovi ostacoli.
@@ -94,15 +93,15 @@ Le reti imparavano i dati di addestramento "a memoria", quindi nei test con dati
 > In pratica: sembravano “intelligenti” in fase di test, ma “fallivano” con dati mai visti prima. Questo rendeva le reti **poco affidabili** in molti casi pratici.
 
 ## Il grande salto qualitativo
-### RELU
+### RELU - spiegazione
 
-### RESNET
+### RESNET - spiegazione
 
-### GPU
+### GPU - spiegazione
 
-### DROPOUT
+### DROPOUT - spiegazione
 
-**L'IA che cambia la nostra vita quotidiana**  
+## L'IA che cambia la nostra vita quotidiana  
 
 Oggi le reti neurali sono ovunque e stanno trasformando il modo in cui viviamo e lavoriamo. Immaginate un assistente che:  
 
