@@ -590,6 +590,6 @@ N.B: il merge va fatto sia su `main` che su `develop`:
   `git merge hotfix_branch`
   `git branch -D hotfix_branch`
 
-### Approfondimento
+### Approfondimenti
 - [GitFlow workflow - Atlassian](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow)
 - [Linea temporale GitFlow](https://cdn.hashnode.com/res/hashnode/image/upload/v1668069961266/fI6dAXt_8.png)
