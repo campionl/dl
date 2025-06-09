@@ -92,7 +92,32 @@ Le reti imparavano i dati di addestramento "a memoria", quindi nei test con dati
 > In pratica: sembravano “intelligenti” in fase di test, ma “fallivano” con dati mai visti prima. Questo rendeva le reti **poco affidabili** in molti casi pratici.
 
 ## Il grande salto qualitativo
-### RELU - spiegazione
+### RELU - spiegazione  
+
+**Cos'è?**  
+ReLU è una funzione matematica usata nelle reti neurali per decidere se un neurone deve "accendersi" o no.  
+
+**Come funziona?**  
+- Se l'input è **positivo**, lo lascia passare così com'è.  
+  Esempio: ReLU(3) = **3**  
+- Se l'input è **negativo**, lo blocca e lo trasforma in zero.  
+  Esempio: ReLU(-2) = **0**  
+
+**A cosa serve?**  
+1. **Rende la rete più veloce e semplice** (rispetto a funzioni più complicate come sigmoid o tanh).  
+2. **Aiuta a evitare il problema del "vanishing gradient"**, che rende difficile l'addestramento delle reti profonde.  
+3. **Introduce non-linearità**, permettendo alla rete di imparare relazioni complesse.  
+
+**Perché è importante?**  
+Prima di ReLU, le reti neurali erano lente e difficili da addestrare in profondità. Con ReLU, le reti sono diventate più efficienti, aprendo la strada al deep learning moderno (come ChatGPT, riconoscimento immagini, ecc.).  
+
+**Esempio pratico:**  
+Immagina un filtro in una rete neurale che cerca bordi in un'immagine:  
+- Se trova un bordo (valore positivo), lo fa passare.  
+- Se non trova nulla (valore negativo), lo ignora.
+
+![schema](https://github.com/campionl/dl/blob/develop/assets/relu_function.png)  
+
 
 ### RESNET - spiegazione
 
