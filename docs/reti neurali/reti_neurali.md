@@ -63,7 +63,8 @@ Per risolvere XOR servono almeno 2 linee (2 strati) che lavorino insieme!
 - Lo XOR è un problema non linearmente separabile → Impossibile per un percettrone a 2 input.
 - Crollano del tutto gli investimenti per le reti neurali.
 
-### Backpropagation - spiegazione
+### Backpropagation  
+
 Backpropagation è un algoritmo che calcola l'errore commesso da una rete neurale, tornando indietro per capire dove e come ha sbagliato.  
 **Esempio concreto**: immagina di avere una ricetta a strati e il risultato finale è troppo salato.  
 Per correggere l'errore parte dal risultato finale (la torta è salata), analizza ogni strato uno per uno dall'ultimo al primo e aggiusta ogni passaggio per evitare l'errore.  
@@ -130,8 +131,7 @@ Immagina un filtro in una rete neurale che cerca bordi in un'immagine:
 ![schema](https://github.com/campionl/dl/blob/develop/assets/relu_function.png)  
 
 
-### RESNET - spiegazione
-### **ResNet e Skip Connection - Spiegazione Super Semplice**
+### RESNET   
 
 **Cos'è ResNet?**  
 ResNet è un tipo speciale di rete neurale che può imparare anche con centinaia di strati, senza perdere efficacia. Il suo segreto? Le **skip connection** (scorciatoie intelligenti).
