@@ -92,7 +92,7 @@ Le reti imparavano i dati di addestramento "a memoria", quindi nei test con dati
 > In pratica: sembravano “intelligenti” in fase di test, ma “fallivano” con dati mai visti prima. Questo rendeva le reti **poco affidabili** in molti casi pratici.
 
 ## Il grande salto qualitativo
-### RELU - spiegazione  
+### RELU 
 
 **Cos'è?**  
 ReLU è una funzione matematica usata nelle reti neurali per decidere se un neurone deve "accendersi" o no.  
