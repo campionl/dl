@@ -13,7 +13,7 @@ $m =$ numero di ingressi
 $x_i =$ segnale  
 $w_i =$ peso del segnale  
 $b =$ bias (termine costante indipendente)  
-$\chi =$ funzione di output  
+$\chi =$ funzione di attivazione  
 
 ![schema](https://github.com/campionl/dl/blob/develop/assets/neur_art.jpg)
 
