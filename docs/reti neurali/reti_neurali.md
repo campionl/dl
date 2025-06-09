@@ -121,7 +121,7 @@ Immagina un filtro in una rete neurale che cerca bordi in un'immagine:
 
 ### RESNET - spiegazione
 
-### GPU - spiegazione
+### GPU
 Tutto iniziò con un problema semplice ma cruciale: le reti neurali, soprattutto quelle profonde, richiedevano un’enorme potenza di calcolo per essere addestrate.  
 
 Le **CPU**, pur versatili, non erano ottimizzate per le operazioni massive e parallele richieste dal deep learning.  
