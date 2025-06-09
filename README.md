@@ -15,5 +15,3 @@ Le reti neurali sono modelli computazionali ispirati al funzionamento del cervel
 
 ## Documentazione
 - [reti neurali](./docs/reti%20neurali/reti_neurali.md)
-- [rete neurale pari dispari](./neurale_paridispari.ipynb)
-- [rete neurale MNIST](./Rete_mnist.ipynb)

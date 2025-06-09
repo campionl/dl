@@ -63,7 +63,8 @@ Per risolvere XOR servono almeno 2 linee (2 strati) che lavorino insieme!
 - Lo XOR è un problema non linearmente separabile → Impossibile per un percettrone a 2 input.
 - Crollano del tutto gli investimenti per le reti neurali.
 
-### Backpropagation
+### Backpropagation  
+
 Backpropagation è un algoritmo che calcola l'errore commesso da una rete neurale, tornando indietro per capire dove e come ha sbagliato.  
 **Esempio concreto**: immagina di avere una ricetta a strati e il risultato finale è troppo salato.  
 Per correggere l'errore parte dal risultato finale (la torta è salata), analizza ogni strato uno per uno dall'ultimo al primo e aggiusta ogni passaggio per evitare l'errore.  
@@ -103,7 +104,7 @@ Le reti imparavano i dati di addestramento "a memoria", quindi nei test con dati
 > In pratica: sembravano “intelligenti” in fase di test, ma “fallivano” con dati mai visti prima. Questo rendeva le reti **poco affidabili** in molti casi pratici.
 
 ## Il grande salto qualitativo
-### RELU - spiegazione  
+### RELU 
 
 **Cos'è?**  
 ReLU è una funzione matematica usata nelle reti neurali per decidere se un neurone deve "accendersi" o no.  
@@ -135,45 +136,95 @@ Immagina un filtro in una rete neurale che cerca bordi in un'immagine:
 Il metodo **ResNet** è stato introdotto nel 2015 per eliminare il problema del **vanishing gradient**.
 Questo meccanismo consiste nel **saltare** blocchi di 2/3 layer durante il calcolo dei pesi tramite l'algoritmo di backpropagation, permettendo un aggiornamento dei pesi senza **perdite** e/o **esplosioni eccessive** di valori.
 
+#### **Come funziona?**  
+Immagina di dover imparare a riconoscere una foto di gatto:
+
+1. **Nelle reti normali**:  
+   - L'immagine passa attraverso tutti gli strati uno dopo l'altro  
+   - Come un telefono senza fili: più strati ci sono, più il messaggio si distorce  
+
+2. **In ResNet**:  
+   - Ogni 2-3 strati c'è una **scorciatoia** che salta al livello successivo  
+   - Funziona così:  
+     ```  
+     Output = Trasformazione(strati) + Input originale  
+     ```  
+   - Come se ogni tanto controllassi la foto originale per non perderti  
+
+**Esempio numerico**:  
+- Input (foto originale): `5`  
+- Trasformazione dopo 3 strati: `+2`  
+- Output finale: `5 (input) + 2 (modifiche) = 7`  
+
+---
+
+#### **Perché è geniale?**  
+**Mantiene l'informazione originale**: Anche dopo 100 strati, la rete ricorda com'era la foto all'inizio  
+**Risolve il problema dei gradienti che scompaiono**: Le correzioni arrivano fino ai primi strati  
+**Permette reti super-profonde**: ResNet-152 ha 152 strati e funziona meglio di reti più corte  
+
+---
+
+#### **Skip Connection - Il Superpotere di ResNet**  
+**Cos'è?**  
+Una scorciatoia che permette all'informazione di:  
+1. Passare normalmente attraverso gli strati  
+2. **OPPURE** saltarli completamente e arrivare direttamente allo strato successivo  
+
+**Come un atleta intelligente**:  
+- Se il percorso è utile, lo fa tutto (impara nuove cose)  
+- Se è inutile, salta gli ostacoli (risparmia energia)  
+
+**Esempio pratico**:  
+Riconoscere un gatto in una foto sfocata:  
+- Gli strati profondi analizzano i dettagli (occhi, orecchie)  
+- Se non trovano nulla, usano l'input originale (la foto grezza) tramite skip connection  
+
+---
+
+#### **Perché ha cambiato il Deep Learning?**  
+Prima del 2015:  
+- Le reti neurali diventavano **peggiori** oltre i 20 strati  
+- Impossibile addestrare reti complesse  
+
+Dopo ResNet:  
+- Reti con **1000+ strati** addestrabili  
+- Migliori prestazioni in:  
+  - Riconoscimento immagini (Google Photos)  
+  - Auto a guida autonoma  
+  - Sistemi come ChatGPT (usano skip connection simili)  
+
+---
+
+#### **Esempio nella Vita Reale**  
+Pensa a quando studi per un esame:  
+- **Senza skip**: Rileggi tutto il libro 100 volte → alla fine non capisci più nulla  
+- **Con skip**: Ogni 3 capitoli confronti con gli appunti originali → mantieni il filo logico  
+
+![schema](https://github.com/campionl/dl/blob/develop/assets/RESNET.png)  
+
+
 ### GPU
-### **Perché le GPU hanno preso il sopravvento sulle CPU nell'addestramento delle reti neurali?**  
+Tutto iniziò con un problema semplice ma cruciale: le reti neurali, soprattutto quelle profonde, richiedevano un’enorme potenza di calcolo per essere addestrate.  
 
-Le **GPU** (Graphics Processing Unit) sono diventate fondamentali per l'addestramento delle reti neurali perché sono **superiori alle CPU** (Central Processing Unit) nel fare **migliaia di calcoli in parallelo** alla volta.  
+Le **CPU**, pur versatili, non erano ottimizzate per le operazioni massive e parallele richieste dal deep learning.  
 
-#### **CPU vs GPU: la differenza principale**  
+Le **GPU**, invece, nate per il rendering grafico (dove devono gestire milioni di pixel simultaneamente), si rivelarono perfette. La loro architettura a **core multipli** permetteva di eseguire migliaia di operazioni in parallelo, accelerando di centinaia di volte operazioni come:  
+- Le moltiplicazioni tra matrici (cuore del funzionamento di una rete neurale).  
+- Le attivazioni di funzioni non lineari (come ReLU) su grandi batch di dati.  
+- L’aggiornamento dei pesi durante la backpropagation.  
+### **CPU vs GPU: la differenza principale** 
 - Una **CPU** è come un **genio matematico** che risolve un problema alla volta, ma molto velocemente.  
 - Una **GPU** è come una **squadra di 1000 studenti** che lavorano insieme su tanti piccoli calcoli contemporaneamente.  
 
 Nelle reti neurali, dobbiamo fare **milioni di moltiplicazioni** (tra pesi e input) e somme in pochissimo tempo. Le CPU sono troppo lente perché fanno tutto in **sequenza**, mentre le GPU **parallelizzano** il lavoro, accelerando l'addestramento di **100x o più!**  
 
----
-
-### **Esempio semplice per capire il parallelismo delle GPU**  
-Immagina di dover **moltiplicare due enormi liste di numeri**:  
-- **Lista A**: [1, 2, 3, 4, 5, 6, 7, 8]  
-- **Lista B**: [2, 2, 2, 2, 2, 2, 2, 2]  
-
-#### **Come lo farebbe una CPU?**  
-1. Calcola **1 × 2 = 2**  
-2. Poi **2 × 2 = 4**  
-3. Poi **3 × 2 = 6**  
-... e così via, **uno alla volta**.  
-
-#### **Come lo farebbe una GPU?**  
-La GPU **divide il lavoro tra tutti i suoi core** (i "piccoli cervelli" al suo interno) e fa **tutte le moltiplicazioni insieme**:  
-- Core 1: **1 × 2 = 2**  
-- Core 2: **2 × 2 = 4**  
-- Core 3: **3 × 2 = 6**  
-... e così via, **tutti nello stesso momento!**  
-
-Risultato? **La GPU finisce in un colpo solo, mentre la CPU impiega 8 volte più tempo!**  
-
----
-
 ### **Perché questo è fondamentale nelle reti neurali?**  
-Ogni strato di una rete neurale fa **milioni di operazioni** come queste. Senza GPU, addestrare un modello moderno (come ChatGPT o ResNet) richiederebbe **anni invece che giorni o ore**.  
+Ogni strato di una rete neurale fa **milioni di operazioni** come queste.  
+Senza GPU, addestrare un modello moderno (come ChatGPT o ResNet) richiederebbe **anni invece che giorni o ore**.  
 
 Ecco perché oggi **tutto il Deep Learning gira su GPU** (o su chip ancora più specializzati come i **TPU** di Google). Le CPU sono ancora utili, ma per l'IA le **GPU dominano** grazie alla loro capacità di **calcolo parallelo massiccio!** 🚀
+
 ### DROPOUT
 Una tecnica che consiste in "spegnere" casualmente alcuni neuroni durante l'addestramento per evitare l'overfitting
 E' utilizzato perchè altrimenti la rete impara a memoria e non generalizza.  
@@ -193,6 +244,11 @@ Oggi le reti neurali sono ovunque e stanno trasformando il modo in cui viviamo e
 **Dalla fabbrica all'ospedale**  
 Nei laboratori simulano farmaci e malattie, nelle fabbriche controllano la qualità dei prodotti, mentre i robot imparano a muoversi in ambienti complessi. E con l'IA generativa (come ChatGPT), possiamo addirittura creare testi, immagini e musica originali!  
 
-Una rivoluzione silenziosa che, passo dopo passo, sta rendendo le macchine sempre più "intelligenti" e utili nella vita di tutti i giorni. 
+Una rivoluzione silenziosa che, passo dopo passo, sta rendendo le macchine sempre più "intelligenti" e utili nella vita di tutti i giorni.
 
-## Conclusioni
+# Esempi di reti neurali
+- [Pari dispari](../../src/neurale_paridispari.ipynb): riconosce se un numero dato in input è pari o dispari;
+- [MNIST](../../src/Rete_mnist.ipynb): riconosce un numero dato in input;
+- [EMNIST](../../src/Rete_mnist.ipynb): riconosce una lettera data in input (maiuscola o minuscola).
+
+[Rete neurale per riconoscere parole](https://colab.research.google.com/drive/1K4VlcecT352TM3ZKYVgGAfRp0ylPXYi8?usp=sharing)
