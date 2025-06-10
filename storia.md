@@ -1,4 +1,4 @@
-# Storia di yolo
+# Storia di Yolo
 
 
 ### **Storia di YOLO (You Only Look Once) – Evoluzione nel Tempo**  
