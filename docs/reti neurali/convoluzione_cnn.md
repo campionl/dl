@@ -8,6 +8,10 @@ La formula è:
 
 $$(f * g)(t) = \int_{-\infty}^{\infty} f(\tau) g(t - \tau) d\tau$$
 
+Esempio:
+
+![Esempio di convoluzione](../../assets/convolution_sample.gif)
+
 ## Cos'è la Convoluzione?  
 
 Immagina di avere un'immagine, come una foto del tuo gatto, e vuoi insegnare a una rete neurale a riconoscere se c'è un gatto nella foto. La **convoluzione** è uno degli strumenti più potenti per farlo.  
