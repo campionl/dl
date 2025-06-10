@@ -1,7 +1,4 @@
-# Storia di Yolo
-
-
-### **Storia di YOLO (You Only Look Once) – Evoluzione nel Tempo**  
+## **Storia di YOLO (You Only Look Once) – Evoluzione nel Tempo**  
 
 YOLO (You Only Look Once) è uno degli algoritmi più influenti nel campo della **computer vision** e dell'**object detection**, grazie alla sua capacità di rilevare oggetti in tempo reale con un singolo passaggio attraverso una rete neurale. Ecco la sua storia completa:
 
