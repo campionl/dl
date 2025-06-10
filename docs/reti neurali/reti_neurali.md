@@ -249,6 +249,4 @@ Una rivoluzione silenziosa che, passo dopo passo, sta rendendo le macchine sempr
 # Esempi di reti neurali
 - [Pari dispari](../../src/neurale_paridispari.ipynb): riconosce se un numero dato in input è pari o dispari;
 - [MNIST](../../src/Rete_mnist.ipynb): riconosce un numero dato in input;
-- [EMNIST](../../src/Rete_mnist.ipynb): riconosce una lettera data in input (maiuscola o minuscola).
-
-[Rete neurale per riconoscere parole](https://colab.research.google.com/drive/1K4VlcecT352TM3ZKYVgGAfRp0ylPXYi8?usp=sharing)
+- [EMNIST](../../src/PAROLA_rete_neurale.ipynb): riconosce una parola data in input (con lettere maiuscole o minuscole).
