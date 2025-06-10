@@ -15,7 +15,7 @@ $w_i =$ peso del segnale
 $b =$ bias (termine costante indipendente)  
 $\chi =$ funzione di attivazione  
 
-![schema](https://github.com/campionl/dl/blob/develop/assets/neur_art.jpg)
+![schema](../../assets/func_act.jpeg)
 
 
 ### Le origini delle reti neurali
@@ -87,7 +87,7 @@ Grazie al backpropagation, fu possibile **addestrare reti a più strati** (MLP),
 
 Questo segnò una **svolta fondamentale** nello sviluppo dell’intelligenza artificiale.
 
-![schema](https://github.com/campionl/dl/blob/develop/assets/MLP.jpg)  
+![schema](../../assets/MLP.jpg)  
 
 ## Nuove limitazioni
 Anche se il backpropagation aveva riacceso l’interesse negli anni ’80, negli anni ’90 e nei primi 2000 le reti neurali hanno incontrato nuovi ostacoli.
@@ -128,7 +128,7 @@ Immagina un filtro in una rete neurale che cerca bordi in un'immagine:
 - Se trova un bordo (valore positivo), lo fa passare.  
 - Se non trova nulla (valore negativo), lo ignora.
 
-![schema](https://github.com/campionl/dl/blob/develop/assets/relu_function.png)  
+![schema](../../assets/relu_function.png)  
 
 
 ### ResNet
@@ -201,7 +201,7 @@ Pensa a quando studi per un esame:
 - **Senza skip**: Rileggi tutto il libro 100 volte → alla fine non capisci più nulla  
 - **Con skip**: Ogni 3 capitoli confronti con gli appunti originali → mantieni il filo logico  
 
-![schema](https://github.com/campionl/dl/blob/develop/assets/RESNET.png)  
+![schema](../../assets/RESNET.png)  
 
 
 ### GPU
