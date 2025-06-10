@@ -22,7 +22,7 @@ YOLO (You Only Look Once) è uno degli algoritmi più influenti nel campo della 
    - Poteva riconoscere oltre **9000 classi** di oggetti (da qui il nome YOLO9000).  
 
 4. **2018 – YOLOv3**  
-   - Ancora più **preciso**, grazie a una rete neurale più profonda ([**Darknet-53**](https://paperswithcode.com/method/darknet-53)).  
+   - Ancora più **preciso**, grazie a una rete neurale più profonda ([**Darknet-53**](https://www.geeksforgeeks.org/darknet-53/)).  
    - Miglior gestione degli **oggetti piccoli**.  
    - Rimase lo **standard** per anni.  
 
