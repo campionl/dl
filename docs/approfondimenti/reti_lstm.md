@@ -11,13 +11,13 @@ Le LSTM sono molto usate per elaborare sequenze temporali o testi, come:
 
 ---
 
-## 📦 Come funziona una LSTM?
+## Come funziona una LSTM?
 
 Le LSTM sono costituite da **celle di memoria** che possono:
 
-- 📥 **Memorizzare informazioni**
-- 🗑️ **Cancellare ciò che non serve**
-- 📤 **Uscire con nuove informazioni utili**
+- **Memorizzare informazioni**
+- **Cancellare ciò che non serve**
+- **Uscire con nuove informazioni utili**
 
 Per fare questo usano **3 porte** principali:
 
@@ -29,7 +29,7 @@ Per fare questo usano **3 porte** principali:
 
 ---
 
-## 🔁 Differenza tra LSTM e RNN classiche
+## Differenza tra LSTM e RNN classiche
 
 | RNN Classica                   | LSTM                                       |
 |-------------------------------|--------------------------------------------|
