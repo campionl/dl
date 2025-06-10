@@ -1,5 +1,13 @@
 # Convoluzione e Reti Neurali Convoluzionali (CNN)  
 
+## La Convoluzione in matematica
+
+La **convoluzione** è un'operazione matematica che combina due funzioni per produrne una terza e descrive come la forma di una funzione viene modicata da un'altra.  
+
+La formula è:
+
+$$(f * g)(t) = \int_{-\infty}^{\infty} f(\tau) g(t - \tau) d\tau$$
+
 ## Cos'è la Convoluzione?  
 
 Immagina di avere un'immagine, come una foto del tuo gatto, e vuoi insegnare a una rete neurale a riconoscere se c'è un gatto nella foto. La **convoluzione** è uno degli strumenti più potenti per farlo.  
