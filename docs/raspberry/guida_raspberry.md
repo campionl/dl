@@ -14,7 +14,7 @@ Il Raspberry Pi è un **microcomputer** delle dimensioni di una carta di credito
 
 Ti consiglio il **Pi 4 (4GB o 8GB)** se vuoi fare AI, coding e automazione.
 
----
+--
 
 ## **2. Cosa ti serve per iniziare**
 
