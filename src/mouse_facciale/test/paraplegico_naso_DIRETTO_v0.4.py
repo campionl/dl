@@ -4,6 +4,28 @@ import numpy as np
 import pyautogui
 import time
 import sys
+from collections import deque
+import platform
+
+def play_beep():
+    if platform.system() == "Windows":
+        try:
+            import winsound
+            winsound.Beep(500, 200)
+        except ImportError:
+            print("winsound not available. Install it for Windows beeps.")
+    elif platform.system() == "Linux":
+        try:
+            import subprocess
+            subprocess.Popen(['aplay', '-q', '/usr/share/sounds/alsa/Front_Left.wav'])
+        except Exception as e:
+            print(f"Failed to play beep on Linux: {e}. Ensure 'aplay' or 'sox' is installed.")
+    elif platform.system() == "Darwin":
+        try:
+            import os
+            os.system('afplay /System/Library/Sounds/Tink.aiff')
+        except Exception as e:
+            print(f"Failed to play beep on macOS: {e}")
 
 class HeadMouseController:
     def __init__(self):
@@ -11,8 +33,8 @@ class HeadMouseController:
         self.face_mesh = self.mp_face_mesh.FaceMesh(
             max_num_faces=1,
             refine_landmarks=True,
-            min_detection_confidence=0.8,
-            min_tracking_confidence=0.8
+            min_detection_confidence=0.7,
+            min_tracking_confidence=0.7
         )
 
         pyautogui.FAILSAFE = False
@@ -38,7 +60,9 @@ class HeadMouseController:
             'left': [],
             'right': [],
             'up': [],
-            'down': []
+            'down': [],
+            'closed_eyes': [],
+            'open_mouth': []
         }
         self.current_calibration_stage_frames = 0
         self.CALIBRATION_STAGE_DURATION = 90
@@ -49,31 +73,30 @@ class HeadMouseController:
             3: "GUARDA IL PIÙ A DESTRA POSSIBILE",
             4: "GUARDA IL PIÙ IN ALTO POSSIBILE",
             5: "GUARDA IL PIÙ IN BASSO POSSIBILE",
-            6: "Elaborazione dati...",
-            7: "CALIBRATO! Mouse Attivo."
+            6: "CHIUDI GLI OCCHI (per calibrazione click)",
+            7: "APRI LA BOCCA (per calibrazione doppio click)",
+            8: "Elaborazione dati...",
+            9: "CALIBRATO! Mouse Attivo."
         }
-        self.last_calibration_text_update = time.time()
-        self.calibration_text_cooldown = 1.0
+        self.last_calibration_stage_start_time = time.time()
+        self.calibration_beep_played = False
 
         self.movement_range = {'min_x': 0, 'max_x': 0, 'min_y': 0, 'max_y': 0}
         self.MARGIN_FACTOR = 0.15
 
-        self.nose_pos_history = []
-        self.ACCELERATION_HISTORY_LENGTH = 3
-        self.ACCELERATION_THRESHOLD_X = 200
-        self.ACCELERATION_THRESHOLD_Y = 200
-        self.ACCELERATION_THRESHOLD_MAGNITUDE = 300
+        self.nose_pos_history = deque(maxlen=60)
+        self.STILLNESS_HISTORY_LENGTH = 30
+        self.STILL_MOVEMENT_THRESHOLD_PIXELS = 3
 
-        self.BLINK_THRESHOLD = 0.22
-        self.MOUTH_THRESHOLD = 0.35
-        self.eye_history = []
-        self.mouth_history = []
-        self.HISTORY_LENGTH = 5
+        self.calibrated_blink_threshold = 0.25
+        self.calibrated_mouth_threshold = 0.40
+        self.eye_history = deque(maxlen=10)
+        self.mouth_history = deque(maxlen=10)
+        self.EYE_MOUTH_HISTORY_LENGTH = 5
 
         self.STILL_TIME_THRESHOLD = 1.0
         self.last_movement_time = time.time()
         self.is_still = False
-        self.STILL_MOVEMENT_THRESHOLD = 5
 
         self.last_left_click_time = 0.0
         self.last_right_click_time = 0.0
@@ -115,37 +138,52 @@ class HeadMouseController:
         except IndexError:
             return 0
 
-    def calibrate_movement_range(self, nose_pos):
+    def calibrate_movement_range(self, nose_pos, left_ear, right_ear, mouth_ratio):
+        current_time = time.time()
+
+        if not self.calibration_beep_played and current_time - self.last_calibration_stage_start_time > 0.5:
+            play_beep()
+            self.calibration_beep_played = True
+
         if self.calibration_stage == 0:
-            if time.time() - self.last_calibration_text_update > self.calibration_text_cooldown * 2:
+            if current_time - self.last_calibration_stage_start_time > 2.0:
                 self.calibration_stage = 1
                 self.current_calibration_stage_frames = 0
-                self.last_calibration_text_update = time.time()
+                self.last_calibration_stage_start_time = current_time
+                self.calibration_beep_played = False
             return
 
-        stage_key = {
-            1: 'center',
-            2: 'left',
-            3: 'right',
-            4: 'up',
-            5: 'down'
-        }.get(self.calibration_stage)
+        stage_key_map = {
+            1: 'center', 2: 'left', 3: 'right', 4: 'up', 5: 'down',
+            6: 'closed_eyes', 7: 'open_mouth'
+        }
+        current_stage_key = stage_key_map.get(self.calibration_stage)
 
-        if stage_key:
-            self.calibration_data[stage_key].append(nose_pos)
+        if current_stage_key:
+            if current_stage_key in ['center', 'left', 'right', 'up', 'down']:
+                self.calibration_data[current_stage_key].append(nose_pos)
+            elif current_stage_key == 'closed_eyes':
+                self.calibration_data[current_stage_key].append((left_ear + right_ear) / 2)
+            elif current_stage_key == 'open_mouth':
+                self.calibration_data[current_stage_key].append(mouth_ratio)
+
             self.current_calibration_stage_frames += 1
 
             if self.current_calibration_stage_frames >= self.CALIBRATION_STAGE_DURATION:
                 self.calibration_stage += 1
                 self.current_calibration_stage_frames = 0
-                self.last_calibration_text_update = time.time()
-                self.nose_pos_history = []
+                self.last_calibration_stage_start_time = current_time
+                self.calibration_beep_played = False
+                self.nose_pos_history.clear()
+                self.eye_history.clear()
+                self.mouth_history.clear()
                 self.pos_filter = self.screen_center.copy()
                 self.prev_pos = self.screen_center.copy()
 
-        if self.calibration_stage == 6:
-            all_x = []
-            all_y = []
+        if self.calibration_stage == 8:
+            print("Elaborando dati di calibrazione...")
+            all_x_head = []
+            all_y_head = []
 
             center_data = np.array(self.calibration_data['center'])
             if center_data.size > 0:
@@ -154,24 +192,24 @@ class HeadMouseController:
             else:
                 center_x_avg = nose_pos[0]
                 center_y_avg = nose_pos[1]
-                print("[WARNING] Dati di calibrazione 'center' insufficienti. Usando posizione attuale.")
+                print("Avviso: Dati di calibrazione 'center' insufficienti. Usando posizione attuale.")
 
             for key in ['left', 'right', 'up', 'down']:
                 if self.calibration_data[key]:
                     data = np.array(self.calibration_data[key])
-                    all_x.extend(data[:, 0])
-                    all_y.extend(data[:, 1])
+                    all_x_head.extend(data[:, 0])
+                    all_y_head.extend(data[:, 1])
 
-            if not all_x or not all_y:
-                print("[ERROR] Calibrazione fallita: Dati insufficienti per definire il range di movimento.")
+            if not all_x_head or not all_y_head:
+                print("Errore: Calibrazione fallita: Dati di movimento testa insufficienti.")
                 self.calibrated = False
-                self.calibration_stage = 0 # Reset calibration
+                self.calibration_stage = 0
                 return
 
-            self.movement_range['min_x'] = min(all_x)
-            self.movement_range['max_x'] = max(all_x)
-            self.movement_range['min_y'] = min(all_y)
-            self.movement_range['max_y'] = max(all_y)
+            self.movement_range['min_x'] = min(all_x_head)
+            self.movement_range['max_x'] = max(all_x_head)
+            self.movement_range['min_y'] = min(all_y_head)
+            self.movement_range['max_y'] = max(all_y_head)
 
             x_range = self.movement_range['max_x'] - self.movement_range['min_x']
             y_range = self.movement_range['max_y'] - self.movement_range['min_y']
@@ -181,7 +219,6 @@ class HeadMouseController:
             self.movement_range['min_y'] -= y_range * self.MARGIN_FACTOR
             self.movement_range['max_y'] += y_range * self.MARGIN_FACTOR
 
-            # Adjust range to be centered around the initially detected center position
             current_mid_x = (self.movement_range['min_x'] + self.movement_range['max_x']) / 2
             current_mid_y = (self.movement_range['min_y'] + self.movement_range['max_y']) / 2
 
@@ -193,11 +230,30 @@ class HeadMouseController:
             self.movement_range['min_y'] += offset_y
             self.movement_range['max_y'] += offset_y
 
+            closed_eyes_data = np.array(self.calibration_data['closed_eyes'])
+            open_mouth_data = np.array(self.calibration_data['open_mouth'])
+
+            if closed_eyes_data.size > 0:
+                avg_closed_ear = np.mean(closed_eyes_data)
+                self.calibrated_blink_threshold = avg_closed_ear * 1.3
+                print(f"Soglia ammiccamento calibrata: {self.calibrated_blink_threshold:.3f}")
+            else:
+                print("Avviso: Dati per occhi chiusi insufficienti. Usando soglia predefinita.")
+
+            if open_mouth_data.size > 0:
+                avg_open_mar = np.mean(open_mouth_data)
+                self.calibrated_mouth_threshold = avg_open_mar * 0.85
+                print(f"Soglia bocca aperta calibrata: {self.calibrated_mouth_threshold:.3f}")
+            else:
+                print("Avviso: Dati per bocca aperta insufficienti. Usando soglia predefinita.")
+
+            self.calibrated_blink_threshold = np.clip(self.calibrated_blink_threshold, 0.08, 0.35)
+            self.calibrated_mouth_threshold = np.clip(self.calibrated_mouth_threshold, 0.25, 0.6)
+
             self.calibrated = True
-            self.calibration_stage = 7
-            print(f"Calibrato! Area movimento X: {self.movement_range['min_x']:.0f}-{self.movement_range['max_x']:.0f} "
-                  f"Y: {self.movement_range['min_y']:.0f}-{self.movement_range['max_y']:.0f}")
-            self.calibration_data = {k: [] for k in self.calibration_data} # Clear data
+            self.calibration_stage = 9
+            print("Calibrazione completata con successo!")
+            self.calibration_data = {k: [] for k in self.calibration_data}
 
     def smooth_movement(self, target_pos):
         self.pos_filter = self.pos_filter * (1 - self.FILTER_STRENGTH) + target_pos * self.FILTER_STRENGTH
@@ -220,82 +276,70 @@ class HeadMouseController:
 
         return new_pos
 
-    def _calculate_nose_acceleration(self):
-        if len(self.nose_pos_history) < self.ACCELERATION_HISTORY_LENGTH:
-            return np.array([0.0, 0.0])
-
-        p_t = self.nose_pos_history[-1]
-        p_t_minus_1 = self.nose_pos_history[-2]
-        p_t_minus_2 = self.nose_pos_history[-3]
-
-        v_t = p_t - p_t_minus_1
-        v_t_minus_1 = p_t_minus_1 - p_t_minus_2
-
-        acceleration = v_t - v_t_minus_1
-        return acceleration
+    def _is_still_enough(self):
+        if len(self.nose_pos_history) < self.STILLNESS_HISTORY_LENGTH:
+            return False
+        recent_x = [p[0] for p in self.nose_pos_history]
+        recent_y = [p[1] for p in self.nose_pos_history]
+        std_dev_x = np.std(recent_x)
+        std_dev_y = np.std(recent_y)
+        return std_dev_x < self.STILL_MOVEMENT_THRESHOLD_PIXELS and \
+               std_dev_y < self.STILL_MOVEMENT_THRESHOLD_PIXELS
 
     def _is_blinking(self, ear_history, eye_index):
-        if not ear_history:
+        if len(ear_history) < self.EYE_MOUTH_HISTORY_LENGTH:
             return False
-        return all(ear[eye_index] < self.BLINK_THRESHOLD for ear in ear_history)
+        return all(ear[eye_index] < self.calibrated_blink_threshold for ear in list(ear_history)[-self.EYE_MOUTH_HISTORY_LENGTH:])
 
     def _is_mouth_open(self, mouth_history):
-        if not mouth_history:
+        if len(mouth_history) < self.EYE_MOUTH_HISTORY_LENGTH:
             return False
-        return all(mr > self.MOUTH_THRESHOLD for mr in mouth_history)
+        return all(mr > self.calibrated_mouth_threshold for mr in list(mouth_history)[-self.EYE_MOUTH_HISTORY_LENGTH:])
+
+    def _check_left_click(self, current_time):
+        if self._is_still_enough():
+            if not self.is_still:
+                self.last_movement_time = current_time
+                self.is_still = True
+            elif (current_time - self.last_movement_time) >= self.STILL_TIME_THRESHOLD:
+                if (current_time - self.last_left_click_time) > self.CLICK_COOLDOWN:
+                    pyautogui.click()
+                    self.last_left_click_time = current_time
+                    self.is_still = False
+                    print(f"[ACTION] Click SX (Fermo per {self.STILL_TIME_THRESHOLD:.1f}s)")
+        else:
+            self.is_still = False
+
+    def _check_right_click(self, current_time):
+        is_left_eye_closed = self._is_blinking(self.eye_history, 0)
+        is_right_eye_closed = self._is_blinking(self.eye_history, 1)
+
+        if (is_left_eye_closed and not is_right_eye_closed) or \
+           (is_right_eye_closed and not is_left_eye_closed):
+            if (current_time - self.last_right_click_time) > self.CLICK_COOLDOWN:
+                pyautogui.click(button='right')
+                self.last_right_click_time = current_time
+                print("[ACTION] Click DX (Ammiccamento)")
+
+    def _check_double_click(self, current_time):
+        if self._is_mouth_open(self.mouth_history):
+            if (current_time - self.last_double_click_time) > self.CLICK_COOLDOWN:
+                pyautogui.doubleClick()
+                self.last_double_click_time = current_time
+                print("[ACTION] Doppio Click (Bocca aperta)")
 
     def detect_gestures(self, nose_pos, left_ear, right_ear, mouth_ratio):
         self.nose_pos_history.append(nose_pos)
-        while len(self.nose_pos_history) > self.ACCELERATION_HISTORY_LENGTH:
-            self.nose_pos_history.pop(0)
+        self.eye_history.append((left_ear, right_ear))
+        self.mouth_history.append(mouth_ratio)
 
         current_time = time.time()
 
-        if len(self.nose_pos_history) > 1:
-            movement = np.linalg.norm(self.nose_pos_history[-1] - self.nose_pos_history[-2])
-            if movement > self.STILL_MOVEMENT_THRESHOLD:
-                self.last_movement_time = current_time
-                self.is_still = False
-            else:
-                if (current_time - self.last_movement_time) >= self.STILL_TIME_THRESHOLD:
-                    self.is_still = True
-                else:
-                    self.is_still = False
+        self._check_left_click(current_time)
+        self._check_right_click(current_time)
+        self._check_double_click(current_time)
 
-        self.eye_history.append((left_ear, right_ear))
-        self.mouth_history.append(mouth_ratio)
-        while len(self.eye_history) > self.HISTORY_LENGTH:
-            self.eye_history.pop(0)
-            self.mouth_history.pop(0)
-
-        is_left_blinking = self._is_blinking(self.eye_history, 0)
-        is_right_blinking = self._is_blinking(self.eye_history, 1)
-        is_mouth_open = self._is_mouth_open(self.mouth_history)
-
-        if self.is_still and (current_time - self.last_left_click_time > self.CLICK_COOLDOWN):
-            pyautogui.click()
-            self.last_left_click_time = current_time
-            self.is_still = False
-            print(f"[ACTION] Left click (Still for {self.STILL_TIME_THRESHOLD}s)")
-
-        elif is_left_blinking and not is_right_blinking and \
-             (current_time - self.last_right_click_time > self.CLICK_COOLDOWN):
-            pyautogui.click(button='right')
-            self.last_right_click_time = current_time
-            print("[ACTION] Right click (Left wink)")
-
-        elif is_right_blinking and not is_left_blinking and \
-             (current_time - self.last_right_click_time > self.CLICK_COOLDOWN):
-            pyautogui.click(button='right')
-            self.last_right_click_time = current_time
-            print("[ACTION] Right click (Right wink)")
-
-        elif is_mouth_open and (current_time - self.last_double_click_time > self.CLICK_COOLDOWN):
-            pyautogui.doubleClick()
-            self.last_double_click_time = current_time
-            print("[ACTION] Double click (Mouth open)")
-
-    def draw_interface(self, frame, nose_pos, left_ear, right_ear, mouth_ratio, nose_acceleration):
+    def draw_interface(self, frame, nose_pos, left_ear, right_ear, mouth_ratio):
         h, w = frame.shape[:2]
 
         if self.calibrated:
@@ -304,25 +348,25 @@ class HeadMouseController:
                         (int(self.movement_range['max_x']), int(self.movement_range['max_y'])),
                         (0, 255, 0), 2)
             cv2.circle(frame, tuple(nose_pos.astype(int)), 8, (0, 255, 0), -1)
-            status_text = self.CALIBRATION_GUIDE_TEXTS[7] # "CALIBRATO! Mouse Attivo."
-            color = (0, 255, 0)
         else:
-            status_text = self.CALIBRATION_GUIDE_TEXTS[self.calibration_stage]
-            color = (0, 255, 255)
-            if self.calibration_stage > 0 and self.calibration_stage < 6:
-                progress_text = f" ({self.current_calibration_stage_frames}/{self.CALIBRATION_STAGE_DURATION})"
-                status_text += progress_text
             cv2.circle(frame, tuple(nose_pos.astype(int)), 8, (0, 165, 255), -1)
 
+        status_text = self.CALIBRATION_GUIDE_TEXTS[self.calibration_stage]
+        color = (0, 255, 255) if not self.calibrated else (0, 255, 0)
+        if self.calibration_stage > 0 and self.calibration_stage < 8 and not self.calibrated:
+            progress_text = f" ({self.current_calibration_stage_frames}/{self.CALIBRATION_STAGE_DURATION})"
+            status_text += progress_text
         cv2.putText(frame, status_text, (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.8, color, 2)
 
         if self.calibrated:
             cv2.putText(frame, f"Pos: {int(nose_pos[0])},{int(nose_pos[1])}", (20, 80),
                        cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 1)
-            cv2.putText(frame, f"Occhi: L={left_ear:.2f} R={right_ear:.2f} (Soglia: {self.BLINK_THRESHOLD:.2f})", (20, 110),
+
+            cv2.putText(frame, f"Occhi: L={left_ear:.2f} R={right_ear:.2f} (Soglia: {self.calibrated_blink_threshold:.2f})", (20, 110),
                        cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 1)
-            cv2.putText(frame, f"Bocca: {mouth_ratio:.2f} (Soglia: {self.MOUTH_THRESHOLD:.2f})", (20, 140),
+            cv2.putText(frame, f"Bocca: {mouth_ratio:.2f} (Soglia: {self.calibrated_mouth_threshold:.2f})", (20, 140),
                        cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 1)
+
             still_status = "FERMO" if self.is_still else "MUOVENDOSI"
             still_color = (0, 255, 0) if self.is_still else (0, 165, 255)
             cv2.putText(frame, f"Stato: {still_status} ({time.time() - self.last_movement_time:.1f}s)", (20, 170), cv2.FONT_HERSHEY_SIMPLEX, 0.6, still_color, 1)
@@ -340,6 +384,7 @@ def main():
     print("="*60)
     print("Controllo del mouse tramite movimenti del capo e gesti facciali.")
     print("Include calibrazione guidata per una precisione ottimale.")
+    print("Ottimizzato per performance e affidabilità.")
     print("="*60)
 
     controller = HeadMouseController()
@@ -348,22 +393,20 @@ def main():
         print("Errore: Impossibile aprire la webcam. Controlla che sia connessa e non in uso.")
         sys.exit(1)
 
-    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
-    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
     cap.set(cv2.CAP_PROP_FPS, 60)
 
     try:
-        current_nose_acceleration = np.array([0.0, 0.0])
-
         while True:
             ret, frame = cap.read()
             if not ret:
-                print("Avviso: Impossibile leggere il frame dalla webcam. Terminazione.")
+                print("Avviso: Impossibile leggere il frame dal flusso della webcam. Terminazione.")
                 break
 
             frame = cv2.flip(frame, 1)
-            rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
+            rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             results = controller.face_mesh.process(rgb_frame)
 
             if results.multi_face_landmarks:
@@ -372,11 +415,13 @@ def main():
                 landmarks_np = np.array([[lm.x * w, lm.y * h] for lm in face_landmarks.landmark], dtype=np.float64)
 
                 nose_pos = landmarks_np[controller.NOSE_TIP]
+                left_ear = controller._get_ear(landmarks_np, controller.LEFT_EYE_POINTS)
+                right_ear = controller._get_ear(landmarks_np, controller.RIGHT_EYE_POINTS)
+                mouth_ratio = controller._get_mar(landmarks_np)
 
                 if not controller.calibrated:
-                    controller.calibrate_movement_range(nose_pos)
-
-                if controller.calibrated:
+                    controller.calibrate_movement_range(nose_pos, left_ear, right_ear, mouth_ratio)
+                else:
                     norm_x = np.interp(nose_pos[0],
                                        [controller.movement_range['min_x'], controller.movement_range['max_x']],
                                        [0, controller.screen_w])
@@ -389,23 +434,17 @@ def main():
                     pyautogui.moveTo(smooth_pos[0], smooth_pos[1])
                     controller.prev_pos = smooth_pos
 
-                left_ear = controller._get_ear(landmarks_np, controller.LEFT_EYE_POINTS)
-                right_ear = controller._get_ear(landmarks_np, controller.RIGHT_EYE_POINTS)
-                mouth_ratio = controller._get_mar(landmarks_np)
-                if controller.calibrated: # Only detect gestures after calibration is complete
                     controller.detect_gestures(nose_pos, left_ear, right_ear, mouth_ratio)
-
-                current_nose_acceleration = controller._calculate_nose_acceleration()
-
-                controller.draw_interface(frame, nose_pos, left_ear, right_ear, mouth_ratio, current_nose_acceleration)
             else:
-                controller.nose_pos_history = []
+                controller.nose_pos_history.clear()
+                controller.eye_history.clear()
+                controller.mouth_history.clear()
                 controller.is_still = False
                 if controller.calibrated:
-                    # If face disappears after calibration, reset filter to screen center
                     controller.pos_filter = controller.screen_center.copy()
                     controller.prev_pos = controller.screen_center.copy()
 
+            controller.draw_interface(frame, nose_pos, left_ear, right_ear, mouth_ratio)
 
             cv2.imshow('Head Mouse Ultimate', frame)
             if cv2.waitKey(1) & 0xFF == 27:
