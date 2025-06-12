@@ -22,9 +22,9 @@ class HeadMouseController:
         self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
         
         # Parametri controllo mouse
-        self.dead_zone = 0.030  # Zona morta ridotta (3% dello schermo)
-        self.max_acceleration = 6.5  # Accelerazione massima
-        self.base_sensitivity = 0.8  # Sensibilità base aumentata
+        self.dead_zone = 0.015  # Zona morta ridotta (1.5% dello schermo)
+        self.max_acceleration = 2.5  # Accelerazione massima
+        self.base_sensitivity = 1.2  # Sensibilità base aumentata
         
         # Posizione centro di riferimento (calibrazione automatica)
         self.center_nose_x = None
@@ -217,20 +217,22 @@ class HeadMouseController:
         pyautogui.moveTo(smooth_x, smooth_y)
 
     def draw_interface(self, image, nose_x, nose_y):
+        """Disegna l'interfaccia con indicatori"""
         h, w = image.shape[:2]
+        
+        # Disegna il centro di calibrazione
         if self.center_nose_x and self.center_nose_y:
             center_pixel_x = int(self.center_nose_x * w)
             center_pixel_y = int(self.center_nose_y * h)
             cv2.circle(image, (center_pixel_x, center_pixel_y), 8, (0, 255, 0), 2)
             cv2.circle(image, (center_pixel_x, center_pixel_y), 3, (0, 255, 0), -1)
-
-            # **Cerchio zona morta**
-            dead_zone_radius = int(self.dead_zone * min(w, h))
-            cv2.circle(image, (center_pixel_x, center_pixel_y), dead_zone_radius, (255, 0, 0), 2)
-
+        
+        # Disegna la posizione attuale del naso
         nose_pixel_x = int(nose_x * w)
         nose_pixel_y = int(nose_y * h)
-        nose_color = (0, 255, 255) if self.is_in_dead_zone else (0, 0, 255)
+        
+        # Colore basato su zona morta
+        nose_color = (0, 255, 255) if self.is_in_dead_zone else (0, 0, 255)  # Giallo se in zona morta, rosso se attivo
         cv2.circle(image, (nose_pixel_x, nose_pixel_y), 6, nose_color, 2)
         
         # Disegna la zona morta
