@@ -1,10 +1,10 @@
 import cv2
 import mediapipe as mp
 import numpy as np
-import pyautogui
 import time
 import sys
-
+from pynput.mouse import Controller as MouseController, Button
+import tkinter as tk  # Aggiunto per ottenere le dimensioni dello schermo
 
 class SimpleEyeMouseController:
     def __init__(self):
@@ -19,10 +19,13 @@ class SimpleEyeMouseController:
             min_tracking_confidence=0.6
         )
 
-        pyautogui.FAILSAFE = False
-        pyautogui.PAUSE = 0.001
-
-        self.screen_w, self.screen_h = pyautogui.size()
+        self.mouse = MouseController()
+        
+        # Ottieni le dimensioni dello schermo
+        root = tk.Tk()
+        self.screen_w = root.winfo_screenwidth()
+        self.screen_h = root.winfo_screenheight()
+        root.destroy()
         
         # Landmark indices
         self.NOSE_TIP = 1
@@ -44,7 +47,7 @@ class SimpleEyeMouseController:
         
         # Current cursor position
         self.current_cursor_pos = np.array([self.screen_w // 2, self.screen_h // 2], dtype=float)
-        pyautogui.moveTo(self.current_cursor_pos[0], self.current_cursor_pos[1])
+        self.mouse.position = tuple(self.current_cursor_pos)
         
         # Sistema di rilevamento ammiccamento SEMPLIFICATO
         self.eye_distance_threshold = 5.0  # Distanza minima in pixel
@@ -144,7 +147,7 @@ class SimpleEyeMouseController:
             current_time - self.last_click_time > self.click_cooldown):
             
             try:
-                pyautogui.click()
+                self.mouse.click(Button.left)
                 self.last_click_time = current_time
                 self.closed_frame_count = 0  # Reset
                 
@@ -194,7 +197,7 @@ class SimpleEyeMouseController:
         self.current_cursor_pos[1] = np.clip(self.current_cursor_pos[1], 0, self.screen_h - 1)
         
         try:
-            pyautogui.moveTo(self.current_cursor_pos[0], self.current_cursor_pos[1])
+            self.mouse.position = tuple(self.current_cursor_pos)
         except Exception as e:
             print(f"Errore movimento mouse: {e}")
 
