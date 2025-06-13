@@ -38,12 +38,12 @@ class OptimizedHeadMouse:
         
         # PARAMETRI PERSONALIZZABILI (come nel progetto originale)
         self.center_position = None
-        self.movement_sensitivity = 2.2
+        self.movement_sensitivity = 1.8 # Sensibilità generale leggermente ridotta
         self.deadzone_radius = 15.0
         
         # Sensitivity separata per direzioni (come nel progetto originale)
-        self.sensitivity_x = 0.8  # Orizzontale
-        self.sensitivity_y = 0.8  # Verticale
+        self.sensitivity_x = 0.7  # Orizzontale leggermente ridotta
+        self.sensitivity_y = 0.7  # Verticale leggermente ridotta
         
         # Sistema di smoothing avanzato per ridurre jitter
         self.position_history = deque(maxlen=9)  # Aumentato per più smoothing
@@ -59,12 +59,12 @@ class OptimizedHeadMouse:
         self.center_calculated = False
         
         # Sistema click
-        self.click_mode = "blink" # Modalità predefinita cambiata a "blink"
+        self.click_mode = "blink" # Modalità predefinita
         self.last_click_time = 0
         self.click_cooldown = 0.6  # Ridotto per responsività
         
         # Blink clicking migliorato per gesture volontarie
-        self.blink_mode_enabled = True # Abilitato di default se "blink" è la modalità principale
+        self.blink_mode_enabled = True # Abilitato di default
         self.blink_threshold = 0.12  # Soglia per blink volontari
         self.blink_duration_required = 0.25  # Durata minima
         self.blink_start_time = None
@@ -79,12 +79,12 @@ class OptimizedHeadMouse:
         # Threading per performance
         self.mouse_lock = threading.Lock()
         
-        self.show_window = show_window
+        self.show_window = show_window # Sarà sempre True nel main ora
         self.paused = False
         
         print("=== HEAD MOUSE CONTROLLER OTTIMIZZATO ===")
         print("Basato sui principi del progetto di riferimento:")
-        print("- Tracking naso per stabilità (aggiornato)") # Aggiornata la descrizione
+        print("- Tracking naso per stabilità")
         print("- Sensitivity personalizzabile per direzione")
         print("- Sistema smoothing anti-jitter")
         print("- Click personalizzabili (blink/gesture)")
@@ -244,7 +244,6 @@ class OptimizedHeadMouse:
         
         # Aggiorna posizione direttamente con il movimento smussato per un feedback più immediato
         with self.mouse_lock:
-            # Applica direttamente il movimento smussato
             self.current_mouse_pos += smoothed_movement 
             
             # Limiti schermo
@@ -297,7 +296,8 @@ class OptimizedHeadMouse:
 
     def draw_interface(self, frame, tracking_point, landmarks=None):
         """Interfaccia migliorata con più informazioni."""
-        if not self.show_window:
+        # show_window è sempre True ora, ma manteniamo il check per coerenza
+        if not self.show_window: 
             return
 
         h, w = frame.shape[:2]
@@ -427,7 +427,7 @@ def main():
     print("HEAD MOUSE CONTROLLER - VERSIONE OTTIMIZZATA")
     print("="*70)
     print("Miglioramenti implementati:")
-    print("✓ Tracking naso per maggiore stabilità (aggiornato)") # Aggiornata la descrizione
+    print("✓ Tracking naso per maggiore stabilità")
     print("✓ Sensitivity personalizzabile per direzione (X/Y)")
     print("✓ Sistema smoothing anti-jitter avanzato")
     print("✓ Click personalizzabili: blink/gesture")
@@ -437,14 +437,8 @@ def main():
     print("✓ Movimento cursore più diretto e reattivo")
     print("="*70)
 
-    # Scelta modalità display
-    while True:
-        choice = input("Mostrare finestra webcam? (s/n): ").lower().strip()
-        if choice in ['s', 'n']:
-            show_window = choice == 's'
-            break
-        print("Inserisci 's' per sì o 'n' per no")
-
+    # La finestra webcam sarà sempre mostrata
+    show_window = True 
     controller = OptimizedHeadMouse(show_window=show_window)
     
     # Setup webcam con ricerca automatica
@@ -516,57 +510,50 @@ def main():
                         controller.detect_voluntary_blink(landmarks_np)
                         controller.detect_eyebrow_gesture(landmarks_np)
 
-                if show_window:
-                    controller.draw_interface(frame, tracking_point_for_drawing, landmarks_np)
+                # La finestra è sempre mostrata
+                controller.draw_interface(frame, tracking_point_for_drawing, landmarks_np)
             else:
-                if show_window:
-                    cv2.putText(frame, "VISO NON RILEVATO", (20, 50), 
-                                cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2)
-                    cv2.putText(frame, "Posizionati davanti alla camera", (20, 90), 
-                                cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
+                # Se il viso non è rilevato, mostra comunque la finestra con un messaggio
+                cv2.putText(frame, "VISO NON RILEVATO", (20, 50), 
+                            cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2)
+                cv2.putText(frame, "Posizionati davanti alla camera", (20, 90), 
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
             
-            if show_window:
-                # FPS counter
-                frame_count += 1
-                if frame_count % 30 == 0:
-                    current_time = time.time()
-                    fps = 30 / (current_time - last_fps_time)
-                    last_fps_time = current_time
-                    cv2.putText(frame, f"FPS: {int(fps)}", (w - 100, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 255), 2)
-                
-                cv2.imshow('Head Mouse Controller - Ottimizzato', frame)
-                
-                key = cv2.waitKey(1) & 0xFF
-                if key == 27:  # ESC
-                    break
-                elif key == ord(' '):  # SPAZIO
-                    controller.toggle_pause()
-                elif key == ord('c') or key == ord('C'):  # C
-                    controller.toggle_click_mode()
-                elif key == ord('+') or key == ord('='):  # +
-                    controller.adjust_sensitivity("both", True)
-                elif key == ord('-'):  # -
-                    controller.adjust_sensitivity("both", False)
-                elif key == ord('x'):  # X
-                    controller.adjust_sensitivity("x", True)
-                elif key == ord('z'):  # Z
-                    controller.adjust_sensitivity("x", False)
-                elif key == ord('y'):  # Y
-                    controller.adjust_sensitivity("y", True)
-                elif key == ord('u'):  # U
-                    controller.adjust_sensitivity("y", False)
-                elif key == ord('r'):  # R
-                    controller.center_calculated = False
-                    controller.center_samples = []
-                    controller.center_position = None
-                    print("🔄 Calibrazione resettata. Riposizionati per calibrare.")
-            else:
-                # Se la finestra non è mostrata, gestisci comunque i click da tastiera per le impostazioni
-                key = cv2.waitKey(1) & 0xFF # Ascolta solo per l'uscita
-                if key == 27:  # ESC
-                    break
-                time.sleep(0.01) # Piccolo ritardo per evitare di consumare troppa CPU se non c'è la finestra
-                
+            # FPS counter
+            frame_count += 1
+            if frame_count % 30 == 0:
+                current_time = time.time()
+                fps = 30 / (current_time - last_fps_time)
+                last_fps_time = current_time
+                cv2.putText(frame, f"FPS: {int(fps)}", (w - 100, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 255), 2)
+            
+            cv2.imshow('Head Mouse Controller - Ottimizzato', frame)
+            
+            key = cv2.waitKey(1) & 0xFF
+            if key == 27:  # ESC
+                break
+            elif key == ord(' '):  # SPAZIO
+                controller.toggle_pause()
+            elif key == ord('c') or key == ord('C'):  # C
+                controller.toggle_click_mode()
+            elif key == ord('+') or key == ord('='):  # +
+                controller.adjust_sensitivity("both", True)
+            elif key == ord('-'):  # -
+                controller.adjust_sensitivity("both", False)
+            elif key == ord('x'):  # X
+                controller.adjust_sensitivity("x", True)
+            elif key == ord('z'):  # Z
+                controller.adjust_sensitivity("x", False)
+            elif key == ord('y'):  # Y
+                controller.adjust_sensitivity("y", True)
+            elif key == ord('u'):  # U
+                controller.adjust_sensitivity("y", False)
+            elif key == ord('r'):  # R
+                controller.center_calculated = False
+                controller.center_samples = []
+                controller.center_position = None
+                print("🔄 Calibrazione resettata. Riposizionati per calibrare.")
+            
 
     except KeyboardInterrupt:
         print("\n⏹️ Interruzione da tastiera")
