@@ -34,7 +34,7 @@ class HeadMouseController:
         
         # Parametri configurabili
         self.center_position = None
-        self.base_sensitivity = 3.0  # Sensibilità base aumentata
+        self.base_sensitivity = 4.0  # Sensibilità base aumentata
         self.deadzone_radius = 15.0  # Area morta iniziale
         self.max_acceleration_distance = 200.0  # Distanza massima per accelerazione aumentata
         
