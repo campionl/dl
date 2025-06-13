@@ -47,7 +47,7 @@ class SimpleNoseMouseController:
         pyautogui.moveTo(self.current_cursor_pos[0], self.current_cursor_pos[1])
         
         # Sistema di rilevamento ammiccamento per click
-        self.eye_closed_threshold = 0.02  # Soglia per rilevare occhio chiuso
+        self.eye_closed_threshold = 0.03  # Soglia per rilevare occhio chiuso
         self.last_click_time = 0
         self.click_cooldown = 0.5  # Tempo minimo tra i click (secondi)
         self.eye_aspect_ratios = []  # Buffer per stabilizzare il rilevamento
