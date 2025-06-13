@@ -51,8 +51,8 @@ class HeadMouseController:
         self.center_calculated = False
         
         # Blink clicking
-        self.blink_threshold = 0.15  # Soglia per blink volontari
-        self.blink_duration_required = 0.25  # Durata minima
+        self.blink_threshold = 0.10  # Soglia per blink volontari
+        self.blink_duration_required = 0.05  # Durata minima
         self.blink_start_time = None
         self.eye_closed = False
         self.ear_history = deque(maxlen=3)
@@ -66,18 +66,18 @@ class HeadMouseController:
         self.paused = False
         
         print("=== HEAD MOUSE CONTROLLER ===")
-        print("Click con occhio destro | Movimento accelerato")
+        print("Click con occhio sinistro | Movimento accelerato")
         print("Punto di riferimento: punta del naso")
 
-    def calculate_eye_aspect_ratio(self, landmarks, eye='right'):
-        """Calcola EAR per un solo occhio (destro di default)."""
+    def calculate_eye_aspect_ratio(self, landmarks, eye='left'):
+        """Calcola EAR per un solo occhio (sinistro di default)."""
         try:
-            if eye == 'right':
-                top = landmarks[self.RIGHT_EYE_TOP]
-                bottom = landmarks[self.RIGHT_EYE_BOTTOM]
-            else:  # left
+            if eye == 'left':
                 top = landmarks[self.LEFT_EYE_TOP]
                 bottom = landmarks[self.LEFT_EYE_BOTTOM]
+            else:  # right
+                top = landmarks[self.RIGHT_EYE_TOP]
+                bottom = landmarks[self.RIGHT_EYE_BOTTOM]
                 
             ear = abs(top[1] - bottom[1]) / 25.0
             return ear
@@ -85,8 +85,8 @@ class HeadMouseController:
             return 0.2  # Valore default sicuro
 
     def detect_blink(self, landmarks):
-        """Rileva blink solo dell'occhio destro per click."""
-        ear = self.calculate_eye_aspect_ratio(landmarks, eye='right')
+        """Rileva blink solo dell'occhio sinistro per click."""
+        ear = self.calculate_eye_aspect_ratio(landmarks, eye='left')
         self.ear_history.append(ear)
         
         # Stabilizza con media mobile
@@ -226,13 +226,13 @@ class HeadMouseController:
                     # Mostra zona accelerazione
                     cv2.circle(frame, center_pt, int(self.max_acceleration_distance), (0, 100, 255), 1)
 
-            # Indicatore occhio destro
+            # Indicatore occhio sinistro
             if landmarks is not None and not self.paused:
-                right_eye_top = landmarks[self.RIGHT_EYE_TOP].astype(int)
-                right_eye_bottom = landmarks[self.RIGHT_EYE_BOTTOM].astype(int)
+                left_eye_top = landmarks[self.LEFT_EYE_TOP].astype(int)
+                left_eye_bottom = landmarks[self.LEFT_EYE_BOTTOM].astype(int)
 
                 eye_color = (0, 0, 255) if self.eye_closed else (0, 255, 0)
-                cv2.line(frame, tuple(right_eye_top), tuple(right_eye_bottom), eye_color, 2)
+                cv2.line(frame, tuple(left_eye_top), tuple(left_eye_bottom), eye_color, 2)
 
             # Status
             status_text = "PAUSATO" if self.paused else "ATTIVO"
@@ -262,7 +262,7 @@ class HeadMouseController:
 
 def main():
     print("=== HEAD MOUSE CONTROLLER ===")
-    print("Click con occhio destro | Punto di riferimento: naso")
+    print("Click con occhio sinistro | Punto di riferimento: naso")
     
     # Scelta modalità display
     while True:
