@@ -47,6 +47,13 @@ class BinocularNoseMouseController:
         self.RIGHT_EYE_LEFT = 133
         self.RIGHT_EYE_RIGHT = 33
         
+        # Landmark per la bocca
+        self.MOUTH_LANDMARKS = [61, 291, 39, 181, 0, 17, 269, 405]
+        self.MOUTH_TOP = 13
+        self.MOUTH_BOTTOM = 14
+        self.MOUTH_LEFT = 61
+        self.MOUTH_RIGHT = 291
+        
         # Sistema di controllo semplificato
         self.center_position = None  # Sarà impostato automaticamente
         self.last_nose_pos = np.array([320.0, 240.0])
@@ -63,7 +70,7 @@ class BinocularNoseMouseController:
         pyautogui.moveTo(self.current_cursor_pos[0], self.current_cursor_pos[1])
         
         # Sistema di rilevamento ammiccamento per entrambi gli occhi
-        self.eye_closed_threshold = 0.25  # Soglia aumentata e più realistica
+        self.eye_closed_threshold = 0.15  # Soglia aumentata e più realistica
         self.last_left_click_time = 0
         self.last_right_click_time = 0
         self.click_cooldown = 0.5  # Tempo minimo tra i click (secondi)
@@ -81,6 +88,77 @@ class BinocularNoseMouseController:
         # EAR di riferimento separati
         self.left_eye_open_ear = None
         self.right_eye_open_ear = None
+        
+        # Controllo abilitazione click con bocca
+        self.clicks_enabled = False
+        self.mouth_open_threshold = 0.5 # Soglia per considerare la bocca aperta
+        self.mouth_ear_buffer = []
+        self.mouth_ear_buffer_size = 20
+        self.mouth_open_ear = None
+
+    def calculate_mouth_aspect_ratio(self, landmarks):
+        """
+        Calcola il Mouth Aspect Ratio per rilevare se la bocca è aperta.
+        """
+        try:
+            # Punti verticali
+            mouth_top = landmarks[self.MOUTH_TOP]
+            mouth_bottom = landmarks[self.MOUTH_BOTTOM]
+            
+            # Punti orizzontali
+            mouth_left = landmarks[self.MOUTH_LEFT]
+            mouth_right = landmarks[self.MOUTH_RIGHT]
+            
+            # Calcola distanze verticali
+            vertical_dist = np.linalg.norm(mouth_top - mouth_bottom)
+            
+            # Calcola distanza orizzontale
+            horizontal_dist = np.linalg.norm(mouth_left - mouth_right)
+            
+            # Evita divisione per zero
+            if horizontal_dist == 0:
+                return 0.0
+                
+            # Calcola MAR
+            mar = vertical_dist / horizontal_dist
+            return mar
+            
+        except Exception as e:
+            print(f"Errore calcolo MAR: {e}")
+            return 0.0
+
+    def detect_mouth_open(self, landmarks):
+        """
+        Rileva se la bocca è aperta e aggiorna lo stato dei click.
+        """
+        try:
+            mar = self.calculate_mouth_aspect_ratio(landmarks)
+            
+            # Aggiungi al buffer per stabilizzare
+            self.mouth_ear_buffer.append(mar)
+            if len(self.mouth_ear_buffer) > self.mouth_ear_buffer_size:
+                self.mouth_ear_buffer.pop(0)
+            
+            # Calcola la media per ridurre il rumore
+            avg_mar = np.mean(self.mouth_ear_buffer)
+            
+            # Imposta MAR di riferimento quando la bocca è chiusa
+            if self.mouth_open_ear is None or avg_mar < self.mouth_open_ear:
+                self.mouth_open_ear = avg_mar
+            
+            # Calcola soglia dinamica basata sul MAR di riferimento
+            if self.mouth_open_ear is not None:
+                dynamic_threshold = self.mouth_open_ear * 1.5  # 150% del MAR normale
+                
+                # Aggiorna lo stato dei click
+                self.clicks_enabled = avg_mar > dynamic_threshold
+                
+                return self.clicks_enabled
+            return False
+            
+        except Exception as e:
+            print(f"Errore rilevamento bocca aperta: {e}")
+            return False
 
     def calculate_eye_aspect_ratio(self, landmarks, eye_type='left'):
         """
@@ -122,6 +200,9 @@ class BinocularNoseMouseController:
         Rileva se l'occhio specificato è chiuso e genera il click appropriato.
         eye_type: 'left' per click destro, 'right' per click sinistro
         """
+        if not self.clicks_enabled:
+            return False
+            
         try:
             # Calcola l'Eye Aspect Ratio
             ear = self.calculate_eye_aspect_ratio(landmarks, eye_type)
@@ -301,23 +382,47 @@ class BinocularNoseMouseController:
                     cv2.circle(frame, tuple(right_eye_top), 3, (255, 0, 255), -1)
                     cv2.circle(frame, tuple(right_eye_bottom), 3, (255, 0, 255), -1)
                     
+                    # Disegna contorno bocca (VERDE se aperta, ROSSO se chiusa)
+                    mouth_color = (0, 255, 0) if self.clicks_enabled else (0, 0, 255)
+                    for idx in self.MOUTH_LANDMARKS:
+                        if idx < len(landmarks):
+                            point = landmarks[idx].astype(int)
+                            cv2.circle(frame, tuple(point), 2, mouth_color, -1)
+                    
+                    # Punti principali per MAR - Bocca
+                    mouth_top = landmarks[self.MOUTH_TOP].astype(int)
+                    mouth_bottom = landmarks[self.MOUTH_BOTTOM].astype(int)
+                    mouth_left = landmarks[self.MOUTH_LEFT].astype(int)
+                    mouth_right = landmarks[self.MOUTH_RIGHT].astype(int)
+                    
+                    cv2.circle(frame, tuple(mouth_top), 3, (0, 255, 255), -1)
+                    cv2.circle(frame, tuple(mouth_bottom), 3, (0, 255, 255), -1)
+                    cv2.circle(frame, tuple(mouth_left), 3, (0, 255, 255), -1)
+                    cv2.circle(frame, tuple(mouth_right), 3, (0, 255, 255), -1)
+                    
                     # Indicatori click - INVERTITO
-                    if left_click_detected:
+                    if left_click_detected and self.clicks_enabled:
                         cv2.circle(frame, tuple(left_eye_top), 20, (0, 255, 0), 3)
                         cv2.putText(frame, "RIGHT CLICK!", tuple(left_eye_top - [0, 30]), 
                                    cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
                     
-                    if right_click_detected:
+                    if right_click_detected and self.clicks_enabled:
                         cv2.circle(frame, tuple(right_eye_top), 20, (0, 255, 0), 3)
                         cv2.putText(frame, "LEFT CLICK!", tuple(right_eye_top - [0, 30]), 
                                    cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
                         
                 except Exception as e:
-                    print(f"Errore disegno occhi: {e}")
+                    print(f"Errore disegno occhi/bocca: {e}")
 
             # Informazioni di stato
             status_color = (0, 255, 0) if (left_click_detected or right_click_detected) else (0, 255, 0)
             cv2.putText(frame, "MOUSE BINOCULARE ATTIVO", (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.7, status_color, 2)
+            
+            # Stato click (abilitato/disabilitato)
+            click_status = "ABILITATI" if self.clicks_enabled else "DISABILITATI"
+            click_status_color = (0, 255, 0) if self.clicks_enabled else (0, 0, 255)
+            cv2.putText(frame, f"Click: {click_status}", (w - 200, 40), 
+                       cv2.FONT_HERSHEY_SIMPLEX, 0.7, click_status_color, 2)
             
             # Debug info
             cv2.putText(frame, f"Naso: {int(nose_pos[0])},{int(nose_pos[1])}", (20, 70),
@@ -348,11 +453,19 @@ class BinocularNoseMouseController:
                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, right_ear_color, 1)
                 cv2.putText(frame, f"R-Blink: {self.right_blink_counter}", (250, 150),
                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
+            
+            # Mostra MAR per la bocca
+            if len(self.mouth_ear_buffer) > 0:
+                avg_mar = np.mean(self.mouth_ear_buffer)
+                threshold = self.mouth_open_ear * 1.5 if self.mouth_open_ear else 0.3
+                mar_color = (0, 255, 0) if self.clicks_enabled else (0, 0, 255)
+                cv2.putText(frame, f"MAR: {avg_mar:.3f} | {threshold:.3f}", (w - 200, 70),
+                           cv2.FONT_HERSHEY_SIMPLEX, 0.5, mar_color, 1)
 
             # Istruzioni aggiornate - INVERTITO
             cv2.putText(frame, "Muovi testa=cursore | Occhio SX=click DX | Occhio DX=click SX", (20, h-60),
                        cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 1)
-            cv2.putText(frame, "ESC per uscire", (20, h-30),
+            cv2.putText(frame, "Apri/chiudi bocca per abilitare/disabilitare i click", (20, h-30),
                        cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 1)
 
 
@@ -360,10 +473,12 @@ def main():
     print("="*60)
     print("CONTROLLORE MOUSE BINOCULARE CON NASO")
     print("="*60)
-    print("NOVITA': Controllo con entrambi gli occhi!")
+    print("NOVITA': Controllo con entrambi gli occhi e bocca!")
     print("- OCCHIO SINISTRO chiuso = CLICK DESTRO")
     print("- OCCHIO DESTRO chiuso = CLICK SINISTRO") 
     print("- Movimento del naso = movimento cursore")
+    print("- Apri la bocca per ABILITARE i click")
+    print("- Chiudi la bocca per DISABILITARE i click")
     print("="*60)
     print("Avvio automatico senza calibrazione manuale.")
     print("Mantieni la testa ferma al centro all'inizio per alcuni secondi.")
@@ -441,16 +556,18 @@ def main():
                     controller.auto_set_center(nose_pos)
                 else:
                     controller.update_cursor_position(nose_pos)
+                    # Rileva stato bocca
+                    controller.detect_mouth_open(landmarks_np)
                     # Rileva ammiccamento per entrambi gli occhi
-                    left_click_detected = controller.detect_eye_blink(landmarks_np, 'left')
-                    right_click_detected = controller.detect_eye_blink(landmarks_np, 'right')
+                    left_click_detected = controller.detect_eye_blink(landmarks_np, 'left') if controller.clicks_enabled else False
+                    right_click_detected = controller.detect_eye_blink(landmarks_np, 'right') if controller.clicks_enabled else False
 
                 controller.draw_interface(frame, controller.last_nose_pos, landmarks_np, 
                                         left_click_detected, right_click_detected)
             else:
                 controller.draw_interface(frame, controller.last_nose_pos)
                 
-            cv2.imshow('Mouse Binoculare - Naso + Occhi SX/DX', frame)
+            cv2.imshow('Mouse Binoculare - Naso + Occhi SX/DX + Bocca', frame)
             
             if cv2.waitKey(1) & 0xFF == 27:  # ESC
                 break
