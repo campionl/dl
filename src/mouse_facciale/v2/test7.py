@@ -8,179 +8,27 @@ from collections import deque
 import threading
 
 
-class HeadMouseController:
-    def __init__(self, show_window=True):
-        # MediaPipe setup
-        self.mp_face_mesh = mp.solutions.face_mesh
-        self.face_mesh = self.mp_face_mesh.FaceMesh(
-            max_num_faces=1,
-            refine_landmarks=True,
-            min_detection_confidence=0.8,
-            min_tracking_confidence=0.8
-        )
-
-        # PyAutoGUI setup
-        pyautogui.FAILSAFE = False
-        pyautogui.PAUSE = 0.001
-
-        self.screen_w, self.screen_h = pyautogui.size()
-        
-        # Landmark indices
-        self.NOSE_TIP = 4  # Punto naso centrale
-        self.LEFT_EYE_TOP = 159
-        self.LEFT_EYE_BOTTOM = 145
-        self.RIGHT_EYE_TOP = 386
-        self.RIGHT_EYE_BOTTOM = 374
+class NoseInputModule:
+    """Modulo per la gestione dell'input del naso e movimento del mouse"""
+    def __init__(self, screen_w, screen_h):
+        self.screen_w = screen_w
+        self.screen_h = screen_h
+        self.current_mouse_pos = np.array([self.screen_w // 2, self.screen_h // 2], dtype=float)
+        self.position_history = deque(maxlen=5)
+        self.mouse_lock = threading.Lock()
         
         # Parametri configurabili
         self.center_position = None
-        self.base_sensitivity = 3.0  # Sensibilità base aumentata
-        self.deadzone_radius = 15.0  # Area morta iniziale
-        self.max_acceleration_distance = 200.0  # Distanza massima per accelerazione aumentata
-        
-        # Sistema di smoothing
-        self.position_history = deque(maxlen=5)
-        
-        # Posizione mouse iniziale
-        self.current_mouse_pos = np.array([self.screen_w // 2, self.screen_h // 2], dtype=float)
-        pyautogui.moveTo(self.current_mouse_pos[0], self.current_mouse_pos[1])
+        self.base_sensitivity = 4.0
+        self.deadzone_radius = 15.0
+        self.max_acceleration_distance = 200.0
         
         # Calibrazione
         self.center_samples = []
         self.max_center_samples = 30
         self.center_calculated = False
         
-        # Blink clicking - parametri comuni
-        self.blink_threshold = 0.10  # Soglia per blink volontari
-        self.blink_duration_required = 0.10  # Durata minima
-        self.click_cooldown = 0.5
-        
-        # Occhio sinistro (click sinistro)
-        self.left_blink_start_time = None
-        self.left_eye_closed = False
-        self.left_ear_history = deque(maxlen=3)
-        self.last_left_click_time = 0
-        
-        # Occhio destro (click destro)
-        self.right_blink_start_time = None
-        self.right_eye_closed = False
-        self.right_ear_history = deque(maxlen=3)
-        self.last_right_click_time = 0
-        
-        # Threading
-        self.mouse_lock = threading.Lock()
-        
-        self.show_window = show_window
-        self.paused = False
-        
-        print("=== HEAD MOUSE CONTROLLER ===")
-        print("Click sinistro: occhio sinistro | Click destro: occhio destro")
-        print("Punto di riferimento: punta del naso")
-
-    def calculate_eye_aspect_ratio(self, landmarks, eye='left'):
-        """Calcola EAR per l'occhio specificato."""
-        try:
-            if eye == 'left':
-                top = landmarks[self.LEFT_EYE_TOP]
-                bottom = landmarks[self.LEFT_EYE_BOTTOM]
-            else:  # right
-                top = landmarks[self.RIGHT_EYE_TOP]
-                bottom = landmarks[self.RIGHT_EYE_BOTTOM]
-                
-            ear = abs(top[1] - bottom[1]) / 25.0
-            return ear
-        except:
-            return 0.2  # Valore default sicuro
-
-    def detect_blinks(self, landmarks):
-        """Rileva blink di entrambi gli occhi separatamente."""
-        # Calcola EAR per entrambi gli occhi
-        left_ear = self.calculate_eye_aspect_ratio(landmarks, eye='left')
-        right_ear = self.calculate_eye_aspect_ratio(landmarks, eye='right')
-        
-        # Aggiungi alla storia
-        self.left_ear_history.append(left_ear)
-        self.right_ear_history.append(right_ear)
-        
-        # Stabilizza con media mobile
-        stable_left_ear = np.mean(list(self.left_ear_history)) if len(self.left_ear_history) >= 2 else left_ear
-        stable_right_ear = np.mean(list(self.right_ear_history)) if len(self.right_ear_history) >= 2 else right_ear
-        
-        current_time = time.time()
-        
-        # Rileva blink occhio sinistro (click sinistro)
-        self.detect_left_blink(stable_left_ear, current_time)
-        
-        # Rileva blink occhio destro (click destro)
-        self.detect_right_blink(stable_right_ear, current_time)
-
-    def detect_left_blink(self, stable_ear, current_time):
-        """Rileva blink dell'occhio sinistro per click sinistro."""
-        # Inizio blink sinistro
-        if stable_ear < self.blink_threshold and not self.left_eye_closed:
-            self.left_eye_closed = True
-            self.left_blink_start_time = current_time
-            return False
-        
-        # Fine blink sinistro - controlla se è volontario
-        elif stable_ear >= self.blink_threshold and self.left_eye_closed:
-            self.left_eye_closed = False
-            
-            if (self.left_blink_start_time is not None and 
-                current_time - self.left_blink_start_time >= self.blink_duration_required and
-                current_time - self.last_left_click_time > self.click_cooldown):
-                
-                self.perform_click(button='left')
-                return True
-        
-        return False
-
-    def detect_right_blink(self, stable_ear, current_time):
-        """Rileva blink dell'occhio destro per click destro."""
-        # Inizio blink destro
-        if stable_ear < self.blink_threshold and not self.right_eye_closed:
-            self.right_eye_closed = True
-            self.right_blink_start_time = current_time
-            return False
-        
-        # Fine blink destro - controlla se è volontario
-        elif stable_ear >= self.blink_threshold and self.right_eye_closed:
-            self.right_eye_closed = False
-            
-            if (self.right_blink_start_time is not None and 
-                current_time - self.right_blink_start_time >= self.blink_duration_required and
-                current_time - self.last_right_click_time > self.click_cooldown):
-                
-                self.perform_click(button='right')
-                return True
-        
-        return False
-
-    def perform_click(self, button='left'):
-        """Esegue click sinistro o destro con gestione errori."""
-        try:
-            with self.mouse_lock:
-                x, y = int(self.current_mouse_pos[0]), int(self.current_mouse_pos[1])
-            
-            if button == 'left':
-                pyautogui.click(x=x, y=y, button='left')
-                print(f"Click SINISTRO: ({x}, {y})")
-                self.last_left_click_time = time.time()
-            else:  # right
-                pyautogui.click(x=x, y=y, button='right')
-                print(f"Click DESTRO: ({x}, {y})")
-                self.last_right_click_time = time.time()
-            
-            return True
-        except Exception as e:
-            print(f"Errore click {button}: {e}")
-            return False
-
-    def toggle_pause(self):
-        """Metodo per mettere in pausa/riprendere il controllo."""
-        self.paused = not self.paused
-        status = "PAUSATO" if self.paused else "ATTIVO"
-        print(f"Stato cambiato: {status}")
+        pyautogui.moveTo(self.current_mouse_pos[0], self.current_mouse_pos[1])
 
     def auto_calibrate_center(self, tracking_point):
         """Calibrazione centro."""
@@ -196,7 +44,7 @@ class HeadMouseController:
 
     def update_mouse_position(self, tracking_point):
         """Aggiorna posizione mouse con accelerazione progressiva."""
-        if self.center_position is None or self.paused:
+        if self.center_position is None:
             return
         
         # Calcola offset e distanza dal centro
@@ -211,11 +59,11 @@ class HeadMouseController:
         effective_distance = distance - self.deadzone_radius
         normalized_distance = min(effective_distance / (self.max_acceleration_distance - self.deadzone_radius), 1.0)
         
-        # Accelerazione non lineare (esponenziale per maggiore controllo)
-        acceleration_factor = 1.0 + (3.0 * normalized_distance ** 2)  # 1x-4x
+        # Accelerazione non lineare
+        acceleration_factor = 1.0 + (3.0 * normalized_distance ** 2)
         
-        # Calcola movimento con accelerazione progressiva
-        direction = offset / distance  # Normalizza
+        # Calcola movimento
+        direction = offset / distance
         movement = direction * self.base_sensitivity * acceleration_factor * effective_distance * 0.1
         
         # Smoothing
@@ -238,6 +86,181 @@ class HeadMouseController:
                 pyautogui.moveTo(int(self.current_mouse_pos[0]), int(self.current_mouse_pos[1]))
             except Exception as e:
                 print(f"Errore movimento: {e}")
+    
+    def reset_calibration(self):
+        """Resetta la calibrazione"""
+        self.center_calculated = False
+        self.center_samples = []
+        self.center_position = None
+        print("Calibrazione resettata")
+    
+    def adjust_sensitivity(self, amount):
+        """Modifica la sensibilità"""
+        self.base_sensitivity = np.clip(self.base_sensitivity + amount, 0.5, 5.0)
+        print(f"Sensibilità aggiornata: {self.base_sensitivity:.1f}")
+
+
+class EyeInputModule:
+    """Modulo per la gestione dell'input degli occhi e rilevamento click"""
+    def __init__(self, left_indices=(159, 145), right_indices=(386, 374)):
+        # Landmark indices
+        self.LEFT_EYE_TOP = left_indices[0]
+        self.LEFT_EYE_BOTTOM = left_indices[1]
+        self.RIGHT_EYE_TOP = right_indices[0]
+        self.RIGHT_EYE_BOTTOM = right_indices[1]
+        
+        # Parametri blink
+        self.blink_threshold = 0.10
+        self.blink_duration_required = 0.10
+        self.click_cooldown = 0.5
+        
+        # Stato occhi
+        self.left_blink_start_time = None
+        self.left_eye_closed = False
+        self.left_ear_history = deque(maxlen=3)
+        self.last_left_click_time = 0
+        
+        self.right_blink_start_time = None
+        self.right_eye_closed = False
+        self.right_ear_history = deque(maxlen=3)
+        self.last_right_click_time = 0
+        
+        self.mouse_lock = threading.Lock()
+
+    def calculate_eye_aspect_ratio(self, landmarks, eye='left'):
+        """Calcola EAR per l'occhio specificato."""
+        try:
+            if eye == 'left':
+                top = landmarks[self.LEFT_EYE_TOP]
+                bottom = landmarks[self.LEFT_EYE_BOTTOM]
+            else:  # right
+                top = landmarks[self.RIGHT_EYE_TOP]
+                bottom = landmarks[self.RIGHT_EYE_BOTTOM]
+                
+            ear = abs(top[1] - bottom[1]) / 25.0
+            return ear
+        except:
+            return 0.2  # Valore default sicuro
+
+    def detect_blinks(self, landmarks, current_mouse_pos):
+        """Rileva blink di entrambi gli occhi separatamente."""
+        # Calcola EAR per entrambi gli occhi
+        left_ear = self.calculate_eye_aspect_ratio(landmarks, eye='left')
+        right_ear = self.calculate_eye_aspect_ratio(landmarks, eye='right')
+        
+        # Aggiungi alla storia
+        self.left_ear_history.append(left_ear)
+        self.right_ear_history.append(right_ear)
+        
+        # Stabilizza con media mobile
+        stable_left_ear = np.mean(list(self.left_ear_history)) if self.left_ear_history else left_ear
+        stable_right_ear = np.mean(list(self.right_ear_history)) if self.right_ear_history else right_ear
+        
+        current_time = time.time()
+        
+        # Rileva blink occhio sinistro (click sinistro)
+        if self.detect_left_blink(stable_left_ear, current_time):
+            self.perform_click(current_mouse_pos, button='left')
+        
+        # Rileva blink occhio destro (click destro)
+        if self.detect_right_blink(stable_right_ear, current_time):
+            self.perform_click(current_mouse_pos, button='right')
+
+    def detect_left_blink(self, stable_ear, current_time):
+        """Rileva blink dell'occhio sinistro per click sinistro."""
+        # Inizio blink sinistro
+        if stable_ear < self.blink_threshold and not self.left_eye_closed:
+            self.left_eye_closed = True
+            self.left_blink_start_time = current_time
+            return False
+        
+        # Fine blink sinistro
+        elif stable_ear >= self.blink_threshold and self.left_eye_closed:
+            self.left_eye_closed = False
+            
+            if (self.left_blink_start_time is not None and 
+                current_time - self.left_blink_start_time >= self.blink_duration_required and
+                current_time - self.last_left_click_time > self.click_cooldown):
+                return True
+        
+        return False
+
+    def detect_right_blink(self, stable_ear, current_time):
+        """Rileva blink dell'occhio destro per click destro."""
+        # Inizio blink destro
+        if stable_ear < self.blink_threshold and not self.right_eye_closed:
+            self.right_eye_closed = True
+            self.right_blink_start_time = current_time
+            return False
+        
+        # Fine blink destro
+        elif stable_ear >= self.blink_threshold and self.right_eye_closed:
+            self.right_eye_closed = False
+            
+            if (self.right_blink_start_time is not None and 
+                current_time - self.right_blink_start_time >= self.blink_duration_required and
+                current_time - self.last_right_click_time > self.click_cooldown):
+                return True
+        
+        return False
+
+    def perform_click(self, current_mouse_pos, button='left'):
+        """Esegue click sinistro o destro con gestione errori."""
+        try:
+            with self.mouse_lock:
+                x, y = int(current_mouse_pos[0]), int(current_mouse_pos[1])
+            
+            if button == 'left':
+                pyautogui.click(x=x, y=y, button='left')
+                print(f"Click SINISTRO: ({x}, {y})")
+                self.last_left_click_time = time.time()
+            else:  # right
+                pyautogui.click(x=x, y=y, button='right')
+                print(f"Click DESTRO: ({x}, {y})")
+                self.last_right_click_time = time.time()
+            
+            return True
+        except Exception as e:
+            print(f"Errore click {button}: {e}")
+            return False
+
+
+class HeadMouseController:
+    def __init__(self, show_window=True):
+        # MediaPipe setup
+        self.mp_face_mesh = mp.solutions.face_mesh
+        self.face_mesh = self.mp_face_mesh.FaceMesh(
+            max_num_faces=1,
+            refine_landmarks=True,
+            min_detection_confidence=0.8,
+            min_tracking_confidence=0.8
+        )
+
+        # PyAutoGUI setup
+        pyautogui.FAILSAFE = False
+        pyautogui.PAUSE = 0.001
+        self.screen_w, self.screen_h = pyautogui.size()
+        
+        # Landmark indices
+        self.NOSE_TIP = 4
+        
+        # Moduli separati
+        self.nose_module = NoseInputModule(self.screen_w, self.screen_h)
+        self.eye_module = EyeInputModule()
+        
+        # Stato applicazione
+        self.show_window = show_window
+        self.paused = False
+        
+        print("=== HEAD MOUSE CONTROLLER ===")
+        print("Click sinistro: occhio sinistro | Click destro: occhio destro")
+        print("Punto di riferimento: punta del naso")
+
+    def toggle_pause(self):
+        """Metodo per mettere in pausa/riprendere il controllo."""
+        self.paused = not self.paused
+        status = "PAUSATO" if self.paused else "ATTIVO"
+        print(f"Stato cambiato: {status}")
 
     def draw_interface(self, frame, tracking_point, landmarks=None):
         """Disegna interfaccia utente."""
@@ -246,11 +269,11 @@ class HeadMouseController:
 
         h, w = frame.shape[:2]
 
-        if not self.center_calculated:
+        if not self.nose_module.center_calculated:
             # Fase calibrazione
             cv2.circle(frame, tuple(tracking_point.astype(int)), 15, (0, 165, 255), 3)
-            progress = len(self.center_samples)
-            percentage = int((progress / self.max_center_samples) * 100)
+            progress = len(self.nose_module.center_samples)
+            percentage = int((progress / self.nose_module.max_center_samples) * 100)
             
             cv2.putText(frame, f"CALIBRAZIONE: {percentage}%", 
                        (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 165, 255), 2)
@@ -262,24 +285,24 @@ class HeadMouseController:
             cv2.circle(frame, tuple(tracking_point.astype(int)), 8, color, -1)
             
             # Centro e deadzone
-            if self.center_position is not None:
-                center_pt = tuple(self.center_position.astype(int))
-                cv2.circle(frame, center_pt, int(self.deadzone_radius), (255, 255, 0), 2)
+            if self.nose_module.center_position is not None:
+                center_pt = tuple(self.nose_module.center_position.astype(int))
+                cv2.circle(frame, center_pt, int(self.nose_module.deadzone_radius), (255, 255, 0), 2)
                 
                 # Freccia movimento
-                distance = np.linalg.norm(tracking_point - self.center_position)
-                if distance > self.deadzone_radius and not self.paused:
+                distance = np.linalg.norm(tracking_point - self.nose_module.center_position)
+                if distance > self.nose_module.deadzone_radius and not self.paused:
                     cv2.arrowedLine(frame, center_pt, tuple(tracking_point.astype(int)), (0, 255, 255), 3)
                     
                     # Mostra zona accelerazione
-                    cv2.circle(frame, center_pt, int(self.max_acceleration_distance), (0, 100, 255), 1)
+                    cv2.circle(frame, center_pt, int(self.nose_module.max_acceleration_distance), (0, 100, 255), 1)
 
             # Indicatori occhi
             if landmarks is not None and not self.paused:
                 # Occhio sinistro (click sinistro)
-                left_eye_top = landmarks[self.LEFT_EYE_TOP].astype(int)
-                left_eye_bottom = landmarks[self.LEFT_EYE_BOTTOM].astype(int)
-                left_eye_color = (0, 0, 255) if self.left_eye_closed else (0, 255, 0)
+                left_eye_top = landmarks[self.eye_module.LEFT_EYE_TOP].astype(int)
+                left_eye_bottom = landmarks[self.eye_module.LEFT_EYE_BOTTOM].astype(int)
+                left_eye_color = (0, 0, 255) if self.eye_module.left_eye_closed else (0, 255, 0)
                 cv2.line(frame, tuple(left_eye_top), tuple(left_eye_bottom), left_eye_color, 3)
                 
                 # Etichetta occhio sinistro
@@ -287,9 +310,9 @@ class HeadMouseController:
                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, left_eye_color, 2)
                 
                 # Occhio destro (click destro)
-                right_eye_top = landmarks[self.RIGHT_EYE_TOP].astype(int)
-                right_eye_bottom = landmarks[self.RIGHT_EYE_BOTTOM].astype(int)
-                right_eye_color = (255, 0, 0) if self.right_eye_closed else (0, 255, 0)
+                right_eye_top = landmarks[self.eye_module.RIGHT_EYE_TOP].astype(int)
+                right_eye_bottom = landmarks[self.eye_module.RIGHT_EYE_BOTTOM].astype(int)
+                right_eye_color = (255, 0, 0) if self.eye_module.right_eye_closed else (0, 255, 0)
                 cv2.line(frame, tuple(right_eye_top), tuple(right_eye_bottom), right_eye_color, 3)
                 
                 # Etichetta occhio destro
@@ -302,7 +325,7 @@ class HeadMouseController:
             cv2.putText(frame, status_text, (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.8, status_color, 2)
             
             # Info sensibilità
-            cv2.putText(frame, f"Sensibilita: {self.base_sensitivity:.1f}", 
+            cv2.putText(frame, f"Sensibilita: {self.nose_module.base_sensitivity:.1f}", 
                        (20, 80), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
 
         # Controlli aggiornati
@@ -321,7 +344,7 @@ class HeadMouseController:
             if i == 0:
                 color, weight = (255, 255, 0), 2
             elif i <= 2:
-                color, weight = (0, 255, 255), 1  # Evidenzia info click
+                color, weight = (0, 255, 255), 1
             else:
                 color, weight = (255, 255, 255), 1
                 
@@ -377,11 +400,14 @@ def main():
 
                 tracking_point = landmarks_np[controller.NOSE_TIP]
                 
-                if not controller.center_calculated:
-                    controller.auto_calibrate_center(tracking_point)
-                else:
-                    controller.update_mouse_position(tracking_point)
-                    controller.detect_blinks(landmarks_np)
+                if not controller.nose_module.center_calculated:
+                    controller.nose_module.auto_calibrate_center(tracking_point)
+                elif not controller.paused:
+                    controller.nose_module.update_mouse_position(tracking_point)
+                    controller.eye_module.detect_blinks(
+                        landmarks_np,
+                        controller.nose_module.current_mouse_pos
+                    )
 
                 if controller.show_window:
                     controller.draw_interface(frame, tracking_point, landmarks_np)
@@ -399,16 +425,11 @@ def main():
                 elif key == ord(' '):  # SPAZIO
                     controller.toggle_pause()
                 elif key == ord('+'):  # +
-                    controller.base_sensitivity = min(5.0, controller.base_sensitivity + 0.2)
-                    print(f"Sensibilità aumentata a: {controller.base_sensitivity:.1f}")
+                    controller.nose_module.adjust_sensitivity(0.2)
                 elif key == ord('-'):  # -
-                    controller.base_sensitivity = max(0.5, controller.base_sensitivity - 0.2)
-                    print(f"Sensibilità diminuita a: {controller.base_sensitivity:.1f}")
+                    controller.nose_module.adjust_sensitivity(-0.2)
                 elif key == ord('r'):  # R
-                    controller.center_calculated = False
-                    controller.center_samples = []
-                    controller.center_position = None
-                    print("Calibrazione resettata")
+                    controller.nose_module.reset_calibration()
             else:
                 key = cv2.waitKey(1) & 0xFF
                 if key == 27:  # ESC
