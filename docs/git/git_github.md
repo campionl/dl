@@ -564,7 +564,7 @@ Ovviamente quando saremo arrivati al giorno del rilascio dovremo unire il branch
   `git checkout main`
   `git merge release/0.1.0`
 
-### Se ho fatto un breve errore è voglio correggerlo rapidamente?  
+### Se ho fatto un breve errore e voglio correggerlo rapidamente?  
 
 Ci sono ovviamente casi in qui il software potrebbe riscontrare degli errori, per sistemare tali errori abbiamo a disposizione il branch `hotfix`.  
 - `hotfix` serve per manutenzioni rapide, ha differenza di `release` e `feature` questo viene creato sotto il `main` o `master`.
