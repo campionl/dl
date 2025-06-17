@@ -1,4 +1,4 @@
-# Relazione su Xiaomi MiMo-7B
+# Xiaomi MiMo-7B
 
 ## Cos'è MiMo-7B?
 
