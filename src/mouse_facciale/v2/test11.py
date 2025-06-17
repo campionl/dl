@@ -202,21 +202,30 @@ class SwitchMode_action(BaseAction):
     def __init__(self):
         self.last_switch_time = 0
         self.switch_cooldown = 1.0  # 1 secondo di cooldown
+        self.cursor_position_locked = None  # Posizione bloccata in modalità scrolling
     
-    def switch_mode(self, current_mode):
-        """Cambia la modalità"""
+    def switch_mode(self, current_mode, mouse_position):
+        """Cambia la modalità e gestisce il blocco del cursore"""
         current_time = time.time()
         if current_time - self.last_switch_time < self.switch_cooldown:
             return current_mode
         
         new_mode = 'scroll' if current_mode == 'pointer' else 'pointer'
         print(f"Modalità cambiata: {new_mode}")
+        
+        # Gestione blocco/sblocco cursore
+        if new_mode == 'scroll':
+            self.cursor_position_locked = mouse_position.copy()
+            print(f"Cursore bloccato in posizione: {self.cursor_position_locked}")
+        else:
+            self.cursor_position_locked = None
+        
         self.last_switch_time = current_time
         return new_mode
     
-    def execute(self, current_mode):
+    def execute(self, current_mode, mouse_position):
         """Implementazione del metodo base per eseguire l'azione"""
-        return self.switch_mode(current_mode)
+        return self.switch_mode(current_mode, mouse_position)
 
 
 class MouseCursor_action(BaseAction):
@@ -275,11 +284,14 @@ class MouseCursor_action(BaseAction):
             import ctypes
             ctypes.windll.user32.SetCursorPos(int(new_position[0]), int(new_position[1]))
 
-    def enforce_position(self):
-        """Mantiene forzatamente la posizione corrente"""
+    def enforce_position(self, locked_position=None):
+        """Mantiene forzatamente la posizione corrente o una posizione bloccata"""
         with self.mouse_lock:
             try:
-                pyautogui.moveTo(int(self.current_mouse_pos[0]), int(self.current_mouse_pos[1]))
+                if locked_position is not None:
+                    pyautogui.moveTo(int(locked_position[0]), int(locked_position[1]))
+                else:
+                    pyautogui.moveTo(int(self.current_mouse_pos[0]), int(self.current_mouse_pos[1]))
             except Exception as e:
                 print(f"Errore enforcement posizione: {e}")
 
@@ -559,7 +571,6 @@ class HeadMouseController:
         self.show_window = show_window
         self.paused = False
         self.current_mode = 'pointer'  # 'pointer' o 'scroll'
-        self.last_mouse_pos_before_scroll = None
 
     def add_event_action_mapping(self, event, action, event_args_mapper, action_args_mapper):
         """Aggiunge una mappatura evento-azione"""
@@ -616,18 +627,17 @@ class HeadMouseController:
         # Gestione cambio modalità
         if self.open_mouth_event.check_event(landmarks):
             old_mode = self.current_mode
-            new_mode = self.switch_mode_action.execute(self.current_mode)
-            if new_mode != old_mode:
-                # Solo se c'è un effettivo cambio
-                self.current_mode = new_mode
-                if self.current_mode == 'scroll':
-                    # Passa a modalità scroll: salva la posizione corrente
-                    print("Passaggio a modalità SCROLL")
-                    self.last_mouse_pos_before_scroll = current_mouse_pos.copy()
-                elif self.current_mode == 'pointer':
-                    # Torna a modalità pointer: ripristina la posizione
-                    print("Passaggio a modalità POINTER")
-                    self.mouse_cursor.current_mouse_pos = self.last_mouse_pos_before_scroll.copy()
+            self.current_mode = self.switch_mode_action.execute(self.current_mode, current_mouse_pos)
+            
+            if self.current_mode == 'pointer' and old_mode == 'scroll':
+                # Ripristina la posizione del cursore
+                if self.switch_mode_action.cursor_position_locked is not None:
+                    self.mouse_cursor.set_position(self.switch_mode_action.cursor_position_locked)
+                    self.switch_mode_action.cursor_position_locked = None
+
+        # Mantieni il cursore bloccato in modalità scrolling
+        if self.current_mode == 'scroll' and self.switch_mode_action.cursor_position_locked is not None:
+            self.mouse_cursor.enforce_position(self.switch_mode_action.cursor_position_locked)
 
         # Processa eventi specifici per modalità
         if self.current_mode == 'pointer':
@@ -710,9 +720,14 @@ class HeadMouseController:
             status_color = (0, 0, 255) if self.paused else (0, 255, 0)
             cv2.putText(frame, status_text, (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.8, status_color, 2)
             
+            # Modalità corrente
+            mode_text = "POINTING" if self.current_mode == 'pointer' else "SCROLLING"
+            mode_color = (0, 255, 255) if self.current_mode == 'pointer' else (255, 255, 0)
+            cv2.putText(frame, f"Modalità: {mode_text}", (20, 80), cv2.FONT_HERSHEY_SIMPLEX, 0.5, mode_color, 1)
+            
             # Info sensibilità
             cv2.putText(frame, f"Sensibilita: {self.mouse_cursor.base_sensitivity:.1f}", 
-                       (20, 80), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
+                       (20, 110), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
 
         # Controlli
         controls = [
@@ -721,6 +736,7 @@ class HeadMouseController:
             "+/- = Modifica sensibilità",
             "R = Reset calibrazione",
             "ESC = Esci",
+            "Apertura bocca = Cambia modalità",
             "Auto-ricalibrazioni dopo 5s sul bordo"
         ]
         
