@@ -1,7 +1,7 @@
 import cv2
 import mediapipe as mp
 import numpy as np
-import pyautogui
+import pynput.mouse as mouse  # Changed pyautogui to pynput.mouse
 import time
 import sys
 from collections import deque
@@ -146,17 +146,33 @@ class OpenMouth_event(BaseEvent):
         self.mouth_open = False
         self.event_detected = False
         self.mouth_history = deque(maxlen=3)
+        self.neutral_mouth_y = None # Used for potential vertical scrolling
     
     def calculate_mouth_openness(self, landmarks):
         """Calcola l'apertura della bocca"""
         try:
             upper_lip = landmarks[self.UPPER_LIP]
             lower_lip = landmarks[self.LOWER_LIP]
-            openness = abs(upper_lip[1] - lower_lip[1]) / 25.0
+            openness = abs(upper_lip[1] - lower_lip[1]) / 25.0 # Normalized by an approximate face size
             return openness
         except:
             return 0.0
-    
+            
+    def get_vertical_offset(self, landmarks):
+        """Calcola l'offset verticale del centro della bocca rispetto a una posizione neutra"""
+        try:
+            upper_lip_y = landmarks[self.UPPER_LIP][1]
+            lower_lip_y = landmarks[self.LOWER_LIP][1]
+            current_mouth_center_y = (upper_lip_y + lower_lip_y) / 2
+            
+            if self.neutral_mouth_y is None:
+                self.neutral_mouth_y = current_mouth_center_y # Calibrate neutral position
+                return 0.0
+            
+            return current_mouth_center_y - self.neutral_mouth_y
+        except:
+            return 0.0
+
     def detect_open_mouth(self, landmarks):
         """Rileva apertura bocca solo se mantenuta per il tempo richiesto"""
         openness = self.calculate_mouth_openness(landmarks)
@@ -185,6 +201,7 @@ class OpenMouth_event(BaseEvent):
                 self.mouth_open = False
                 self.open_start_time = None
                 self.event_detected = False  # Reset per permettere nuovo rilevamento
+                self.neutral_mouth_y = None # Reset neutral position on close
         
         return False
     
@@ -228,35 +245,31 @@ class MouseCursor_action(BaseAction):
         self.position_history = deque(maxlen=5) # Usato per lo smoothing del movimento
         self.mouse_lock = threading.Lock() # Lock per thread safety
         self.base_sensitivity = 4.0
-        pyautogui.moveTo(self.current_mouse_pos[0], self.current_mouse_pos[1])
+        
+        self.mouse_controller = mouse.Controller() # Initialize pynput controller
+        self.mouse_controller.position = (self.current_mouse_pos[0], self.current_mouse_pos[1])
 
     def update_position(self, direction, acceleration_factor, effective_distance):
         """Aggiorna la posizione del cursore"""
         if direction is None:
             return
 
-        # Calcola movimento
-        movement = direction * self.base_sensitivity * acceleration_factor * effective_distance * 0.1
+        # Calcola movimento relativo
+        movement_x = direction[0] * self.base_sensitivity * acceleration_factor * effective_distance * 0.1
+        movement_y = direction[1] * self.base_sensitivity * acceleration_factor * effective_distance * 0.1
 
         # Smoothing
-        self.position_history.append(movement)
+        self.position_history.append(np.array([movement_x, movement_y]))
 
         if len(self.position_history) > 1:
             smoothed_movement = np.mean(self.position_history, axis=0)
         else:
-            smoothed_movement = movement
+            smoothed_movement = np.array([movement_x, movement_y])
 
-        # Aggiorna posizione
+        # Applica movimento relativo con pynput
         with self.mouse_lock:
-            self.current_mouse_pos += smoothed_movement
-
-            # Limiti schermo
-            self.current_mouse_pos[0] = np.clip(self.current_mouse_pos[0], 0, self.screen_w - 1)
-            self.current_mouse_pos[1] = np.clip(self.current_mouse_pos[1], 0, self.screen_h - 1)
-
-            # Muovi il mouse
             try:
-                pyautogui.moveTo(int(self.current_mouse_pos[0]), int(self.current_mouse_pos[1]))
+                self.mouse_controller.move(int(smoothed_movement[0]), int(smoothed_movement[1]))
             except Exception as e:
                 print(f"Errore movimento: {e}")
 
@@ -264,22 +277,23 @@ class MouseCursor_action(BaseAction):
         """Blocca la posizione corrente del cursore"""
         with self.mouse_lock:
             # Sincronizza la posizione interna con quella reale del sistema
-            system_pos = pyautogui.position()
-            self.current_mouse_pos = np.array([system_pos.x, system_pos.y], dtype=float)
+            system_pos = self.mouse_controller.position
+            self.current_mouse_pos = np.array([system_pos[0], system_pos[1]], dtype=float)
 
     def set_position(self, new_position):
         """Imposta direttamente una nuova posizione"""
         with self.mouse_lock:
             self.current_mouse_pos = new_position.copy()
-            # Use ctypes to set the cursor position
-            import ctypes
-            ctypes.windll.user32.SetCursorPos(int(new_position[0]), int(new_position[1]))
+            try:
+                self.mouse_controller.position = (int(new_position[0]), int(new_position[1]))
+            except Exception as e:
+                print(f"Errore set posizione: {e}")
 
     def enforce_position(self):
         """Mantiene forzatamente la posizione corrente"""
         with self.mouse_lock:
             try:
-                pyautogui.moveTo(int(self.current_mouse_pos[0]), int(self.current_mouse_pos[1]))
+                self.mouse_controller.position = (int(self.current_mouse_pos[0]), int(self.current_mouse_pos[1]))
             except Exception as e:
                 print(f"Errore enforcement posizione: {e}")
 
@@ -291,6 +305,9 @@ class MouseCursor_action(BaseAction):
     def get_current_position(self):
         """Restituisce la posizione attuale del cursore"""
         with self.mouse_lock:
+            # Ottiene la posizione in tempo reale dal controller di pynput
+            system_pos = self.mouse_controller.position
+            self.current_mouse_pos = np.array([system_pos[0], system_pos[1]], dtype=float)
             return self.current_mouse_pos.copy()
 
     def execute(self, direction, acceleration_factor, effective_distance):
@@ -306,6 +323,7 @@ class Scroll_action(BaseAction):
         self.scroll_lock = threading.Lock()
         self.scroll_sensitivity = 2.0
         self.scroll_history = deque(maxlen=3)
+        self.mouse_controller = mouse.Controller() # Initialize pynput controller
     
     def perform_scroll(self, direction, effective_distance):
         """Esegue lo scrolling"""
@@ -316,14 +334,14 @@ class Scroll_action(BaseAction):
         try:
             with self.scroll_lock:
                 # Calcola l'ammontare dello scroll con smoothing
+                # direction[1] per scroll verticale (Y-axis)
                 scroll_amount = -direction[1] * effective_distance * 0.1 * self.scroll_sensitivity
                 self.scroll_history.append(scroll_amount)
                 smoothed_scroll = np.mean(self.scroll_history) if self.scroll_history else scroll_amount
                 
-                # Scrolling verticale con controllo più preciso
                 scroll_value = int(smoothed_scroll)
                 if abs(scroll_value) > 0:  # Solo se c'è movimento significativo
-                    pyautogui.scroll(scroll_value)
+                    self.mouse_controller.scroll(0, scroll_value) # x, y for scroll
                     self.last_scroll_time = current_time
                     return True
         except Exception as e:
@@ -379,7 +397,7 @@ class LeftEye_event(BaseEvent):
                 self.blink_start_time = current_time
             elif (self.eye_closed and 
                   not self.blink_detected and 
-                  self.open_start_time is not None and 
+                  self.blink_start_time is not None and 
                   current_time - self.blink_start_time >= self.blink_duration_required):
                 # Occhio chiuso abbastanza a lungo - registra il blink
                 self.blink_detected = True
@@ -408,6 +426,7 @@ class LeftClick_action(BaseAction):
         self.click_cooldown = click_cooldown
         self.last_click_time = 0
         self.mouse_lock = threading.Lock()
+        self.mouse_controller = mouse.Controller() # Initialize pynput controller
     
     def perform_click(self, mouse_position):
         """Esegue click sinistro"""
@@ -417,10 +436,9 @@ class LeftClick_action(BaseAction):
         
         try:
             with self.mouse_lock:
-                x, y = int(mouse_position[0]), int(mouse_position[1])
-            
-            pyautogui.click(x=x, y=y, button='left')
-            print(f"Click SINISTRO: ({x}, {y})")
+                # pynput performs click at the current system cursor position
+                self.mouse_controller.click(mouse.Button.left)
+            print(f"Click SINISTRO")
             self.last_click_time = current_time
             return True
         except Exception as e:
@@ -500,6 +518,7 @@ class RightClick_action(BaseAction):
         self.click_cooldown = click_cooldown
         self.last_click_time = 0
         self.mouse_lock = threading.Lock()
+        self.mouse_controller = mouse.Controller() # Initialize pynput controller
     
     def perform_click(self, mouse_position):
         """Esegue click destro"""
@@ -509,10 +528,8 @@ class RightClick_action(BaseAction):
         
         try:
             with self.mouse_lock:
-                x, y = int(mouse_position[0]), int(mouse_position[1])
-            
-            pyautogui.click(x=x, y=y, button='right')
-            print(f"Click DESTRO: ({x}, {y})")
+                self.mouse_controller.click(mouse.Button.right)
+            print(f"Click DESTRO")
             self.last_click_time = current_time
             return True
         except Exception as e:
@@ -524,7 +541,7 @@ class RightClick_action(BaseAction):
         return self.perform_click(mouse_position)
 
 class HeadMouseController:
-    def __init__(self, show_window=True, auto_recalibrate=True):
+    def __init__(self, show_window=True, user_config=None):
         # MediaPipe setup
         self.mp_face_mesh = mp.solutions.face_mesh
         self.face_mesh = self.mp_face_mesh.FaceMesh(
@@ -534,11 +551,12 @@ class HeadMouseController:
             min_tracking_confidence=0.8
         )
 
-        # PyAutoGUI setup
-        pyautogui.FAILSAFE = False
-        pyautogui.PAUSE = 0.001
-        self.screen_w, self.screen_h = pyautogui.size()
-        
+        # PyAutoGUI size for screen dimensions
+        # Note: pyautogui.size() is used only to get screen dimensions, pynput handles control
+        import pyautogui 
+        self.screen_w, self.screen_h = pyautogui.size() 
+        del pyautogui # remove pyautogui after getting screen size
+
         # Landmark indices
         self.NOSE_TIP = 4
         self.UPPER_LIP = 13
@@ -551,20 +569,24 @@ class HeadMouseController:
         self.scroll_action = Scroll_action()
         self.open_mouth_event = OpenMouth_event(self.UPPER_LIP, self.LOWER_LIP)
         self.switch_mode_action = SwitchMode_action()
-        self.left_eye_event = LeftEye_event()  # Initialize here
-        self.right_eye_event = RightEye_event()  # Initialize here
-        self.left_click_action = LeftClick_action() # Initialize here
-        self.right_click_action = RightClick_action() # Initialize here
+        self.left_eye_event = LeftEye_event()
+        self.right_eye_event = RightEye_event()
+        self.left_click_action = LeftClick_action()
+        self.right_click_action = RightClick_action()
         
+        # User configuration
+        self.user_config = user_config if user_config else {}
+        self.scroll_direction_source = self.user_config.get('scroll_direction', 'nose up/down')
+
         # Dizionario per le associazioni evento-azione
         self.event_action_mappings = []
+        self.setup_event_action_mappings() # Setup mappings based on user config
         
         # Stato applicazione
         self.show_window = show_window
         self.paused = False
         self.current_mode = 'pointer'  # 'pointer' o 'scroll'
         self.last_mouse_pos_before_scroll = None
-        self.auto_recalibrate = auto_recalibrate # New: auto recalibration setting
 
     def add_event_action_mapping(self, event, action, event_args_mapper, action_args_mapper):
         """Aggiunge una mappatura evento-azione"""
@@ -574,6 +596,52 @@ class HeadMouseController:
             'event_args_mapper': event_args_mapper,
             'action_args_mapper': action_args_mapper
         })
+
+    def setup_event_action_mappings(self):
+        """Configura le mappature evento-azione in base alla configurazione utente"""
+        self.event_action_mappings = [] # Reset existing mappings
+
+        # Always add nose joystick mapping for cursor movement
+        self.add_event_action_mapping(
+            event=self.nose_joystick,
+            action=self.mouse_cursor,
+            event_args_mapper=lambda tp, lm, mp: (tp, self.calibration.center_position),
+            action_args_mapper=lambda tp, lm, mp: self.nose_joystick.get_movement_vector(tp, self.calibration.center_position)
+        )
+
+        # Left Click mapping
+        if self.user_config.get('left_click') == 'right eye':
+            self.add_event_action_mapping(self.right_eye_event, self.left_click_action, 
+                                          lambda tp, lm, mp: (lm,), lambda tp, lm, mp: (mp,))
+        elif self.user_config.get('left_click') == 'left eye':
+            self.add_event_action_mapping(self.left_eye_event, self.left_click_action, 
+                                          lambda tp, lm, mp: (lm,), lambda tp, lm, mp: (mp,))
+        elif self.user_config.get('left_click') == 'mouth open':
+            self.add_event_action_mapping(self.open_mouth_event, self.left_click_action, 
+                                          lambda tp, lm, mp: (lm,), lambda tp, lm, mp: (mp,))
+
+        # Right Click mapping
+        if self.user_config.get('right_click') == 'right eye':
+            self.add_event_action_mapping(self.right_eye_event, self.right_click_action, 
+                                          lambda tp, lm, mp: (lm,), lambda tp, lm, mp: (mp,))
+        elif self.user_config.get('right_click') == 'left eye':
+            self.add_event_action_mapping(self.left_eye_event, self.right_click_action, 
+                                          lambda tp, lm, mp: (lm,), lambda tp, lm, mp: (mp,))
+        elif self.user_config.get('right_click') == 'mouth open':
+            self.add_event_action_mapping(self.open_mouth_event, self.right_click_action, 
+                                          lambda tp, lm, mp: (lm,), lambda tp, lm, mp: (mp,))
+        
+        # Mode Switch mapping
+        if self.user_config.get('mode_switch') == 'right eye':
+            self.add_event_action_mapping(self.right_eye_event, self.switch_mode_action,
+                                          lambda tp, lm, mp: (lm,), lambda tp, lm, mp: (self.current_mode,))
+        elif self.user_config.get('mode_switch') == 'left eye':
+            self.add_event_action_mapping(self.left_eye_event, self.switch_mode_action,
+                                          lambda tp, lm, mp: (lm,), lambda tp, lm, mp: (self.current_mode,))
+        elif self.user_config.get('mode_switch') == 'mouth open':
+            self.add_event_action_mapping(self.open_mouth_event, self.switch_mode_action,
+                                          lambda tp, lm, mp: (lm,), lambda tp, lm, mp: (self.current_mode,))
+
 
     def toggle_pause(self):
         """Attiva/disattiva la pausa"""
@@ -586,7 +654,7 @@ class HeadMouseController:
         self.mouse_cursor.set_position(np.array([center_x, center_y], dtype=float))
 
     def process_nose_movement(self, tracking_point):
-        """Processa il movimento del naso"""
+        """Processa il movimento del naso (principalmente per il puntatore)"""
         if self.paused or self.current_mode != 'pointer':  # Solo in modalità pointer
             return
             
@@ -597,7 +665,7 @@ class HeadMouseController:
         
         # Controlla se serve auto-ricalibrare
         current_mouse_pos = self.mouse_cursor.get_current_position()
-        if self.auto_recalibrate and self.nose_joystick.should_recalibrate(current_mouse_pos, self.screen_w, self.screen_h): # Check auto_recalibrate
+        if self.nose_joystick.should_recalibrate(current_mouse_pos, self.screen_w, self.screen_h):
             print("Auto-ricalibrazione attivata - cursore sul bordo per 5 secondi")
             self.calibration.set_new_center(tracking_point)
             self.nose_joystick.reset_outside_timer()
@@ -618,46 +686,75 @@ class HeadMouseController:
             return
         current_mouse_pos = self.mouse_cursor.get_current_position()
 
-        # Gestione cambio modalità
-        if self.open_mouth_event.check_event(landmarks):
-            old_mode = self.current_mode
-            new_mode = self.switch_mode_action.execute(self.current_mode)
-            if new_mode != old_mode:
-                # Solo se c'è un effettivo cambio
-                self.current_mode = new_mode
-                if self.current_mode == 'scroll':
-                    # Passa a modalità scroll: salva la posizione corrente
-                    print("Passaggio a modalità SCROLL")
-                    self.last_mouse_pos_before_scroll = current_mouse_pos.copy()
-                elif self.current_mode == 'pointer':
-                    # Torna a modalità pointer: ripristina la posizione
-                    print("Passaggio a modalità POINTER")
-                    if self.last_mouse_pos_before_scroll is not None:
-                        self.mouse_cursor.set_position(self.last_mouse_pos_before_scroll)
+        # Iterate through all configured event-action mappings
+        for mapping in self.event_action_mappings:
+            event_instance = mapping['event']
+            action_instance = mapping['action']
+            
+            # Special handling for nose joystick, as it's continuous movement
+            if isinstance(event_instance, NoseJoystick_event):
+                # This is handled separately in process_nose_movement for pointer mode
+                continue
 
-        # Processa eventi specifici per modalità
-        if self.current_mode == 'pointer':
-            # Eventi di click solo in modalità puntatore
-            for mapping in self.event_action_mappings:
-                # We need to explicitly check if the event is for a click action
-                if isinstance(mapping['action'], (LeftClick_action, RightClick_action)):
-                    # Prepara gli argomenti per l'evento
-                    event_args = mapping['event_args_mapper'](tracking_point, landmarks, current_mouse_pos)
-                    # Verifica se l'evento è attivo
-                    if mapping['event'].check_event(*event_args):
-                        # Prepara gli argomenti per l'azione
+            event_args = mapping['event_args_mapper'](tracking_point, landmarks, current_mouse_pos)
+            
+            # Check for event activation
+            if event_instance.check_event(*event_args):
+                if isinstance(action_instance, SwitchMode_action):
+                    old_mode = self.current_mode
+                    new_mode = action_instance.execute(self.current_mode)
+                    if new_mode != old_mode:
+                        self.current_mode = new_mode
+                        if self.current_mode == 'scroll':
+                            print("Passaggio a modalità SCROLL")
+                            self.last_mouse_pos_before_scroll = current_mouse_pos.copy()
+                        elif self.current_mode == 'pointer':
+                            print("Passaggio a modalità POINTER")
+                            if self.last_mouse_pos_before_scroll is not None:
+                                self.mouse_cursor.set_position(self.last_mouse_pos_before_scroll)
+                            # Reset mouth neutral position for consistent scrolling
+                            if isinstance(self.open_mouth_event, OpenMouth_event):
+                                self.open_mouth_event.neutral_mouth_y = None
+                elif self.current_mode == 'pointer':
+                    # Only execute click actions in pointer mode
+                    if isinstance(action_instance, (LeftClick_action, RightClick_action)):
                         action_args = mapping['action_args_mapper'](tracking_point, landmarks, current_mouse_pos)
-                        # Esegui l'azione associata
-                        mapping['action'].execute(*action_args)
-        elif self.current_mode == 'scroll':
-            # Gestione scroll
-            direction, _, effective_distance = self.nose_joystick.get_movement_vector(
-                tracking_point, self.calibration.center_position
-            )
-            if direction is not None:
-                # Usiamo solo la componente verticale per lo scrolling
-                scroll_direction = np.array([0, direction[1]])  # Solo componente Y
-                self.scroll_action.execute(scroll_direction, effective_distance)
+                        action_instance.execute(*action_args)
+        
+        # Handle scrolling based on the selected source
+        if self.current_mode == 'scroll':
+            scroll_direction_vector = None
+            effective_distance_for_scroll = 0
+
+            if self.scroll_direction_source == 'nose up/down':
+                direction, _, effective_distance_for_scroll = self.nose_joystick.get_movement_vector(
+                    tracking_point, self.calibration.center_position
+                )
+                if direction is not None:
+                    scroll_direction_vector = np.array([0, direction[1]]) # Use Y component for vertical scroll
+            elif self.scroll_direction_source == 'mouth up/down':
+                vertical_offset = self.open_mouth_event.get_vertical_offset(landmarks)
+                # Define how vertical_offset translates to scroll direction and effective distance
+                # This needs tuning based on typical mouth movement range
+                scroll_threshold = 5.0 # pixels
+                if abs(vertical_offset) > scroll_threshold:
+                    # Normalize offset to get a direction (-1 for up, 1 for down)
+                    direction_y = 1 if vertical_offset > 0 else -1
+                    scroll_direction_vector = np.array([0, direction_y])
+                    effective_distance_for_scroll = abs(vertical_offset) # Use magnitude for speed
+                else:
+                    self.open_mouth_event.neutral_mouth_y = None # Reset if near neutral
+            elif self.scroll_direction_source == 'eyes up/down (average)':
+                # Placeholder for eye-based scrolling
+                # This would involve tracking the average Y position of eye landmarks
+                # relative to a neutral eye position.
+                # Example: (landmarks[self.LEFT_EYE_TOP][1] + landmarks[self.RIGHT_EYE_TOP][1]) / 2
+                print("Scrolling con occhi non ancora implementato completamente.")
+                pass # Implement actual logic here
+            
+            if scroll_direction_vector is not None and effective_distance_for_scroll > 0:
+                self.scroll_action.execute(scroll_direction_vector, effective_distance_for_scroll)
+
 
     def draw_interface(self, frame, tracking_point, landmarks=None):
         """Disegna interfaccia utente"""
@@ -694,60 +791,69 @@ class HeadMouseController:
                     # Mostra zona accelerazione
                     cv2.circle(frame, center_pt, int(self.nose_joystick.max_acceleration_distance), (0, 100, 255), 1)
 
-            # Indicatori occhi
+            # Indicatori occhi e bocca
             if landmarks is not None and not self.paused:
-                # Find the LeftEye_event and RightEye_event instances in event_action_mappings
-                left_eye_event_instance = None
-                right_eye_event_instance = None
-                for mapping in self.event_action_mappings:
-                    if isinstance(mapping['event'], LeftEye_event):
-                        left_eye_event_instance = mapping['event']
-                    if isinstance(mapping['event'], RightEye_event):
-                        right_eye_event_instance = mapping['event']
-
-                if left_eye_event_instance:
-                    left_eye_top = landmarks[left_eye_event_instance.LEFT_EYE_TOP].astype(int)
-                    left_eye_bottom = landmarks[left_eye_event_instance.LEFT_EYE_BOTTOM].astype(int)
-                    left_eye_color = (0, 0, 255) if left_eye_event_instance.is_eye_closed() else (0, 255, 0)
-                    cv2.line(frame, tuple(left_eye_top), tuple(left_eye_bottom), left_eye_color, 3)
-                    cv2.putText(frame, "L", (left_eye_top[0] - 15, left_eye_top[1] - 10), 
-                               cv2.FONT_HERSHEY_SIMPLEX, 0.5, left_eye_color, 2)
+                # Left Eye
+                left_eye_top = landmarks[self.left_eye_event.LEFT_EYE_TOP].astype(int)
+                left_eye_bottom = landmarks[self.left_eye_event.LEFT_EYE_BOTTOM].astype(int)
+                left_eye_color = (0, 0, 255) if self.left_eye_event.is_eye_closed() else (0, 255, 0)
+                cv2.line(frame, tuple(left_eye_top), tuple(left_eye_bottom), left_eye_color, 3)
+                cv2.putText(frame, "L", (left_eye_top[0] - 15, left_eye_top[1] - 10), 
+                           cv2.FONT_HERSHEY_SIMPLEX, 0.5, left_eye_color, 2)
                 
-                if right_eye_event_instance:
-                    right_eye_top = landmarks[right_eye_event_instance.RIGHT_EYE_TOP].astype(int)
-                    right_eye_bottom = landmarks[right_eye_event_instance.RIGHT_EYE_BOTTOM].astype(int)
-                    right_eye_color = (255, 0, 0) if right_eye_event_instance.is_eye_closed() else (0, 255, 0)
-                    cv2.line(frame, tuple(right_eye_top), tuple(right_eye_bottom), right_eye_color, 3)
-                    cv2.putText(frame, "R", (right_eye_top[0] + 10, right_eye_top[1] - 10), 
-                               cv2.FONT_HERSHEY_SIMPLEX, 0.5, right_eye_color, 2)
+                # Right Eye
+                right_eye_top = landmarks[self.right_eye_event.RIGHT_EYE_TOP].astype(int)
+                right_eye_bottom = landmarks[self.right_eye_event.RIGHT_EYE_BOTTOM].astype(int)
+                right_eye_color = (255, 0, 0) if self.right_eye_event.is_eye_closed() else (0, 255, 0)
+                cv2.line(frame, tuple(right_eye_top), tuple(right_eye_bottom), right_eye_color, 3)
+                cv2.putText(frame, "R", (right_eye_top[0] + 10, right_eye_top[1] - 10), 
+                           cv2.FONT_HERSHEY_SIMPLEX, 0.5, right_eye_color, 2)
+                
+                # Mouth
+                mouth_color = (0, 165, 255) if self.open_mouth_event.is_mouth_open() else (0, 255, 0)
+                upper_lip_pt = landmarks[self.open_mouth_event.UPPER_LIP].astype(int)
+                lower_lip_pt = landmarks[self.open_mouth_event.LOWER_LIP].astype(int)
+                cv2.line(frame, tuple(upper_lip_pt), tuple(lower_lip_pt), mouth_color, 3)
+                cv2.putText(frame, "M", (upper_lip_pt[0] - 10, upper_lip_pt[1] - 10),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, mouth_color, 2)
+
 
             # Status
             status_text = "PAUSATO" if self.paused else "ATTIVO"
             status_color = (0, 0, 255) if self.paused else (0, 255, 0)
             cv2.putText(frame, status_text, (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.8, status_color, 2)
             
-            # Info sensibilità
-            cv2.putText(frame, f"Sensibilita: {self.mouse_cursor.base_sensitivity:.1f}", 
-                       (20, 80), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
-            cv2.putText(frame, f"Modalita: {self.current_mode.upper()}", 
-                       (20, 110), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
+            # Current Mode
+            mode_text = f"MODALITA: {self.current_mode.upper()}"
+            mode_color = (255, 255, 0) if self.current_mode == 'pointer' else (0, 255, 255)
+            cv2.putText(frame, mode_text, (20, 90), cv2.FONT_HERSHEY_SIMPLEX, 0.6, mode_color, 2)
+
+            # Info sensibilità (dynamic based on mode)
+            if self.current_mode == 'pointer':
+                cv2.putText(frame, f"Sensibilita Puntatore: {self.mouse_cursor.base_sensitivity:.1f}", 
+                           (20, 120), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
+            elif self.current_mode == 'scroll':
+                cv2.putText(frame, f"Sensibilita Scroll: {self.scroll_action.scroll_sensitivity:.1f}", 
+                           (20, 120), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
+                cv2.putText(frame, f"Scroll Source: {self.scroll_direction_source.capitalize()}", 
+                           (20, 150), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
+
 
         # Controlli
         controls = [
             "=== CONTROLLI ===",
             "SPAZIO = Pausa/Riprendi",
-            "+/- = Modifica sensibilità",
+            "+/- = Modifica sensibilità (puntatore/scroll)",
             "R = Reset calibrazione",
             "ESC = Esci",
+            "Auto-ricalibrazioni dopo 5s sul bordo"
         ]
-        if self.auto_recalibrate:
-            controls.append("Auto-ricalibrazioni dopo 5s sul bordo")
         
         y_start = h - len(controls) * 20 - 10
         for i, control in enumerate(controls):
             if i == 0:
                 color, weight = (255, 255, 0), 2
-            elif i == len(controls) - 1 and self.auto_recalibrate: # Only highlight if auto-recalibrate is active
+            elif i == len(controls) - 1:
                 color, weight = (255, 165, 0), 1
             else:
                 color, weight = (255, 255, 255), 1
@@ -756,112 +862,63 @@ class HeadMouseController:
                         cv2.FONT_HERSHEY_SIMPLEX, 0.4, color, weight)
 
 
+def get_user_choice(prompt, options):
+    """Helper function to get user's choice for keybindings"""
+    print(prompt)
+    for i, option in enumerate(options):
+        print(f"{i+1}. {option}")
+    while True:
+        try:
+            choice = int(input("Inserisci il numero della tua scelta: "))
+            if 1 <= choice <= len(options):
+                return options[choice-1]
+            else:
+                print("Scelta non valida. Riprova.")
+        except ValueError:
+            print("Input non valido. Inserisci un numero.")
+
 def main():
     print("=== HEAD MOUSE CONTROLLER ===")
     
-    # Configure auto-recalibration
-    auto_recalibrate = True
-    while True:
-        choice = input("Attivare l'auto-ricalibrazione (ricalibra quando il cursore è al bordo per 5s)? (s/n): ").lower().strip()
-        if choice in ['s', 'n']:
-            auto_recalibrate = (choice == 's')
-            break
-        print("Inserisci 's' per sì o 'n' per no")
-
-    controller = HeadMouseController(auto_recalibrate=auto_recalibrate)
-
-    # Dictionary to map user choices to event classes
-    gesture_options = {
-        '1': 'OpenMouth_event',
-        '2': 'LeftEye_event',
-        '3': 'RightEye_event',
-    }
-    
-    # Ask user for Left Click gesture
-    left_click_gesture = None
-    while left_click_gesture not in gesture_options:
-        print("\nScegli il gesto per il CLICK SINISTRO:")
-        print("1: Apertura Bocca")
-        print("2: Chiusura Occhio Sinistro")
-        print("3: Chiusura Occhio Destro")
-        left_click_gesture = input("Inserisci il numero della tua scelta: ").strip()
-        if left_click_gesture not in gesture_options:
-            print("Scelta non valida. Riprova.")
-
-    # Ask user for Right Click gesture
-    right_click_gesture = None
-    while right_click_gesture not not in gesture_options or right_click_gesture == left_click_gesture:
-        print("\nScegli il gesto per il CLICK DESTRO:")
-        print("1: Apertura Bocca")
-        print("2: Chiusura Occhio Sinistro")
-        print("3: Chiusura Occhio Destro")
-        right_click_gesture = input("Inserisci il numero della tua scelta: ").strip()
-        if right_click_gesture not in gesture_options or right_click_gesture == left_click_gesture:
-            print("Scelta non valida o già usata per il click sinistro. Riprova.")
-
-    # Ask user for Switch Mode gesture
-    switch_mode_gesture = None
-    while switch_mode_gesture not in gesture_options or switch_mode_gesture == left_click_gesture or switch_mode_gesture == right_click_gesture:
-        print("\nScegli il gesto per CAMBIARE MODALITÀ (puntatore/scroll):")
-        print("1: Apertura Bocca")
-        print("2: Chiusura Occhio Sinistro")
-        print("3: Chiusura Occhio Destro")
-        switch_mode_gesture = input("Inserisci il numero della tua scelta: ").strip()
-        if switch_mode_gesture not in gesture_options or switch_mode_gesture == left_click_gesture or switch_mode_gesture == right_click_gesture:
-            print("Scelta non valida o già usata. Riprova.")
-            
-    # Now that choices are made, instantiate event objects based on choices
-    gesture_event_map = {
-        'OpenMouth_event': controller.open_mouth_event,
-        'LeftEye_event': controller.left_eye_event,
-        'RightEye_event': controller.right_eye_event,
-    }
-
-    # Assign actions to chosen events
-    # Left Click
-    controller.add_event_action_mapping(
-        event=gesture_event_map[gesture_options[left_click_gesture]],
-        action=controller.left_click_action,
-        event_args_mapper=lambda tp, lm, mp: (lm,),
-        action_args_mapper=lambda tp, lm, mp: (mp,)
-    )
-
-    # Right Click
-    controller.add_event_action_mapping(
-        event=gesture_event_map[gesture_options[right_click_gesture]],
-        action=controller.right_click_action,
-        event_args_mapper=lambda tp, lm, mp: (lm,),
-        action_args_mapper=lambda tp, lm, mp: (mp,)
-    )
-    
-    # Switch Mode
-    # The OpenMouth_event is pre-assigned to switch mode in the original code,
-    # but now we dynamically assign based on user choice.
-    # We need to ensure that the event for switch mode is properly checked.
-    # The `process_events` method needs to be slightly adjusted to handle this dynamic assignment.
-    # For simplicity in this modification, let's directly set the event for switch mode here:
-    controller.switch_mode_event = gesture_event_map[gesture_options[switch_mode_gesture]]
-
-
-    # Standard nose movement for pointer control (always active)
-    controller.add_event_action_mapping(
-        event=controller.nose_joystick,
-        action=controller.mouse_cursor,
-        event_args_mapper=lambda tp, lm, mp: (tp, controller.calibration.center_position),
-        action_args_mapper=lambda tp, lm, mp: controller.nose_joystick.get_movement_vector(tp, controller.calibration.center_position)
-    )
-
-    # Webcam display choice (moved to last)
-    show_window = True
+    # Scelta modalità display
     while True:
         choice = input("Mostrare finestra webcam? (s/n): ").lower().strip()
         if choice in ['s', 'n']:
             show_window = choice == 's'
             break
         print("Inserisci 's' per sì o 'n' per no")
-    
-    controller.show_window = show_window # Set show_window in the controller instance
 
+    # User configuration for actions
+    gesture_options = ["right eye", "left eye", "mouth open"]
+    
+    user_config = {}
+
+    user_config['left_click'] = get_user_choice("Scegli la gesto per il Click SINISTRO:", gesture_options)
+    user_config['right_click'] = get_user_choice("Scegli la gesto per il Click DESTRO:", gesture_options)
+    user_config['mode_switch'] = get_user_choice("Scegli la gesto per il CAMBIO MODALITA' (Puntatore/Scroll):", gesture_options)
+
+    # Determine available scroll directions (excluding the one chosen for mode switch)
+    scroll_direction_options_all = ["nose up/down", "mouth up/down", "eyes up/down (average)"]
+    scroll_direction_options_filtered = [opt for opt in scroll_direction_options_all if 
+                                         (opt == "mouth up/down" and user_config['mode_switch'] != "mouth open") or
+                                         (opt == "nose up/down" and user_config['mode_switch'] != "nose up/down") or
+                                         (opt == "eyes up/down (average)" and user_config['mode_switch'] != "eyes up/down (average)")]
+    
+    # Simple check for now, can be expanded for click options too
+    # Ensure nose is always an option if not used for mode switch (which it can't be as it's for cursor movement)
+    if user_config['mode_switch'] != "nose up/down": # nose isn't typically a mode switch, but good to be safe
+        if "nose up/down" not in scroll_direction_options_filtered:
+            scroll_direction_options_filtered.append("nose up/down")
+
+    # If all other options are used, default to nose for scroll direction
+    if not scroll_direction_options_filtered:
+        scroll_direction_options_filtered = ["nose up/down"] # Fallback
+
+    print("\n--- ATTENZIONE: La modalità di scroll 'bocca su/giù' o 'occhi su/giù' richiede una calibrazione manuale/visiva per una corretta interpreatazione del movimento verticale. ---")
+    user_config['scroll_direction'] = get_user_choice("Scegli la direzione di SCROLL (se la gesto scelta per il cambio modalità è 'bocca aperta' o 'occhi', le opzioni relative saranno limitate):", scroll_direction_options_filtered)
+
+    controller = HeadMouseController(show_window=show_window, user_config=user_config)
+    
     # Setup webcam
     cap = cv2.VideoCapture(0)
     if not cap.isOpened():
@@ -873,13 +930,13 @@ def main():
     cap.set(cv2.CAP_PROP_FPS, 30)
     
     print("\n🎮 CONTROLLI:")
-    print("SPAZIO = Pausa/Riprendi | +/- = Sensibilità")
+    print("SPAZIO = Pausa/Riprendi | +/- = Sensibilità (puntatore/scroll)")
     print("R = Reset calibrazione | ESC = Esci")
-    print(f"Gesto per Click Sinistro: {gesture_options[left_click_gesture]}")
-    print(f"Gesto per Click Destro: {gesture_options[right_click_gesture]}")
-    print(f"Gesto per Cambiare Modalità (puntatore/scroll): {gesture_options[switch_mode_gesture]}")
-    if auto_recalibrate:
-        print("⚡ Auto-ricalibrazione dopo 5 secondi sul bordo")
+    print(f"Click SINISTRO: {user_config['left_click']}")
+    print(f"Click DESTRO: {user_config['right_click']}")
+    print(f"Cambio Modalità (Puntatore/Scroll): {user_config['mode_switch']}")
+    print(f"Direzione Scroll: {user_config['scroll_direction']}")
+    print("⚡ Auto-ricalibrazione dopo 5 secondi sul bordo")
     
     try:
         while True:
@@ -900,20 +957,6 @@ def main():
                 tracking_point = landmarks_np[controller.NOSE_TIP]
                 
                 if not controller.paused:
-                    # Check for the dynamically assigned switch mode event
-                    if controller.switch_mode_event.check_event(landmarks_np):
-                        old_mode = controller.current_mode
-                        new_mode = controller.switch_mode_action.execute(controller.current_mode)
-                        if new_mode != old_mode:
-                            controller.current_mode = new_mode
-                            if controller.current_mode == 'scroll':
-                                print("Passaggio a modalità SCROLL")
-                                controller.last_mouse_pos_before_scroll = controller.mouse_cursor.get_current_position().copy()
-                            elif controller.current_mode == 'pointer':
-                                print("Passaggio a modalità POINTER")
-                                if controller.last_mouse_pos_before_scroll is not None:
-                                    controller.mouse_cursor.set_position(controller.last_mouse_pos_before_scroll)
-
                     controller.process_nose_movement(tracking_point)
                     controller.process_events(tracking_point, landmarks_np)
 
@@ -925,6 +968,7 @@ def main():
                                 cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2)
             
             if controller.show_window:
+                cv2.imshow('Head Mouse Controller', frame)
                 key = cv2.waitKey(1) & 0xFF
                 
                 if key == 27:  # ESC
@@ -945,6 +989,8 @@ def main():
                     controller.calibration.reset_calibration()
                     controller.nose_joystick.reset_outside_timer()
                     controller.reset_mouse_position()
+                    if isinstance(controller.open_mouth_event, OpenMouth_event): # Reset mouth neutral pos on calibration reset
+                        controller.open_mouth_event.neutral_mouth_y = None
             else:
                 key = cv2.waitKey(1) & 0xFF
                 if key == 27:  # ESC
