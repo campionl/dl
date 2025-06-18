@@ -1,7 +1,7 @@
 ```mermaid
 flowchart TD
     db[(x, y, modalità)]
-    hmc[HeadMouseDontroller]
+    hmc[HeadMouseController]
     ome[OpenMouth_event]
     ca[Calibration_action]
     nje[NoseJoystick_event]
