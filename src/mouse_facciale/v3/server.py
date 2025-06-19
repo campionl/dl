@@ -41,57 +41,86 @@ class BluetoothMouseServer:
         # Mostra info dispositivo locale
         local_addr, local_name = self.get_local_bluetooth_info()
         
-        try:
-            self.server_sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
-            
-            # Permetti riutilizzo dell'indirizzo
-            self.server_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-            
-            print("🔗 Binding sulla porta 1...")
-            self.server_sock.bind(("", 1))
-            
-            print("👂 Impostazione modalità ascolto...")
-            self.server_sock.listen(1)
-            
-            print("✅ Server configurato correttamente")
-            print(f"📡 In ascolto su porta RFCOMM 1")
-            
-            return True
-            
-        except bluetooth.btcommon.BluetoothError as e:
-            print(f"❌ Errore Bluetooth setup: {e}")
-            if "Permission denied" in str(e):
-                print("💡 Prova ad eseguire come amministratore")
-            elif "Address already in use" in str(e):
-                print("💡 La porta è già in uso - chiudi altre applicazioni Bluetooth")
-            return False
-        except Exception as e:
-            print(f"❌ Errore setup server: {e}")
-            return False
+        # Prova diverse porte se la prima non funziona
+        ports_to_try = [1, 2, 3, 4, 5]
+        
+        for port in ports_to_try:
+            try:
+                if self.server_sock:
+                    self.server_sock.close()
+                    
+                self.server_sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
+                
+                # Permetti riutilizzo dell'indirizzo
+                self.server_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+                
+                print(f"🔗 Tentativo binding sulla porta {port}...")
+                self.server_sock.bind(("", port))
+                
+                print(f"👂 Impostazione modalità ascolto sulla porta {port}...")
+                self.server_sock.listen(1)
+                
+                print(f"✅ Server configurato correttamente sulla porta {port}")
+                print(f"📡 In ascolto su porta RFCOMM {port}")
+                
+                # Salva la porta utilizzata
+                self.port = port
+                
+                return True
+                
+            except bluetooth.btcommon.BluetoothError as e:
+                print(f"❌ Porta {port} non disponibile: {e}")
+                if "Permission denied" in str(e):
+                    print("💡 Prova ad eseguire come amministratore")
+                elif "Address already in use" in str(e):
+                    print(f"💡 La porta {port} è già in uso")
+                continue
+            except Exception as e:
+                print(f"❌ Errore porta {port}: {e}")
+                continue
+        
+        print("❌ Impossibile configurare il server su tutte le porte disponibili")
+        return False
     
     def wait_for_connection(self):
         """Attende connessione client"""
-        print("\n🔍 In attesa di connessione Bluetooth...")
+        print(f"\n🔍 In attesa di connessione Bluetooth sulla porta {getattr(self, 'port', 1)}...")
         print("💡 Istruzioni per il client:")
         print("   1. Avvia il client sull'altro dispositivo")
         print("   2. Seleziona questo dispositivo dalla lista")
         print("   3. La connessione si stabilirà automaticamente")
         print("\n⏳ Attendere connessione...")
+        print("   (Il server rimarrà in attesa fino alla connessione o interruzione)")
         
         try:
             self.server_sock.settimeout(None)  # Attesa infinita
+            print("📡 Server in ascolto...")
+            
             self.client_sock, self.client_address = self.server_sock.accept()
             
-            print(f"\n✅ Client connesso!")
+            print(f"\n🎉 Client connesso con successo!")
             print(f"📱 Indirizzo client: {self.client_address}")
             
-            # Configura socket client
-            self.client_sock.settimeout(10)  # Timeout per operazioni
+            # Configura socket client per comunicazione
+            self.client_sock.settimeout(1.0)  # Timeout per operazioni di rete
+            
+            # Invia messaggio di benvenuto
+            try:
+                welcome_msg = "SERVER_READY\n"
+                self.client_sock.send(welcome_msg.encode())
+                print("📤 Messaggio di benvenuto inviato")
+            except:
+                print("⚠️ Impossibile inviare messaggio di benvenuto")
             
             return True
             
         except bluetooth.btcommon.BluetoothError as e:
             print(f"❌ Errore connessione Bluetooth: {e}")
+            if "Operation was cancelled" in str(e):
+                print("💡 Operazione annullata dall'utente")
+            return False
+        except KeyboardInterrupt:
+            print("\n🔚 Attesa connessione interrotta dall'utente")
             return False
         except Exception as e:
             print(f"❌ Errore connessione: {e}")
