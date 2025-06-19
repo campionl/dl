@@ -653,8 +653,8 @@ class HeadMouseController:
 
     def draw_interface(self, frame, tracking_point, landmarks=None):
         """Disegna interfaccia utente"""
-        if not self.show_window:
-            return
+        # if not self.show_window:
+        #     return
 
         h, w = frame.shape[:2]
 
