@@ -3,7 +3,7 @@ import bluetooth
 import time
 
 # Indirizzo del server (la tua macchina)
-SERVER_ADDR = "3C:6A:A7:7C:84:94"
+SERVER_ADDR = "XX:XX:XX:XX:XX:XX"
 PSM_INTERRUPT = 0x13
 
 def send_mouse_move(dx=0, dy=0, buttons=0):
