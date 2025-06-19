@@ -1,4 +1,4 @@
-import bluetooth
+import bluetoothAdd commentMore actions
 import pyautogui
 import threading
 import time
@@ -10,7 +10,7 @@ class BluetoothMouseClient:
         self.running = False
         self.last_position = pyautogui.position()
         self.device_address = None
-        self.port = 1
+        self.port = 1  # RFCOMM
         self.lock = threading.Lock()
     
     def discover_devices(self):
@@ -55,17 +55,13 @@ class BluetoothMouseClient:
             print(f"Errore durante l'invio: {e}")
             self.running = False
 
-    def monitor_mouse_movement(self):
-        while self.running:
-            current_pos = pyautogui.position()
-            dx = current_pos[0] - self.last_position[0]
-            dy = current_pos[1] - self.last_position[1]
-            if dx != 0 or dy != 0:
-                self.send(f"MOVE {dx} {dy}\n")
-                self.last_position = current_pos
-            time.sleep(0.01)  # 10ms = 100Hz, fluido
+    def start_mouse_monitor(self):
+        def on_move(x, y):
+            dx = x - self.last_position[0]
+            dy = y - self.last_position[1]
+            self.send(f"MOVE {dx} {dy}\n")
+            self.last_position = (x, y)
 
-    def start_mouse_listener(self):
         def on_click(x, y, button, pressed):
             if pressed:
                 if button.name == 'left':
@@ -76,7 +72,8 @@ class BluetoothMouseClient:
         def on_scroll(x, y, dx, dy):
             self.send(f"SCROLL {dx} {dy}\n")
 
-        listener = mouse.Listener(on_click=on_click, on_scroll=on_scroll)
+        self.last_position = pyautogui.position()
+        listener = mouse.Listener(on_move=on_move, on_click=on_click, on_scroll=on_scroll)
         listener.start()
 
     def run(self):
@@ -84,12 +81,7 @@ class BluetoothMouseClient:
             return
 
         self.running = True
-        self.start_mouse_listener()
-
-        # Thread separato per movimento fluido
-        movement_thread = threading.Thread(target=self.monitor_mouse_movement)
-        movement_thread.daemon = True
-        movement_thread.start()
+        self.start_mouse_monitor()
 
         print("🖱 Mouse mirroring in corso. Premi Ctrl+C per uscire.")
         try:
