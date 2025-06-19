@@ -1,116 +1,99 @@
 # Manda il segnale mouse 
-
 import bluetooth
 import pyautogui
 import threading
-import time 
-import sys
+import time
+from pynput import mouse
 
-class BluetoothMouseMirror:
+class BluetoothMouseClient:
     def __init__(self):
-        self.running = False
         self.socket = None
-        self.last_position = pyautogui.position()
+        self.running = False
         self.device_address = None
-        self.port = 1  # RFCOMM port
+        self.port = 1  # RFCOMM
+        self.lock = threading.Lock()
     
     def discover_devices(self):
-        print("Searching for nearby Bluetooth devices...")
-        nearby_devices = bluetooth.discover_devices(lookup_names=True)
-        print("Found devices:")
-        for i, (addr, name) in enumerate(nearby_devices):
-            print(f"{i+1}. {name} ({addr})")
-        
-        if not nearby_devices:
-            print("No devices found. Make sure your target device is discoverable.")
+        print("Cerca dispositivi Bluetooth...")
+        devices = bluetooth.discover_devices(lookup_names=True)
+        if not devices:
+            print("Nessun dispositivo trovato.")
             return None
-        
-        choice = input("Enter the number of the device to connect to: ")
+
+        for i, (addr, name) in enumerate(devices):
+            print(f"{i + 1}. {name} ({addr})")
+
+        choice = input("Scegli il numero del dispositivo: ")
         try:
             index = int(choice) - 1
-            if 0 <= index < len(nearby_devices):
-                return nearby_devices[index][0]
-        except ValueError:
-            pass
-        
-        print("Invalid selection.")
-        return None
+            return devices[index][0]
+        except:
+            print("Scelta non valida.")
+            return None
     
-    def connect(self, device_address=None):
-        if not device_address:
-            device_address = self.discover_devices()
-            if not device_address:
-                return False
+    def connect(self):
+        addr = self.discover_devices()
+        if not addr:
+            return False
         
-        self.device_address = device_address
-        print(f"Connecting to {self.device_address}...")
-        
+        self.device_address = addr
+        print(f"Connessione a {addr}...")
         try:
             self.socket = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
-            self.socket.connect((self.device_address, self.port))
-            print("Connected successfully!")
+            self.socket.connect((addr, self.port))
+            print("✅ Connessione avvenuta.")
             return True
         except Exception as e:
-            print(f"Connection failed: {e}")
-            self.socket = None
+            print(f"Errore nella connessione: {e}")
             return False
-    
-    def start_mirroring(self):
-        if not self.socket:
-            if not self.connect():
-                return
-        
+
+    def send(self, message):
+        try:
+            with self.lock:
+                self.socket.send(message.encode())
+        except Exception as e:
+            print(f"Errore durante l'invio: {e}")
+            self.running = False
+
+    def start_mouse_monitor(self):
+        def on_move(x, y):
+            self.send(f"POS {x} {y}\n")
+
+        def on_click(x, y, button, pressed):
+            if pressed:
+                if button.name == 'left':
+                    self.send("CLICK\n")
+                elif button.name == 'right':
+                    self.send("RIGHT_CLICK\n")
+
+        def on_scroll(x, y, dx, dy):
+            self.send(f"SCROLL {dx} {dy}\n")
+
+        listener = mouse.Listener(on_move=on_move, on_click=on_click, on_scroll=on_scroll)
+        listener.start()
+
+    def run(self):
+        if not self.connect():
+            return
+
         self.running = True
-        print("Mirroring mouse movements (press Ctrl+C to stop)...")
-        
+        self.start_mouse_monitor()
+
+        print("🖱 Mouse mirroring in corso. Premi Ctrl+C per uscire.")
         try:
             while self.running:
-                current_position = pyautogui.position()
-                if current_position != self.last_position:
-                    dx = current_position[0] - self.last_position[0]
-                    dy = current_position[1] - self.last_position[1]
-                    
-                    # Send relative movement
-                    message = f"MOVE {dx} {dy}\n"
-                    try:
-                        self.socket.send(message)
-                    except Exception as e:
-                        print(f"Error sending data: {e}")
-                        self.running = False
-                        break
-                    
-                    self.last_position = current_position
-                
-                time.sleep(0.01)  # Small delay to reduce CPU usage
+                time.sleep(0.1)
         except KeyboardInterrupt:
-            self.running = False
-            print("\nMirroring stopped by user")
-    
+            print("🔚 Interrotto da utente.")
+        finally:
+            self.stop()
+
     def stop(self):
         self.running = False
         if self.socket:
             self.socket.close()
             self.socket = None
 
-def main():
-    mirror = BluetoothMouseMirror()
-    
-    try:
-        mirror.start_mirroring()
-    except Exception as e:
-        print(f"Error: {e}")
-    finally:
-        mirror.stop()
-
 if __name__ == "__main__":
-    # Check dependencies
-    try:
-        import bluetooth
-        import pyautogui
-    except ImportError as e:
-        print(f"Error: {e}")
-        print("Please install required packages:")
-        print("pip install PyBluez pyautogui")
-        sys.exit(1)
-    
-    main()
+    client = BluetoothMouseClient()
+    client.run()
