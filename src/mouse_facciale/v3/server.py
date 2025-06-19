@@ -1,7 +1,8 @@
 import bluetooth
+import pyautogui
 
 server_sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
-server_sock.bind(("", 1))  # Porta 1 come nel tuo script
+server_sock.bind(("", 1))
 server_sock.listen(1)
 
 print("In attesa di connessione...")
@@ -13,7 +14,12 @@ try:
         data = client_sock.recv(1024)
         if not data:
             break
-        print("Ricevuto:", data.decode().strip())
+        msg = data.decode().strip()
+        print("Ricevuto:", msg)
+
+        if msg.startswith("POS"):
+            _, x, y = msg.split()
+            pyautogui.moveTo(int(x), int(y))
 except KeyboardInterrupt:
     print("Interrotto da utente")
 finally:
