@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧠 Head Mouse Controller - Jetson Simulation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+            color: #c9d1d9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background: rgba(13, 17, 23, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 20px 0;
+            border-bottom: 2px solid #30363d;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            text-align: center;
+            color: #58a6ff;
+            font-size: 2.5em;
+            font-weight: 700;
+            text-shadow: 0 0 20px rgba(88, 166, 255, 0.5);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+        }
+
+        .video-section {
+            background: rgba(22, 27, 34, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            border: 2px solid #30363d;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .video-container {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #000;
+            box-shadow: 0 0 30px rgba(88, 166, 255, 0.3);
+        }
+
+        #videoStream {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 12px;
+        }
+
+        .video-overlay {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            backdrop-filter: blur(5px);
+        }
+
+        .control-panel {
+            background: rgba(22, 27, 34, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            border: 2px solid #30363d;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            height: fit-content;
+            position: sticky;
+            top: 120px;
+        }
+
+        .control-section {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #30363d;
+        }
+
+        .control-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .control-section h3 {
+            color: #58a6ff;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .status-item {
+            background: rgba(13, 17, 23, 0.8);
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 4px solid #30363d;
+            transition: all 0.3s ease;
+        }
+
+        .status-item.active {
+            border-left-color: #58a6ff;
+            background: rgba(88, 166, 255, 0.1);
+        }
+
+        .status-item.warning {
+            border-left-color: #f85149;
+            background: rgba(248, 81, 73, 0.1);
+        }
+
+        .status-item.success {
+            border-left-color: #3fb950;
+            background: rgba(63, 185, 80, 0.1);
+        }
+
+        .status-label {
+            font-size: 0.8em;
+            color: #8b949e;
+            margin-bottom: 4px;
+        }
+
+        .status-value {
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(13, 17, 23, 0.8);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #58a6ff, #79c0ff);
+            transition: width 0.3s ease;
+            border-radius: 4px;
+        }
+
+        .control-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #21262d 0%, #30363d 100%);
+            color: #c9d1d9;
+            border: 2px solid #30363d;
+            padding: 12px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background: linear-gradient(135deg, #30363d 0%, #40464d 100%);
+            border-color: #58a6ff;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(88, 166, 255, 0.3);
+        }
+
+        .btn.primary {
+            background: linear-gradient(135deg, #238636 0%, #2ea043 100%);
+            border-color: #2ea043;
+        }
+
+        .btn.primary:hover {
+            background: linear-gradient(135deg, #2ea043 0%, #3fb950 100%);
+        }
+
+        .btn.danger {
+            background: linear-gradient(135deg, #da3633 0%, #f85149 100%);
+            border-color: #f85149;
+        }
+
+        .btn.danger:hover {
+            background: linear-gradient(135deg, #f85149 0%, #ff6b68 100%);
+        }
+
+        .btn.warning {
+            background: linear-gradient(135deg, #bf8700 0%, #d4a72c 100%);
+            border-color: #d4a72c;
+        }
+
+        .btn.warning:hover {
+            background: linear-gradient(135deg, #d4a72c 0%, #e2b340 100%);
+        }
+
+        .sensitivity-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .sensitivity-btn {
+            background: rgba(88, 166, 255, 0.1);
+            border: 2px solid #58a6ff;
+            color: #58a6ff;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.2em;
+            transition: all 0.3s ease;
+        }
+
+        .sensitivity-btn:hover {
+            background: rgba(88, 166, 255, 0.2);
+            transform: scale(1.1);
+        }
+
+        .info-panel {
+            background: rgba(13, 17, 23, 0.8);
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid #30363d;
+            margin-top: 20px;
+        }
+
+        .info-panel h4 {
+            color: #58a6ff;
+            margin-bottom: 10px;
+            font-size: 1em;
+        }
+
+        .info-list {
+            font-size: 0.85em;
+            line-height: 1.6;
+            color: #8b949e;
+        }
+
+        .info-list li {
+            margin-bottom: 4px;
+        }
+
+        .connection-status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(13, 17, 23, 0.9);
+            padding: 10px 15px;
+            border-radius: 20px;
+            border: 2px solid #30363d;
+            backdrop-filter: blur(10px);
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .connection-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #3fb950;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: #8b949e;
+            font-size: 0.9em;
+            border-top: 1px solid #30363d;
+            margin-top: 40px;
+        }
+
+        /* Responsive design */
+        @media (max-width: 1200px) {
+            .container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .control-panel {
+                position: static;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .container {
+                padding: 15px;
+            }
+
+            .status-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="connection-status">
+        <div class="connection-dot"></div>
+        <span>Connected</span>
+    </div>
+
+    <header class="header">
+        <h1>🧠 Head Mouse Controller - Jetson Simulation</h1>
+    </header>
+
+    <div class="container">
+        <div class="video-section">
+            <div class="video-container">
+                <img id="videoStream" src="/video" alt="Video Stream">
+                <div class="video-overlay">
+                    <span id="videoStatus">🎥 Live Stream Active</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="control-panel">
+            <!-- Status Section -->
+            <div class="control-section">
+                <h3>📊 System Status</h3>
+                <div class="status-grid">
+                    <div class="status-item" id="statusMode">
+                        <div class="status-label">Mode</div>
+                        <div class="status-value">Pointer</div>
+                    </div>
+                    <div class="status-item" id="statusPaused">
+                        <div class="status-label">Status</div>
+                        <div class="status-value">Active</div>
+                    </div>
+                    <div class="status-item" id="statusFace">
+                        <div class="status-label">Face Detection</div>
+                        <div class="status-value">Detecting...</div>
+                    </div>
+                    <div class="status-item" id="statusCalibration">
+                        <div class="status-label">Calibration</div>
+                        <div class="status-value">In Progress</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="calibrationProgress" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Controls Section -->
+            <div class="control-section">
+                <h3>🎮 Controls</h3>
+                <div class="control-buttons">
+                    <button class="btn primary" id="togglePause">
+                        ⏸️ Pause/Resume
+                    </button>
+                    <button class="btn warning" id="resetCalibration">
+                        🔄 Reset Calibration
+                    </button>
+                    <button class="btn" id="forceModeSwitch">
+                        🔄 Switch Mode (Test)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Sensitivity Section -->
+            <div class="control-section">
+                <h3>⚙️ Sensitivity</h3>
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 10px;">
+                    <span style="min-width: 80px;">Pointer:</span>
+                    <div class="sensitivity-controls">
+                        <button class="sensitivity-btn" onclick="adjustSensitivity('down')">−</button>
+                        <span id="pointerSensitivity" style="min-width: 40px; text-align: center;">2.0</span>
+                        <button class="sensitivity-btn" onclick="adjustSensitivity('up')">+</button>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <span style="min-width: 80px;">Scroll:</span>
+                    <div class="sensitivity-controls">
+                        <button class="sensitivity-btn" onclick="adjustSensitivity('down')">−</button>
+                        <span id="scrollSensitivity" style="min-width: 40px; text-align: center;">2.0</span>
+                        <button class="sensitivity-btn" onclick="adjustSensitivity('up')">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Information Section -->
+            <div class="control-section">
+                <h3>ℹ️ How to Use</h3>
+                <div class="info-panel">
+                    <h4>🎯 Controls:</h4>
+                    <ul class="info-list">
+                        <li><strong>Nose Movement:</strong> Controls cursor/scroll</li>
+                        <li><strong>Open Mouth:</strong> Switch between pointer/scroll modes</li>
+                        <li><strong>Left Eye Blink:</strong> Left click (pointer mode)</li>
+                        <li><strong>Right Eye Blink:</strong> Right click (pointer mode)</li>
+                        <li><strong>Auto-recalibration:</strong> After 5s on screen edge</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>🚀 Head Mouse Controller developed by Rusiru - Optimized for Jetson Nano/Xavier</p>
+        <p>Real-time computer vision • MediaPipe • OpenCV • Flask</p>
+    </footer>
+
+    <script>
+        // Status update function
+        function updateStatus() {
+            fetch('/status')
+                .then(response => response.json())
+                .then(data => {
+                    // Update mode
+                    const modeElement = document.getElementById('statusMode');
+                    modeElement.querySelector('.status-value').textContent = 
+                        data.mode === 'pointer' ? '🖱️ Pointer' : '📜 Scroll';
+                    modeElement.className = 'status-item ' + (data.mode === 'pointer' ? 'active' : 'warning');
+
+                    // Update pause status
+                    const pauseElement = document.getElementById('statusPaused');
+                    pauseElement.querySelector('.status-value').textContent = 
+                        data.paused ? '⏸️ Paused' : '▶️ Active';
+                    pauseElement.className = 'status-item ' + (data.paused ? 'warning' : 'success');
+
+                    // Update face detection
+                    const faceElement = document.getElementById('statusFace');
+                    faceElement.querySelector('.status-value').textContent = 
+                        data.face_detected ? '✅ Detected' : '❌ Not Found';
+                    faceElement.className = 'status-item ' + (data.face_detected ? 'success' : 'warning');
+
+                    // Update calibration
+                    const calibrationElement = document.getElementById('statusCalibration');
+                    const progressBar = document.getElementById('calibrationProgress');
+                    
+                    if (data.calibrated) {
+                        calibrationElement.querySelector('.status-value').textContent = '✅ Complete';
+                        calibrationElement.className = 'status-item success';
+                        progressBar.style.width = '100%';
+                    } else {
+                        calibrationElement.querySelector('.status-value').textContent = 
+                            `${data.calibration_progress}%`;
+                        calibrationElement.className = 'status-item active';
+                        progressBar.style.width = `${data.calibration_progress}%`;
+                    }
+
+                    // Update sensitivity displays
+                    document.getElementById('pointerSensitivity').textContent = 
+                        data.sensitivity.toFixed(1);
+                    document.getElementById('scrollSensitivity').textContent = 
+                        data.scroll_sensitivity.toFixed(1);
+                })
+                .catch(error => {
+                    console.error('Error fetching status:', error);
+                });
+        }
+
+        // Control functions
+        document.getElementById('togglePause').addEventListener('click', function() {
+            fetch('/toggle_pause')
+                .then(response => response.json())
+                .then(data => {
+                    this.innerHTML = data.paused ? '▶️ Resume' : '⏸️ Pause';
+                    updateStatus();
+                });
+        });
+
+        document.getElementById('resetCalibration').addEventListener('click', function() {
+            fetch('/reset_calibration')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('🔄 Calibration reset successfully!');
+                        updateStatus();
+                    }
+                });
+        });
+
+        document.getElementById('forceModeSwitch').addEventListener('click', function() {
+            fetch('/force_mode_switch')
+                .then(response => response.json())
+                .then(data => {
+                    alert(`Mode switched: ${data.old_mode} → ${data.new_mode}`);
+                    updateStatus();
+                });
+        });
+
+        function adjustSensitivity(direction) {
+            fetch(`/adjust_sensitivity/${direction}`)
+                .then(response => response.json())
+                .then(data => {
+                    updateStatus();
+                });
+        }
+
+        // Auto-update status every 500ms
+        setInterval(updateStatus, 500);
+
+        // Initial status update
+        updateStatus();
+
+        // Video stream error handling
+        document.getElementById('videoStream').addEventListener('error', function() {
+            document.getElementById('videoStatus').textContent = '❌ Stream Error';
+            document.getElementById('videoStatus').style.color = '#f85149';
+        });
+
+        // Check if video is loading
+        document.getElementById('videoStream').addEventListener('load', function() {
+            document.getElementById('videoStatus').textContent = '🎥 Live Stream Active';
+            document.getElementById('videoStatus').style.color = '#3fb950';
+        });
+    </script>
+</body>
+</html>
