@@ -113,4 +113,8 @@ if __name__ == "__main__":
         print("pip install PyBluez pyautogui")
         sys.exit(1)
     
+<<<<<<< HEAD
     main()
+=======
+    main()
+>>>>>>> e55f7f29220916172449b88027a537074c0fd8c1
