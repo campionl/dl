@@ -1,40 +1,42 @@
-# client_mirror.py
-import bluetooth
+import asyncio
+from bleak import BleakClient, BleakScanner
 import pyautogui
-import time
 import sys
+
+# UUID devono corrispondere a quelli usati nel server
+SERVICE_UUID = "00001101-0000-1000-8000-00805F9B34FB"
+CHARACTERISTIC_UUID = "00001102-0000-1000-8000-00805F9B34FB"
 
 class BluetoothMouseMirror:
     def __init__(self):
         self.running = False
-        self.socket = None
+        self.client = None
         self.last_position = pyautogui.position()
         self.device_address = None
-        self.port = 4  # Deve corrispondere alla porta del server
 
-    def discover_devices(self):
-        print("Ricerca dispositivi Bluetooth nelle vicinanze...")
-        nearby_devices = bluetooth.discover_devices(lookup_names=True, duration=8, flush_cache=True)
+    async def discover_devices(self):
+        print("Ricerca dispositivi BLE nelle vicinanze...")
+        devices = await BleakScanner.discover()
         
-        if not nearby_devices:
+        if not devices:
             print("Nessun dispositivo trovato. Assicurati che il dispositivo target sia rilevabile.")
             return None
         
         print("\nDispositivi trovati:")
-        for i, (addr, name) in enumerate(nearby_devices):
-            print(f"{i+1}. {name} ({addr})")
+        for i, device in enumerate(devices):
+            print(f"{i+1}. {device.name} ({device.address})")
         
         while True:
             try:
                 choice = int(input("\nSeleziona il numero del dispositivo a cui connettersi: "))
-                if 1 <= choice <= len(nearby_devices):
-                    return nearby_devices[choice-1][0]
+                if 1 <= choice <= len(devices):
+                    return devices[choice-1].address
                 print("Selezione non valida. Riprova.")
             except ValueError:
                 print("Inserisci un numero valido.")
 
-    def connect(self):
-        device_address = self.discover_devices()
+    async def connect(self):
+        device_address = await self.discover_devices()
         if not device_address:
             return False
         
@@ -42,17 +44,31 @@ class BluetoothMouseMirror:
         print(f"Connessione a {self.device_address}...")
         
         try:
-            self.socket = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
-            self.socket.connect((self.device_address, self.port))
+            self.client = BleakClient(self.device_address)
+            await self.client.connect()
             print("Connessione riuscita!")
             return True
         except Exception as e:
             print(f"Connessione fallita: {e}")
-            self.socket = None
+            self.client = None
             return False
 
-    def start_mirroring(self):
-        if not self.connect():
+    async def send_mouse_movement(self, dx, dy):
+        if not self.client or not self.client.is_connected:
+            print("Client non connesso")
+            return False
+        
+        try:
+            # Invia il comando come stringa (es. "MOVE 10 5")
+            message = f"MOVE {dx} {dy}\n".encode('utf-8')
+            await self.client.write_gatt_char(CHARACTERISTIC_UUID, message)
+            return True
+        except Exception as e:
+            print(f"Errore invio dati: {e}")
+            return False
+
+    async def start_mirroring(self):
+        if not await self.connect():
             return
         
         self.running = True
@@ -65,46 +81,42 @@ class BluetoothMouseMirror:
                     dx = current_position[0] - self.last_position[0]
                     dy = current_position[1] - self.last_position[1]
                     
-                    # Invia movimento relativo
-                    message = f"MOVE {dx} {dy}\n"
-                    try:
-                        self.socket.send(message)
-                    except Exception as e:
-                        print(f"Errore invio dati: {e}")
+                    if not await self.send_mouse_movement(dx, dy):
                         self.running = False
                         break
                     
                     self.last_position = current_position
                 
-                time.sleep(0.01)  # Piccola pausa per ridurre l'uso della CPU
+                await asyncio.sleep(0.01)  # Piccola pausa per ridurre l'uso della CPU
         except KeyboardInterrupt:
             self.running = False
             print("\nMirroring fermato dall'utente")
         finally:
-            self.stop()
+            await self.stop()
 
-    def stop(self):
+    async def stop(self):
         self.running = False
-        if self.socket:
-            self.socket.close()
-            self.socket = None
+        if self.client and self.client.is_connected:
+            await self.client.disconnect()
         print("Client fermato")
 
-if __name__ == "__main__":
+async def main():
     # Verifica dipendenze
     try:
-        import bluetooth
         import pyautogui
     except ImportError as e:
         print(f"Errore: {e}")
         print("Installa i pacchetti necessari:")
-        print("pip install PyBluez pyautogui")
+        print("pip install bleak pyautogui")
         sys.exit(1)
     
     mirror = BluetoothMouseMirror()
     try:
-        mirror.start_mirroring()
+        await mirror.start_mirroring()
     except Exception as e:
         print(f"Errore: {e}")
     finally:
-        mirror.stop()
+        await mirror.stop()
+
+if __name__ == "__main__":
+    asyncio.run(main())
