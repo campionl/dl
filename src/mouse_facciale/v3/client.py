@@ -1,25 +1,20 @@
 # client.py
-import bluetooth
-import time
+import bluetooth, time, threading
 
-# Indirizzo del server (la tua macchina)
-SERVER_ADDR = "XX:XX:XX:XX:XX:XX"
-PSM_INTERRUPT = 0x13
+SERVER = "AA:BB:CC:DD:EE:FF"  # MAC server
+PSM_INTR = 0x13
 
-def send_mouse_move(dx=0, dy=0, buttons=0):
-    # HID report: [Buttons, dx, dy, wheel]
-    b = bytes([buttons & 0x07, dx & 0xFF, dy & 0xFF, 0x00])
-    sock.send(b)
-    print(f"[client] Sent: {b.hex()}")
+def stream_loop(sock):
+    try:
+        while True:
+            dx, dy = 5, 0
+            sock.send(bytes([0, dx & 0xFF, dy & 0xFF, 0]))
+            time.sleep(0.02)
+    except Exception: pass
 
-sock = bluetooth.BluetoothSocket(bluetooth.L2CAP)
-sock.connect((SERVER_ADDR, PSM_INTERRUPT))
-print("[client] Connected. Inviando movimenti...")
-
-try:
-    for _ in range(10):
-        send_mouse_move(dx=10, dy=0)
-        time.sleep(0.5)
-    send_mouse_move(buttons=1)  # click sinistro
-finally:
+if __name__ == "__main__":
+    sock = bluetooth.BluetoothSocket(bluetooth.L2CAP)
+    sock.connect((SERVER, PSM_INTR))
+    print("Connesso, streaming…")
+    stream_loop(sock)
     sock.close()
