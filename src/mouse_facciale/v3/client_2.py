@@ -1,4 +1,4 @@
-import bluetoothAdd commentMore actions
+import bluetoothAdd
 import pyautogui
 import threading
 import time
