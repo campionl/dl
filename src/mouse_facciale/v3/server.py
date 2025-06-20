@@ -1,246 +1,251 @@
-#!/usr/bin/env python3
-"""
-Server Bluetooth per ricevere coordinate del mouse e controllarle localmente
-Riceve le coordinate dal client e muove il mouse di conseguenza
-"""
-
 import bluetooth
 import pyautogui
-import json
 import threading
 import time
+import queue
 
-class MouseServer:
-    def __init__(self, port=3):
-        self.port = port
+class BluetoothMouseServer:
+    def __init__(self):
         self.server_sock = None
         self.client_sock = None
         self.running = False
-        self.max_port_attempts = 10
+        self.command_queue = queue.Queue()  
+        self.executor_thread = None
         
-        # Configura pyautogui per movimento fluido
-        pyautogui.FAILSAFE = True  # Muovi mouse nell'angolo per emergenza
-        pyautogui.PAUSE = 0.01     # Pausa minima tra comandi
+        # Configurazione pyautogui per performance migliori
+        pyautogui.FAILSAFE = True
+        pyautogui.PAUSE = 0  # Rimuovi pause automatiche
         
-        # Ottieni dimensioni schermo del server
-        self.screen_width, self.screen_height = pyautogui.size()
-        print(f"Risoluzione schermo server: {self.screen_width}x{self.screen_height}")
-    
-    def check_bluetooth_service(self):
-        """Verifica lo stato del servizio Bluetooth"""
-        import subprocess
+        # Parametri di smoothing
+        self.MOVEMENT_SMOOTHING = True
+        self.MAX_MOVEMENT_PER_STEP = 50  # Pixel massimi per movimento
+        
+    def setup_server(self):
+        """Configura il server Bluetooth"""
         try:
-            # Controlla se bluetoothd è in esecuzione
-            result = subprocess.run(['systemctl', 'is-active', 'bluetooth'], 
-                                  capture_output=True, text=True)
-            if result.stdout.strip() != 'active':
-                print("⚠️  Servizio Bluetooth non attivo")
-                print("Esegui: sudo systemctl start bluetooth")
-                return False
-            
-            # Controlla se l'utente è nel gruppo bluetooth
-            result = subprocess.run(['groups'], capture_output=True, text=True)
-            if 'bluetooth' not in result.stdout:
-                print("⚠️  Utente non nel gruppo bluetooth")
-                print("Esegui: sudo usermod -a -G bluetooth $USER")
-                print("Poi riavvia la sessione")
-                return False
-                
+            self.server_sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
+            self.server_sock.bind(("", 1))
+            self.server_sock.listen(1)
             return True
         except Exception as e:
-            print(f"Errore nel controllo servizio: {e}")
-            return True  # Continua comunque
+            print(f"❌ Errore setup server: {e}")
+            return False
     
-    def find_available_port(self):
-        """Trova una porta Bluetooth disponibile"""
-        print("Cercando porta Bluetooth disponibile...")
+    def wait_for_connection(self):
+        """Attende connessione client"""
+        print("🔍 In attesa di connessione Bluetooth...")
+        print("💡 Assicurati che il client sia in modalità discovery")
         
-        for port in range(self.port, self.port + self.max_port_attempts):
+        try:
+            self.client_sock, address = self.server_sock.accept()
+            print(f"✅ Client connesso: {address}")
+            return True
+        except Exception as e:
+            print(f"❌ Errore connessione: {e}")
+            return False
+    
+    def smooth_move(self, dx, dy):
+        """Movimento fluido per grandi spostamenti"""
+        if not self.MOVEMENT_SMOOTHING:
+            pyautogui.moveRel(dx, dy)
+            return
+            
+        # Se il movimento è piccolo, eseguilo direttamente
+        if abs(dx) <= self.MAX_MOVEMENT_PER_STEP and abs(dy) <= self.MAX_MOVEMENT_PER_STEP:
+            pyautogui.moveRel(dx, dy)
+            return
+        
+        # Altrimenti, dividilo in passi più piccoli
+        steps = max(abs(dx), abs(dy)) // self.MAX_MOVEMENT_PER_STEP + 1
+        step_dx = dx / steps
+        step_dy = dy / steps
+        
+        for _ in range(steps):
+            pyautogui.moveRel(int(step_dx), int(step_dy))
+            time.sleep(0.001)  # Piccola pausa tra i passi
+    
+    def execute_command(self, command_line):
+        """Esegue un comando ricevuto"""
+        try:
+            parts = command_line.strip().split()
+            if not parts:
+                return
+                
+            command = parts[0]
+            
+            if command == "MOVE":
+                if len(parts) >= 3:
+                    dx, dy = int(parts[1]), int(parts[2])
+                    # Limita movimenti estremi
+                    dx = max(-200, min(200, dx))
+                    dy = max(-200, min(200, dy))
+                    self.smooth_move(dx, dy)
+            
+            elif command == "GOTO":
+                if len(parts) >= 3:
+                    x, y = int(parts[1]), int(parts[2])
+                    # Verifica che le coordinate siano valide
+                    screen_width, screen_height = pyautogui.size()
+                    x = max(0, min(screen_width - 1, x))
+                    y = max(0, min(screen_height - 1, y))
+                    pyautogui.moveTo(x, y)
+            
+            elif command == "CLICK":
+                pyautogui.click()
+            
+            elif command == "RIGHT_CLICK":
+                pyautogui.rightClick()
+            
+            elif command == "MIDDLE_CLICK":
+                pyautogui.middleClick()
+            
+            elif command == "DOUBLE_CLICK":
+                pyautogui.doubleClick()
+            
+            elif command == "DOWN":
+                button = parts[1] if len(parts) > 1 else 'left'
+                if button in ['left', 'right', 'middle']:
+                    pyautogui.mouseDown(button=button)
+            
+            elif command == "UP":
+                button = parts[1] if len(parts) > 1 else 'left'
+                if button in ['left', 'right', 'middle']:
+                    pyautogui.mouseUp(button=button)
+            
+            elif command == "SCROLL":
+                if len(parts) >= 3:
+                    dx, dy = int(parts[1]), int(parts[2])
+                    # Limita i valori di scroll
+                    dx = max(-10, min(10, dx))
+                    dy = max(-10, min(10, dy))
+                    
+                    if dx != 0:
+                        pyautogui.hscroll(dx)
+                    if dy != 0:
+                        pyautogui.scroll(dy)
+            
+            else:
+                print(f"⚠️  Comando sconosciuto: {command}")
+                
+        except (ValueError, IndexError) as e:
+            print(f"⚠️  Formato comando non valido: {command_line.strip()} - {e}")
+        except Exception as e:
+            print(f"❌ Errore esecuzione comando '{command_line.strip()}': {e}")
+    
+    def command_executor(self):
+        """Thread separato per esecuzione comandi"""
+        while self.running:
             try:
-                test_sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
-                test_sock.bind(("", port))
-                test_sock.close()
-                print(f"✓ Porta {port} disponibile")
-                return port
-            except bluetooth.BluetoothError as e:
-                print(f"✗ Porta {port}: {e}")
+                command = self.command_queue.get(timeout=0.1)
+                if command:
+                    self.execute_command(command)
+                self.command_queue.task_done()
+            except queue.Empty:
                 continue
             except Exception as e:
-                print(f"✗ Porta {port}: {e}")
-                continue
-        return None
+                print(f"❌ Errore executor: {e}")
+                break
     
-    def start_server(self):
-        """Avvia il server Bluetooth"""
-        # Controlla servizio Bluetooth
-        if not self.check_bluetooth_service():
-            return False
-        
-        # Trova una porta disponibile
-        available_port = self.find_available_port()
-        if available_port is None:
-            print(f"❌ Nessuna porta disponibile nel range {self.port}-{self.port + self.max_port_attempts}")
-            print("\n🔧 Possibili soluzioni:")
-            print("1. sudo systemctl restart bluetooth")
-            print("2. sudo chmod 666 /dev/rfcomm*")
-            print("3. Eseguire come root: sudo python3 server.py")
-            return False
-        
-        self.port = available_port
-        
-        try:
-            # Crea socket Bluetooth RFCOMM
-            self.server_sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
-            
-            # Abilita riutilizzo dell'indirizzo
-            self.server_sock.setsockopt(bluetooth.SOL_SOCKET, bluetooth.SO_REUSEADDR, 1)
-            
-            self.server_sock.bind(("", self.port))
-            self.server_sock.listen(1)
-            
-            print(f"🟢 Server in ascolto sulla porta {self.port}")
-            print("📱 In attesa di connessioni...")
-            
-            # Accetta connessione dal client
-            self.client_sock, client_info = self.server_sock.accept()
-            print(f"✅ Connessione accettata da {client_info}")
-            
-            self.running = True
-            
-            # Avvia thread per ricevere dati
-            receive_thread = threading.Thread(target=self.receive_mouse_data)
-            receive_thread.daemon = True
-            receive_thread.start()
-            
-            return True
-            
-        except PermissionError:
-            print("❌ Errore permessi - Esegui come root o aggiungi utente al gruppo bluetooth")
-            print("Comando: sudo usermod -a -G bluetooth $USER")
-            self.cleanup()
-            return False
-        except Exception as e:
-            print(f"❌ Errore nell'avvio del server: {e}")
-            self.cleanup()
-            return False
-    
-    def receive_mouse_data(self):
-        """Riceve continuamente i dati del mouse dal client"""
+    def receive_commands(self):
+        """Riceve comandi dal client"""
         buffer = ""
         
         while self.running:
             try:
-                # Ricevi dati dal client
-                data = self.client_sock.recv(1024).decode('utf-8')
+                # Ricevi dati
+                data = self.client_sock.recv(1024)
                 if not data:
+                    print("❌ Connessione persa")
                     break
                 
-                buffer += data
+                buffer += data.decode('utf-8', errors='ignore')
                 
-                # Processa tutti i messaggi completi nel buffer
+                # Processa comandi completi (terminati da \n)
                 while '\n' in buffer:
-                    line, buffer = buffer.split('\n', 1)
-                    if line.strip():
-                        self.process_mouse_data(line.strip())
-                        
-            except bluetooth.BluetoothError as e:
-                print(f"Errore Bluetooth: {e}")
+                    command_line, buffer = buffer.split('\n', 1)
+                    command_line = command_line.strip()
+                    
+                    if command_line:
+                        # Aggiungi alla coda per esecuzione asincrona
+                        try:
+                            self.command_queue.put_nowait(command_line)
+                        except queue.Full:
+                            # Se coda piena, scarta comando più vecchio
+                            try:
+                                self.command_queue.get_nowait()
+                                self.command_queue.put_nowait(command_line)
+                            except queue.Empty:
+                                pass
+                
+            except bluetooth.btcommon.BluetoothError as e:
+                print(f"❌ Errore Bluetooth: {e}")
                 break
             except Exception as e:
-                print(f"Errore nella ricezione: {e}")
+                print(f"❌ Errore ricezione: {e}")
                 break
+    
+    def run(self):
+        """Avvia il server"""
+        print("🔷 Bluetooth Mouse Server")
+        print("=" * 30)
         
-        print("Disconnesso dal client")
-        self.cleanup()
-    
-    def process_mouse_data(self, data):
-        """Processa i dati ricevuti e muove il mouse"""
+        if not self.setup_server():
+            return
+        
+        if not self.wait_for_connection():
+            return
+        
+        self.running = True
+        
+        # Avvia thread executor
+        self.executor_thread = threading.Thread(target=self.command_executor)
+        self.executor_thread.daemon = True
+        self.executor_thread.start()
+        
+        print("\n🖱️  Server pronto a ricevere comandi mouse!")
+        print("📋 Funzionalità attive:")
+        print("   • Movimento fluido del cursore")
+        print("   • Click sinistro/destro/centrale")  
+        print("   • Scroll verticale/orizzontale")
+        print("   • Movimento ottimizzato e limitato")
+        print("\n⚠️  Premi Ctrl+C per disconnettere")
+        
         try:
-            # Decodifica JSON
-            mouse_data = json.loads(data)
-            
-            # Estrai coordinate e dimensioni schermo client
-            client_x = mouse_data['x']
-            client_y = mouse_data['y']
-            client_width = mouse_data['screen_width']
-            client_height = mouse_data['screen_height']
-            
-            # Calcola posizione relativa (0.0 - 1.0)
-            rel_x = client_x / client_width
-            rel_y = client_y / client_height
-            
-            # Converti alla risoluzione del server
-            server_x = int(rel_x * self.screen_width)
-            server_y = int(rel_y * self.screen_height)
-            
-            # Assicurati che le coordinate siano nei limiti
-            server_x = max(0, min(server_x, self.screen_width - 1))
-            server_y = max(0, min(server_y, self.screen_height - 1))
-            
-            # Muovi il mouse del server
-            pyautogui.moveTo(server_x, server_y)
-            
-        except json.JSONDecodeError:
-            print("Errore nel parsing JSON")
-        except KeyError as e:
-            print(f"Chiave mancante nei dati: {e}")
-        except Exception as e:
-            print(f"Errore nel processare dati: {e}")
+            self.receive_commands()
+        except KeyboardInterrupt:
+            print("\n🔚 Interruzione richiesta dall'utente...")
+        finally:
+            self.stop()
     
-    def cleanup(self):
-        """Pulisce le risorse"""
+    def stop(self):
+        """Chiude tutte le connessioni"""
+        print("🔄 Chiusura server...")
         self.running = False
+        
+        # Svuota la coda
+        while not self.command_queue.empty():
+            try:
+                self.command_queue.get_nowait()
+                self.command_queue.task_done()
+            except queue.Empty:
+                break
         
         if self.client_sock:
             try:
                 self.client_sock.close()
             except:
                 pass
+            self.client_sock = None
         
         if self.server_sock:
             try:
                 self.server_sock.close()
             except:
                 pass
-    
-    def stop(self):
-        """Ferma il server"""
-        print("Fermando il server...")
-        self.cleanup()
-
-def main():
-    print("=== 🐧 Server Bluetooth Mouse Control (Arch Linux) ===")
-    
-    # Verifica se ci sono processi in esecuzione
-    print("🔍 Verificando configurazione Bluetooth...")
-    
-    server = MouseServer()
-    
-    try:
-        if server.start_server():
-            print("🎉 Server avviato con successo!")
-            print(f"📡 Il client deve connettersi alla porta {server.port}")
-            print("⚠️  Premi Ctrl+C per fermare il server")
-            
-            # Mantieni il server attivo
-            while server.running:
-                time.sleep(1)
-        else:
-            print("\n❌ Impossibile avviare il server")
-            print("\n🔧 Comandi di troubleshooting per Arch Linux:")
-            print("sudo systemctl start bluetooth")
-            print("sudo systemctl enable bluetooth") 
-            print("sudo usermod -a -G bluetooth $USER")
-            print("sudo chmod 666 /var/run/sdp")
-            print("\n🔄 Oppure esegui come root:")
-            print("sudo python3 server.py")
-            
-    except KeyboardInterrupt:
-        print("\n⚠️  Interruzione da tastiera ricevuta")
-    except Exception as e:
-        print(f"❌ Errore: {e}")
-    finally:
-        server.stop()
+            self.server_sock = None
+        
+        print("✅ Server chiuso!")
 
 if __name__ == "__main__":
-    main()
+    server = BluetoothMouseServer()
+    server.run()
