@@ -1,41 +1,73 @@
-# === CLIENT (Ricevitore) ===
+# client_auto.py
 import socket
 import pyautogui
-from bluetooth import *
+import bluetooth
+import sys
 
-# 1. Scansione dispositivi
-print("Cerca dispositivi Bluetooth...")
-devices = discover_devices(lookup_names=True, duration=5)
+# Configurazione
+PORT = 4
+BUFFER_SIZE = 1024
+
+print("=== Client Mouse Bluetooth - Ricerca Automatica ===")
+
+# Trova tutti i dispositivi Bluetooth nelle vicinanze
+print("Ricerca dispositivi Bluetooth...")
+devices = bluetooth.discover_devices(duration=8, lookup_names=True, flush_cache=True)
 
 if not devices:
-    print("Nessun dispositivo trovato!")
-    exit()
+    print("Nessun dispositivo trovato! Assicurati che il server sia acceso e visibile.")
+    sys.exit(1)
 
-# 2. Mostra lista dispositivi
-print("\nDispositivi disponibili:")
-for i, (addr, name) in enumerate(devices):
-    print(f"{i+1}. {name} [{addr}]")
+# Filtra dispositivi che hanno un server in ascolto
+available_servers = []
+for addr, name in devices:
+    try:
+        sock_test = socket.socket(socket.AF_BLUETOOTH, socket.SOCK_STREAM, socket.BTPROTO_RFCOMM)
+        sock_test.settimeout(2)
+        sock_test.connect((addr, PORT))
+        sock_test.close()
+        available_servers.append((addr, name))
+    except:
+        pass
 
-# 3. Selezione utente
-selection = int(input("\nSeleziona il numero del server: ")) - 1
-SERVER_ADDR = devices[selection][0]
+if not available_servers:
+    print("Nessun server mouse trovato! Avvia prima il server.")
+    sys.exit(1)
 
-# 4. Connessione
+# Se c'è un solo server, connettiti automaticamente
+if len(available_servers) == 1:
+    server_addr, server_name = available_servers[0]
+    print(f"Trovato un server: {server_name}")
+else:
+    # Se ci sono più server, chiedi all'utente
+    print("\nServer disponibili:")
+    for i, (addr, name) in enumerate(available_servers):
+        print(f"{i+1}. {name} [{addr}]")
+    
+    selection = int(input("\nSeleziona il server: ")) - 1
+    server_addr, server_name = available_servers[selection]
+
+# Connessione finale
+print(f"Connessione a {server_name}...")
 sock = socket.socket(socket.AF_BLUETOOTH, socket.SOCK_STREAM, socket.BTPROTO_RFCOMM)
-sock.connect((SERVER_ADDR, 4))
-print(f"Connesso a {devices[selection][1]}!")
+sock.connect((server_addr, PORT))
+print(f"Connesso! Muovi il mouse sul server per controllare questo computer.")
+print("Premi CTRL+C per uscire")
 
-# 5. Ricevi movimenti
 try:
     while True:
-        data = sock.recv(1024).decode()
-        if not data: break
+        data = sock.recv(BUFFER_SIZE).decode('utf-8')
+        if not data:
+            break
         
         try:
             dx, dy = map(float, data.split(','))
             pyautogui.moveRel(dx, dy, _pause=False)
-        except:
+        except ValueError:
             pass
 
 except (KeyboardInterrupt, OSError):
+    print("Chiusura connessione...")
+finally:
     sock.close()
+    sys.exit()
