@@ -1,251 +1,113 @@
 import bluetooth
 import pyautogui
-import threading
-import time
-import queue
+import sys
 
-class BluetoothMouseServer:
-    def __init__(self):
-        self.server_sock = None
-        self.client_sock = None
-        self.running = False
-        self.command_queue = queue.Queue()  
-        self.executor_thread = None
-        
-        # Configurazione pyautogui per performance migliori
-        pyautogui.FAILSAFE = True
-        pyautogui.PAUSE = 0  # Rimuovi pause automatiche
-        
-        # Parametri di smoothing
-        self.MOVEMENT_SMOOTHING = True
-        self.MAX_MOVEMENT_PER_STEP = 50  # Pixel massimi per movimento
-        
-    def setup_server(self):
-        """Configura il server Bluetooth"""
-        try:
-            self.server_sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
-            self.server_sock.bind(("", 1))
-            self.server_sock.listen(1)
-            return True
-        except Exception as e:
-            print(f"❌ Errore setup server: {e}")
-            return False
-    
-    def wait_for_connection(self):
-        """Attende connessione client"""
-        print("🔍 In attesa di connessione Bluetooth...")
-        print("💡 Assicurati che il client sia in modalità discovery")
-        
-        try:
-            self.client_sock, address = self.server_sock.accept()
-            print(f"✅ Client connesso: {address}")
-            return True
-        except Exception as e:
-            print(f"❌ Errore connessione: {e}")
-            return False
-    
-    def smooth_move(self, dx, dy):
-        """Movimento fluido per grandi spostamenti"""
-        if not self.MOVEMENT_SMOOTHING:
-            pyautogui.moveRel(dx, dy)
-            return
+# Impostazioni del server Bluetooth
+SERVER_PORT = 1       # Porta standard per i servizi Bluetooth (puoi cambiarla, ma assicurati che sia la stessa sul client)
+SERVER_NAME = "MouseControlServer" # Nome del servizio (utile per la scoperta da parte del client)
+
+def run_server():
+    # Ottieni le dimensioni dello schermo del server
+    screen_width, screen_height = pyautogui.size()
+    print(f"Dimensioni dello schermo del server: {screen_width}x{screen_height}")
+
+    # Crea un socket Bluetooth
+    # bluetooth.RFCOMM è il protocollo più comune per la comunicazione seriale su Bluetooth
+    server_sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
+    server_sock.bind(("", SERVER_PORT)) # Collega il socket a tutte le interfacce disponibili sulla porta specificata
+    server_sock.listen(1) # Metti il socket in ascolto per una singola connessione in coda
+
+    print(f"In attesa di connessioni sulla porta {SERVER_PORT}...")
+
+    # Pubblica il servizio (facoltativo ma utile per la scoperta)
+    # Advertise il servizio in modo che il client possa trovarlo per nome
+    bluetooth.advertise_service(server_sock, SERVER_NAME,
+                                service_classes=[bluetooth.SERIAL_PORT_CLASS],
+                                profiles=[bluetooth.SERIAL_PORT_PROFILE])
+
+    client_sock, address = server_sock.accept() # Accetta una connessione in arrivo
+    print(f"Accettata connessione da {address}")
+
+    try:
+        while True:
+            # Ricevi i dati dal client
+            # La dimensione del buffer (1024) è tipicamente sufficiente per piccole quantità di dati come le coordinate
+            data = client_sock.recv(1024).decode('utf-8')
+            if not data:
+                break # Se non ci sono dati, la connessione è stata chiusa dal client
             
-        # Se il movimento è piccolo, eseguilo direttamente
-        if abs(dx) <= self.MAX_MOVEMENT_PER_STEP and abs(dy) <= self.MAX_MOVEMENT_PER_STEP:
-            pyautogui.moveRel(dx, dy)
-            return
-        
-        # Altrimenti, dividilo in passi più piccoli
-        steps = max(abs(dx), abs(dy)) // self.MAX_MOVEMENT_PER_STEP + 1
-        step_dx = dx / steps
-        step_dy = dy / steps
-        
-        for _ in range(steps):
-            pyautogui.moveRel(int(step_dx), int(step_dy))
-            time.sleep(0.001)  # Piccola pausa tra i passi
-    
-    def execute_command(self, command_line):
-        """Esegue un comando ricevuto"""
-        try:
-            parts = command_line.strip().split()
-            if not parts:
-                return
-                
-            command = parts[0]
-            
-            if command == "MOVE":
-                if len(parts) >= 3:
-                    dx, dy = int(parts[1]), int(parts[2])
-                    # Limita movimenti estremi
-                    dx = max(-200, min(200, dx))
-                    dy = max(-200, min(200, dy))
-                    self.smooth_move(dx, dy)
-            
-            elif command == "GOTO":
-                if len(parts) >= 3:
-                    x, y = int(parts[1]), int(parts[2])
-                    # Verifica che le coordinate siano valide
-                    screen_width, screen_height = pyautogui.size()
-                    x = max(0, min(screen_width - 1, x))
-                    y = max(0, min(screen_height - 1, y))
-                    pyautogui.moveTo(x, y)
-            
-            elif command == "CLICK":
-                pyautogui.click()
-            
-            elif command == "RIGHT_CLICK":
-                pyautogui.rightClick()
-            
-            elif command == "MIDDLE_CLICK":
-                pyautogui.middleClick()
-            
-            elif command == "DOUBLE_CLICK":
-                pyautogui.doubleClick()
-            
-            elif command == "DOWN":
-                button = parts[1] if len(parts) > 1 else 'left'
-                if button in ['left', 'right', 'middle']:
-                    pyautogui.mouseDown(button=button)
-            
-            elif command == "UP":
-                button = parts[1] if len(parts) > 1 else 'left'
-                if button in ['left', 'right', 'middle']:
-                    pyautogui.mouseUp(button=button)
-            
-            elif command == "SCROLL":
-                if len(parts) >= 3:
-                    dx, dy = int(parts[1]), int(parts[2])
-                    # Limita i valori di scroll
-                    dx = max(-10, min(10, dx))
-                    dy = max(-10, min(10, dy))
-                    
-                    if dx != 0:
-                        pyautogui.hscroll(dx)
-                    if dy != 0:
-                        pyautogui.scroll(dy)
-            
-            else:
-                print(f"⚠️  Comando sconosciuto: {command}")
-                
-        except (ValueError, IndexError) as e:
-            print(f"⚠️  Formato comando non valido: {command_line.strip()} - {e}")
-        except Exception as e:
-            print(f"❌ Errore esecuzione comando '{command_line.strip()}': {e}")
-    
-    def command_executor(self):
-        """Thread separato per esecuzione comandi"""
-        while self.running:
+            # Parsifica i dati ricevuti (formato "x,y")
             try:
-                command = self.command_queue.get(timeout=0.1)
-                if command:
-                    self.execute_command(command)
-                self.command_queue.task_done()
-            except queue.Empty:
+                client_x, client_y = map(int, data.split(','))
+            except ValueError:
+                print(f"Dati non validi ricevuti: {data}")
                 continue
-            except Exception as e:
-                print(f"❌ Errore executor: {e}")
-                break
-    
-    def receive_commands(self):
-        """Riceve comandi dal client"""
-        buffer = ""
-        
-        while self.running:
-            try:
-                # Ricevi dati
-                data = self.client_sock.recv(1024)
-                if not data:
-                    print("❌ Connessione persa")
-                    break
-                
-                buffer += data.decode('utf-8', errors='ignore')
-                
-                # Processa comandi completi (terminati da \n)
-                while '\n' in buffer:
-                    command_line, buffer = buffer.split('\n', 1)
-                    command_line = command_line.strip()
-                    
-                    if command_line:
-                        # Aggiungi alla coda per esecuzione asincrona
-                        try:
-                            self.command_queue.put_nowait(command_line)
-                        except queue.Full:
-                            # Se coda piena, scarta comando più vecchio
-                            try:
-                                self.command_queue.get_nowait()
-                                self.command_queue.put_nowait(command_line)
-                            except queue.Empty:
-                                pass
-                
-            except bluetooth.btcommon.BluetoothError as e:
-                print(f"❌ Errore Bluetooth: {e}")
-                break
-            except Exception as e:
-                print(f"❌ Errore ricezione: {e}")
-                break
-    
-    def run(self):
-        """Avvia il server"""
-        print("🔷 Bluetooth Mouse Server")
-        print("=" * 30)
-        
-        if not self.setup_server():
-            return
-        
-        if not self.wait_for_connection():
-            return
-        
-        self.running = True
-        
-        # Avvia thread executor
-        self.executor_thread = threading.Thread(target=self.command_executor)
-        self.executor_thread.daemon = True
-        self.executor_thread.start()
-        
-        print("\n🖱️  Server pronto a ricevere comandi mouse!")
-        print("📋 Funzionalità attive:")
-        print("   • Movimento fluido del cursore")
-        print("   • Click sinistro/destro/centrale")  
-        print("   • Scroll verticale/orizzontale")
-        print("   • Movimento ottimizzato e limitato")
-        print("\n⚠️  Premi Ctrl+C per disconnettere")
-        
-        try:
-            self.receive_commands()
-        except KeyboardInterrupt:
-            print("\n🔚 Interruzione richiesta dall'utente...")
-        finally:
-            self.stop()
-    
-    def stop(self):
-        """Chiude tutte le connessioni"""
-        print("🔄 Chiusura server...")
-        self.running = False
-        
-        # Svuota la coda
-        while not self.command_queue.empty():
-            try:
-                self.command_queue.get_nowait()
-                self.command_queue.task_done()
-            except queue.Empty:
-                break
-        
-        if self.client_sock:
-            try:
-                self.client_sock.close()
-            except:
-                pass
-            self.client_sock = None
-        
-        if self.server_sock:
-            try:
-                self.server_sock.close()
-            except:
-                pass
-            self.server_sock = None
-        
-        print("✅ Server chiuso!")
+
+            # Mappa le coordinate del client alle dimensioni dello schermo del server
+            # Assumiamo che il client invii coordinate assolute basate sulla sua risoluzione
+            # Per una mappatura relativa, avremmo bisogno anche della risoluzione dello schermo del client
+            # Per ora, supponiamo che il client invii valori da 0 a MAX_CLIENT_X e 0 a MAX_CLIENT_Y.
+            # Se i client hanno risoluzioni diverse, questo è un punto critico.
+            # Per una mappatura veramente relativa senza conoscere la risoluzione del client,
+            # il client dovrebbe inviare le coordinate come percentuali (0.0-1.0).
+
+            # Per semplicità, qui mappiamo direttamente le coordinate assolute
+            # Supponiamo che il client invii coordinate relative al suo schermo,
+            # e per spostare il mouse del server nella stessa posizione *relativa*,
+            # dobbiamo sapere le dimensioni dello schermo del client.
+            # Senza di esse, possiamo solo assumere che il client invii coordinate assolute e scalarle.
+            
+            # Per una soluzione più robusta: il client dovrebbe inviare le sue dimensioni dello schermo una volta all'inizio.
+            # In questo esempio, *assumeremo* che le coordinate in arrivo siano già proporzionali allo schermo del server,
+            # o che le risoluzioni siano uguali. Se non lo sono, il movimento potrebbe essere "sfasato".
+            
+            # Per un movimento fluido, pyautogui.moveTo() è ottimo.
+            # La durata (duration) può essere impostata per un movimento più graduale.
+            
+            # Qui usiamo la logica di scalatura se le risoluzioni sono diverse.
+            # Tuttavia, senza la risoluzione del client, questa è una stima.
+            # Idealmente, il client invierebbe `(current_x / client_width, current_y / client_height)`
+            # e il server calcolerebbe `target_x = percent_x * server_width`, `target_y = percent_y * server_height`.
+
+            # DEBUG: Se vuoi stampare le coordinate ricevute
+            # print(f"Ricevuto: {client_x},{client_y}")
+
+            # Sposta il mouse del server
+            # pyautogui.moveTo(client_x, client_y, duration=0.01) # duration per un movimento più fluido
+            
+            # Per un movimento più preciso e relativo, avremmo bisogno delle dimensioni dello schermo del client.
+            # In mancanza di ciò, facciamo un'assunzione semplificata:
+            # mappiamo le coordinate del client come se il client avesse la stessa risoluzione del server.
+            # Se le risoluzioni sono diverse, il movimento non sarà perfettamente "relativo".
+            
+            # Per una mappatura veramente relativa:
+            # Il client dovrebbe inviare (client_x, client_y, client_screen_width, client_screen_height)
+            # E il server calcolerebbe:
+            # percent_x = client_x / client_screen_width
+            # percent_y = client_y / client_screen_height
+            # target_x = int(percent_x * screen_width)
+            # target_y = int(percent_y * screen_height)
+            
+            # Dato che non abbiamo le dimensioni dello schermo del client qui,
+            # sposteremo il mouse direttamente alle coordinate ricevute.
+            # Questo significa che il movimento sarà "relativo" solo se le risoluzioni sono identiche.
+            # Altrimenti, si avrà un effetto di scaling implicito.
+            
+            # Per un movimento più fluido, usa un valore basso per duration.
+            # Valori troppo bassi possono rendere il movimento scattoso se i dati arrivano lentamente.
+            # Valori più alti lo rendono più "trascinato". 0.05 è un buon compromesso.
+            pyautogui.moveTo(client_x, client_y, duration=0.05) 
+
+    except bluetooth.BluetoothError as e:
+        print(f"Errore Bluetooth: {e}")
+    except KeyboardInterrupt:
+        print("Server terminato dall'utente.")
+    finally:
+        print("Chiusura del socket client e server.")
+        if client_sock:
+            client_sock.close()
+        server_sock.close()
+        sys.exit()
 
 if __name__ == "__main__":
-    server = BluetoothMouseServer()
-    server.run()
+    run_server()
