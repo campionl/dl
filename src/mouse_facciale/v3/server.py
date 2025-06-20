@@ -1,93 +1,161 @@
-# server.py (Linux Arch)
+"""
+Server Bluetooth per ricevere coordinate del mouse e controllarle localmente
+Riceve le coordinate dal client e muove il mouse di conseguenza
+"""
+
 import bluetooth
+import pyautogui
+import json
 import threading
-from pynput.mouse import Controller, Button
+import time
 
-# Porta RFCOMM: di solito 1 per SPP
-PORT = 1
-
-def parse_report(data: bytes):
-    """
-    Interpreta report di 4 byte:
-      byte0 = buttons bitmask (bit0=sinistro,1=destro,2=middle)
-      byte1 = dx signed int8
-      byte2 = dy signed int8
-      byte3 = wheel signed int8
-    Ritorna tuple (buttons, dx, dy, wheel) o None se data insufficiente.
-    """
-    if len(data) < 4:
-        return None
-    b0, b1, b2, b3 = data[0], data[1], data[2], data[3]
-    # converti a signed
-    def to_signed(x):
-        return x - 256 if x > 127 else x
-    dx = to_signed(b1)
-    dy = to_signed(b2)
-    wheel = to_signed(b3)
-    return b0, dx, dy, wheel
-
-def client_handler(client_sock, client_info):
-    print(f"[Server] Connessione da {client_info}")
-    mouse = Controller()
-    try:
-        while True:
-            data = client_sock.recv(4)
-            if not data:
-                print("[Server] Connessione chiusa dal client")
+class MouseServer:
+    def __init__(self, port=3):
+        self.port = port
+        self.server_sock = None
+        self.client_sock = None
+        self.running = False
+        
+        # Configura pyautogui per movimento fluido
+        pyautogui.FAILSAFE = True  # Muovi mouse nell'angolo per emergenza
+        pyautogui.PAUSE = 0.01     # Pausa minima tra comandi
+        
+        # Ottieni dimensioni schermo del server
+        self.screen_width, self.screen_height = pyautogui.size()
+        print(f"Risoluzione schermo server: {self.screen_width}x{self.screen_height}")
+    
+    def start_server(self):
+        """Avvia il server Bluetooth"""
+        try:
+            # Crea socket Bluetooth RFCOMM
+            self.server_sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
+            self.server_sock.bind(("", self.port))
+            self.server_sock.listen(1)
+            
+            print(f"Server in ascolto sulla porta {self.port}")
+            print("In attesa di connessioni...")
+            
+            # Accetta connessione dal client
+            self.client_sock, client_info = self.server_sock.accept()
+            print(f"Connessione accettata da {client_info}")
+            
+            self.running = True
+            
+            # Avvia thread per ricevere dati
+            receive_thread = threading.Thread(target=self.receive_mouse_data)
+            receive_thread.daemon = True
+            receive_thread.start()
+            
+            return True
+            
+        except Exception as e:
+            print(f"Errore nell'avvio del server: {e}")
+            return False
+    
+    def receive_mouse_data(self):
+        """Riceve continuamente i dati del mouse dal client"""
+        buffer = ""
+        
+        while self.running:
+            try:
+                # Ricevi dati dal client
+                data = self.client_sock.recv(1024).decode('utf-8')
+                if not data:
+                    break
+                
+                buffer += data
+                
+                # Processa tutti i messaggi completi nel buffer
+                while '\n' in buffer:
+                    line, buffer = buffer.split('\n', 1)
+                    if line.strip():
+                        self.process_mouse_data(line.strip())
+                        
+            except bluetooth.BluetoothError as e:
+                print(f"Errore Bluetooth: {e}")
                 break
-            rpt = parse_report(data)
-            if rpt is None:
-                continue
-            buttons, dx, dy, wheel = rpt
-            # Muovi cursore se differenza
-            if dx != 0 or dy != 0:
-                mouse.move(dx, dy)
-            # Click semplici
-            if buttons & 0x01:
-                mouse.click(Button.left)
-            if buttons & 0x02:
-                mouse.click(Button.right)
-            if buttons & 0x04:
-                mouse.click(Button.middle)
-            # Scroll wheel
-            if wheel:
-                mouse.scroll(0, wheel)
-    except Exception as e:
-        print(f"[Server] Errore: {e}")
-    finally:
-        client_sock.close()
-        print("[Server] Thread client terminato")
+            except Exception as e:
+                print(f"Errore nella ricezione: {e}")
+                break
+        
+        print("Disconnesso dal client")
+        self.cleanup()
+    
+    def process_mouse_data(self, data):
+        """Processa i dati ricevuti e muove il mouse"""
+        try:
+            # Decodifica JSON
+            mouse_data = json.loads(data)
+            
+            # Estrai coordinate e dimensioni schermo client
+            client_x = mouse_data['x']
+            client_y = mouse_data['y']
+            client_width = mouse_data['screen_width']
+            client_height = mouse_data['screen_height']
+            
+            # Calcola posizione relativa (0.0 - 1.0)
+            rel_x = client_x / client_width
+            rel_y = client_y / client_height
+            
+            # Converti alla risoluzione del server
+            server_x = int(rel_x * self.screen_width)
+            server_y = int(rel_y * self.screen_height)
+            
+            # Assicurati che le coordinate siano nei limiti
+            server_x = max(0, min(server_x, self.screen_width - 1))
+            server_y = max(0, min(server_y, self.screen_height - 1))
+            
+            # Muovi il mouse del server
+            pyautogui.moveTo(server_x, server_y)
+            
+        except json.JSONDecodeError:
+            print("Errore nel parsing JSON")
+        except KeyError as e:
+            print(f"Chiave mancante nei dati: {e}")
+        except Exception as e:
+            print(f"Errore nel processare dati: {e}")
+    
+    def cleanup(self):
+        """Pulisce le risorse"""
+        self.running = False
+        
+        if self.client_sock:
+            try:
+                self.client_sock.close()
+            except:
+                pass
+        
+        if self.server_sock:
+            try:
+                self.server_sock.close()
+            except:
+                pass
+    
+    def stop(self):
+        """Ferma il server"""
+        print("Fermando il server...")
+        self.cleanup()
 
-def start_server():
-    server_sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
-    server_sock.bind(("", PORT))
-    server_sock.listen(1)
-    # Opzionale: pubblicizza il servizio SPP
+def main():
+    server = MouseServer()
+    
     try:
-        from bluetooth import advertise_service, SERIAL_PORT_CLASS, SERIAL_PORT_PROFILE
-        advertise_service(
-            server_sock,
-            "MouseRemoteService",
-            service_classes=[SERIAL_PORT_CLASS],
-            profiles=[SERIAL_PORT_PROFILE]
-        )
-        print("[Server] Servizio SPP pubblicizzato")
-    except Exception:
-        # se fallisce, non critico: si può connettere ugualmente specificando MAC+porta
-        pass
-
-    print(f"[Server] In ascolto su RFCOMM canale {PORT}...")
-    try:
-        while True:
-            client_sock, client_info = server_sock.accept()
-            t = threading.Thread(
-                target=client_handler, args=(client_sock, client_info), daemon=True
-            )
-            t.start()
+        if server.start_server():
+            print("Server avviato con successo!")
+            print("Premi Ctrl+C per fermare il server")
+            
+            # Mantieni il server attivo
+            while server.running:
+                time.sleep(1)
+        else:
+            print("Impossibile avviare il server")
+            
     except KeyboardInterrupt:
-        print("\n[Server] Chiusura server.")
+        print("\nInterruzione da tastiera ricevuta")
+    except Exception as e:
+        print(f"Errore: {e}")
     finally:
-        server_sock.close()
+        server.stop()
 
 if __name__ == "__main__":
-    start_server()
+    main()
