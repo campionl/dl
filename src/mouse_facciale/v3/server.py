@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 Server Bluetooth per ricevere coordinate del mouse e controllarle localmente
 Riceve le coordinate dal client e muove il mouse di conseguenza
@@ -25,24 +26,64 @@ class MouseServer:
         self.screen_width, self.screen_height = pyautogui.size()
         print(f"Risoluzione schermo server: {self.screen_width}x{self.screen_height}")
     
+    def check_bluetooth_service(self):
+        """Verifica lo stato del servizio Bluetooth"""
+        import subprocess
+        try:
+            # Controlla se bluetoothd è in esecuzione
+            result = subprocess.run(['systemctl', 'is-active', 'bluetooth'], 
+                                  capture_output=True, text=True)
+            if result.stdout.strip() != 'active':
+                print("⚠️  Servizio Bluetooth non attivo")
+                print("Esegui: sudo systemctl start bluetooth")
+                return False
+            
+            # Controlla se l'utente è nel gruppo bluetooth
+            result = subprocess.run(['groups'], capture_output=True, text=True)
+            if 'bluetooth' not in result.stdout:
+                print("⚠️  Utente non nel gruppo bluetooth")
+                print("Esegui: sudo usermod -a -G bluetooth $USER")
+                print("Poi riavvia la sessione")
+                return False
+                
+            return True
+        except Exception as e:
+            print(f"Errore nel controllo servizio: {e}")
+            return True  # Continua comunque
+    
     def find_available_port(self):
         """Trova una porta Bluetooth disponibile"""
+        print("Cercando porta Bluetooth disponibile...")
+        
         for port in range(self.port, self.port + self.max_port_attempts):
             try:
                 test_sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
                 test_sock.bind(("", port))
                 test_sock.close()
+                print(f"✓ Porta {port} disponibile")
                 return port
-            except Exception:
+            except bluetooth.BluetoothError as e:
+                print(f"✗ Porta {port}: {e}")
+                continue
+            except Exception as e:
+                print(f"✗ Porta {port}: {e}")
                 continue
         return None
     
     def start_server(self):
         """Avvia il server Bluetooth"""
+        # Controlla servizio Bluetooth
+        if not self.check_bluetooth_service():
+            return False
+        
         # Trova una porta disponibile
         available_port = self.find_available_port()
         if available_port is None:
-            print(f"Nessuna porta disponibile nel range {self.port}-{self.port + self.max_port_attempts}")
+            print(f"❌ Nessuna porta disponibile nel range {self.port}-{self.port + self.max_port_attempts}")
+            print("\n🔧 Possibili soluzioni:")
+            print("1. sudo systemctl restart bluetooth")
+            print("2. sudo chmod 666 /dev/rfcomm*")
+            print("3. Eseguire come root: sudo python3 server.py")
             return False
         
         self.port = available_port
@@ -57,12 +98,12 @@ class MouseServer:
             self.server_sock.bind(("", self.port))
             self.server_sock.listen(1)
             
-            print(f"Server in ascolto sulla porta {self.port}")
-            print("In attesa di connessioni...")
+            print(f"🟢 Server in ascolto sulla porta {self.port}")
+            print("📱 In attesa di connessioni...")
             
             # Accetta connessione dal client
             self.client_sock, client_info = self.server_sock.accept()
-            print(f"Connessione accettata da {client_info}")
+            print(f"✅ Connessione accettata da {client_info}")
             
             self.running = True
             
@@ -73,8 +114,13 @@ class MouseServer:
             
             return True
             
+        except PermissionError:
+            print("❌ Errore permessi - Esegui come root o aggiungi utente al gruppo bluetooth")
+            print("Comando: sudo usermod -a -G bluetooth $USER")
+            self.cleanup()
+            return False
         except Exception as e:
-            print(f"Errore nell'avvio del server: {e}")
+            print(f"❌ Errore nell'avvio del server: {e}")
             self.cleanup()
             return False
     
@@ -163,33 +209,36 @@ class MouseServer:
         self.cleanup()
 
 def main():
-    print("=== Server Bluetooth Mouse Control ===")
+    print("=== 🐧 Server Bluetooth Mouse Control (Arch Linux) ===")
     
     # Verifica se ci sono processi in esecuzione
-    print("Verificando porte disponibili...")
+    print("🔍 Verificando configurazione Bluetooth...")
     
     server = MouseServer()
     
     try:
         if server.start_server():
-            print("Server avviato con successo!")
-            print(f"Il client deve connettersi alla porta {server.port}")
-            print("Premi Ctrl+C per fermare il server")
+            print("🎉 Server avviato con successo!")
+            print(f"📡 Il client deve connettersi alla porta {server.port}")
+            print("⚠️  Premi Ctrl+C per fermare il server")
             
             # Mantieni il server attivo
             while server.running:
                 time.sleep(1)
         else:
-            print("Impossibile avviare il server")
-            print("\nPossibili soluzioni:")
-            print("1. Chiudi altre applicazioni Bluetooth")
-            print("2. Riavvia il servizio Bluetooth")
-            print("3. Riavvia il computer")
+            print("\n❌ Impossibile avviare il server")
+            print("\n🔧 Comandi di troubleshooting per Arch Linux:")
+            print("sudo systemctl start bluetooth")
+            print("sudo systemctl enable bluetooth") 
+            print("sudo usermod -a -G bluetooth $USER")
+            print("sudo chmod 666 /var/run/sdp")
+            print("\n🔄 Oppure esegui come root:")
+            print("sudo python3 server.py")
             
     except KeyboardInterrupt:
-        print("\nInterruzione da tastiera ricevuta")
+        print("\n⚠️  Interruzione da tastiera ricevuta")
     except Exception as e:
-        print(f"Errore: {e}")
+        print(f"❌ Errore: {e}")
     finally:
         server.stop()
 
