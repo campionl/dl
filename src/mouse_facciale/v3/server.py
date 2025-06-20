@@ -15,6 +15,7 @@ class MouseServer:
         self.server_sock = None
         self.client_sock = None
         self.running = False
+        self.max_port_attempts = 10
         
         # Configura pyautogui per movimento fluido
         pyautogui.FAILSAFE = True  # Muovi mouse nell'angolo per emergenza
@@ -24,11 +25,35 @@ class MouseServer:
         self.screen_width, self.screen_height = pyautogui.size()
         print(f"Risoluzione schermo server: {self.screen_width}x{self.screen_height}")
     
+    def find_available_port(self):
+        """Trova una porta Bluetooth disponibile"""
+        for port in range(self.port, self.port + self.max_port_attempts):
+            try:
+                test_sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
+                test_sock.bind(("", port))
+                test_sock.close()
+                return port
+            except Exception:
+                continue
+        return None
+    
     def start_server(self):
         """Avvia il server Bluetooth"""
+        # Trova una porta disponibile
+        available_port = self.find_available_port()
+        if available_port is None:
+            print(f"Nessuna porta disponibile nel range {self.port}-{self.port + self.max_port_attempts}")
+            return False
+        
+        self.port = available_port
+        
         try:
             # Crea socket Bluetooth RFCOMM
             self.server_sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
+            
+            # Abilita riutilizzo dell'indirizzo
+            self.server_sock.setsockopt(bluetooth.SOL_SOCKET, bluetooth.SO_REUSEADDR, 1)
+            
             self.server_sock.bind(("", self.port))
             self.server_sock.listen(1)
             
@@ -50,6 +75,7 @@ class MouseServer:
             
         except Exception as e:
             print(f"Errore nell'avvio del server: {e}")
+            self.cleanup()
             return False
     
     def receive_mouse_data(self):
@@ -137,11 +163,17 @@ class MouseServer:
         self.cleanup()
 
 def main():
+    print("=== Server Bluetooth Mouse Control ===")
+    
+    # Verifica se ci sono processi in esecuzione
+    print("Verificando porte disponibili...")
+    
     server = MouseServer()
     
     try:
         if server.start_server():
             print("Server avviato con successo!")
+            print(f"Il client deve connettersi alla porta {server.port}")
             print("Premi Ctrl+C per fermare il server")
             
             # Mantieni il server attivo
@@ -149,6 +181,10 @@ def main():
                 time.sleep(1)
         else:
             print("Impossibile avviare il server")
+            print("\nPossibili soluzioni:")
+            print("1. Chiudi altre applicazioni Bluetooth")
+            print("2. Riavvia il servizio Bluetooth")
+            print("3. Riavvia il computer")
             
     except KeyboardInterrupt:
         print("\nInterruzione da tastiera ricevuta")

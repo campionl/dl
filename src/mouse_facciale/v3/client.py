@@ -47,29 +47,41 @@ class MouseClient:
             except ValueError:
                 print("Inserisci un numero valido")
     
-    def connect_to_server(self, port=3):
-        """Connette al server Bluetooth"""
+    def connect_to_server(self, port_range=(3, 13)):
+        """Connette al server Bluetooth provando diverse porte"""
         if not self.server_address:
             self.server_address = self.discover_devices()
             if not self.server_address:
                 return False
         
-        try:
-            print(f"Connessione a {self.server_address}...")
-            
-            # Crea socket Bluetooth RFCOMM
-            self.sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
-            self.sock.connect((self.server_address, port))
-            
-            print("Connesso al server!")
-            return True
-            
-        except bluetooth.BluetoothError as e:
-            print(f"Errore connessione Bluetooth: {e}")
-            return False
-        except Exception as e:
-            print(f"Errore generico: {e}")
-            return False
+        print(f"Connessione a {self.server_address}...")
+        
+        # Prova diverse porte nel range
+        for port in range(port_range[0], port_range[1]):
+            try:
+                print(f"Tentativo connessione porta {port}...")
+                
+                # Crea socket Bluetooth RFCOMM
+                self.sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
+                self.sock.settimeout(5)  # Timeout di 5 secondi
+                self.sock.connect((self.server_address, port))
+                
+                print(f"Connesso al server sulla porta {port}!")
+                return True
+                
+            except bluetooth.BluetoothError as e:
+                if self.sock:
+                    self.sock.close()
+                    self.sock = None
+                continue
+            except Exception as e:
+                if self.sock:
+                    self.sock.close()
+                    self.sock = None
+                continue
+        
+        print(f"Impossibile connettersi al server su tutte le porte {port_range[0]}-{port_range[1]-1}")
+        return False
     
     def send_mouse_position(self):
         """Invia continuamente la posizione del mouse"""
