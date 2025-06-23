@@ -57,9 +57,7 @@ In pratica, eseguono un numero elevatissimo di calcoli al secondo per trovare la
 
 Ecco una spiegazione dettagliata delle **fasi di apprendimento degli LLM**, con focus tecnico ed esempi concreti:
 
----
-
-### 2 - **Fasi di apprendimento degli LLM: un processo stratificato**
+### 2 - Fasi di apprendimento degli LLM: un processo stratificato
 Le tre fasi fondamentali trasformano un modello generico in uno specializzato:
 
 #### a. Pre-training: la costruzione della conoscenza di base
@@ -91,8 +89,6 @@ Le tre fasi fondamentali trasformano un modello generico in uno specializzato:
   steps = 1_000_000          # Iterazioni di ottimizzazione  
   ```  
 - **Risultato**: Un modello "grezzo" capace di completare testi, ma non affidabile per task specifici.
-
----
 
 #### b. Fine-tuning: la specializzazione
 - **Scopo**: Adattare il modello a compiti specifici (es. chatbot, traduzione, diagnosi medica).
@@ -126,8 +122,6 @@ Le tre fasi fondamentali trasformano un modello generico in uno specializzato:
   - **Adapter Layers**: Strati aggiuntivi "congelano" i pesi originali  
   - **LoRA (Low-Rank Adaptation)**: Aggiorna solo matrici a basso rango  
 
----
-
 #### c. RLHF (Reinforcement Learning from Human Feedback): raffinamento umano  
 - **Scopo**: Allineare le risposte a valori umani (accuratezza, sicurezza, stile).
 - **Fasi tecniche**:  
@@ -160,7 +154,6 @@ Le tre fasi fondamentali trasformano un modello generico in uno specializzato:
     `"La fabbricazione di esplosivi è illegale e pericolosa. Cerca aiuto professionale se..."`  
 
 ---
-
 ### Perché tre fasi? Un'analisi tecnica  
 1. **Efficienza computazionale**:  
    - Il pre-training richiede **migliaia di GPU** (costo: $2-20 milioni)  
@@ -175,14 +168,12 @@ Le tre fasi fondamentali trasformano un modello generico in uno specializzato:
 3. **Controllo etico**:  
    - Il RLHF "filtra" comportamenti pericolosi appresi durante il pre-training da fonti non controllate.  
 
----
-
-### **Sfide attuali nell'apprendimento**  
+### Sfide attuali nell'apprendimento
 - **Bias nei dati**:  
   Se il pre-training contiene stereotipi (es. "l'infermiere è donna"), il modello li riprodurrà.  
-  *Soluzione*: Debiasing tramite re-weighting dei dati.  
+  *Soluzione*: debiasing tramite re-weighting dei dati.  
 
-- **Scalabilità vs. sostenibilità**:  
+- **Scalabilità vs sostenibilità**:  
   Addestrare GPT-4: **50 GWh** (energia per 5.000 case/anno)  
   *Nuove strategie*:  
   - **Mixture of Experts (MoE)**: Attiva solo parti del modello  
@@ -194,9 +185,7 @@ Le tre fasi fondamentali trasformano un modello generico in uno specializzato:
   - **RAG (Retrieval-Augmented Generation)**: Collega il modello a database esterni  
   - **Apprendimento continuo**: Micro-aggiornamenti settimanali  
 
----
-
-### **Esempio Concreto: Creazione di un LLM per Finanza**  
+### Esempio concreto: creazione di un LLM per finanza
 1. **Pre-training**:  
    - Dati: 10TB di report aziendali, notizie di borsa (2000-2023)  
 2. **Fine-tuning**:  
@@ -208,13 +197,14 @@ Le tre fasi fondamentali trasformano un modello generico in uno specializzato:
    - Analisti finanziari correggono errori su proiezioni di mercato  
    - Reward Model impara a privilegiare fonti come Bloomberg/Reuters  
 
-**Risultato**: Un modello che:  
+Ne risulta un modello che:  
 - Spiega termini complessi ("EBITDA") in linguaggio semplice  
 - Genera report di analisi da dati strutturati  
 - Evita previsioni speculative non basate su dati  
 
 Questo processo trasforma un "pappagallo statistico" in uno strumento professionale affidabile. 
 
+---
 ### 3 - Generazione del testo: tecniche avanzate  
 - **Temperature sampling**:  
 	- Bassa (0.2): Risposte conservative *"La capitale è Parigi"*  
@@ -223,8 +213,8 @@ Questo processo trasforma un "pappagallo statistico" in uno strumento profession
   Seleziona solo da parole cumulativamente probabili al 90%, scartando outlier.  
 
 ## LLM Reasoning: capacità logiche e limiti  
-### Meccanismi di Ragionamento  
-- **Chain-of-Thought (CoT)**:  
+### Meccanismi di ragionamento  
+- **Chain of Thought (CoT)**:  
   Input: *"Se ho 5 mele, ne do 2 a Marco e 3 a Sara, quante mele ho?"*  
   Output:  
   ```  
@@ -238,11 +228,11 @@ Questo processo trasforma un "pappagallo statistico" in uno strumento profession
   *"Se Venezia è la 'Serenissima', come chiamare Milano?"* → *"Città meneghina"* (per analogia storico-culturale)  
 
 ### Confronto tra Modelli  
-| Caratteristica       | GPT-4             | MiMo-7B           | Claude 3          |  
-|----------------------|-------------------|-------------------|-------------------|  
-| Ragionamento esplicito| Solo su richiesta | Sempre attivo     | Parziale          |  
-| Precisione matematica| 68%               | 72%               | 75%               |  
-| Gestione ambiguità   | Media             | Alta              | Alta              |  
+| Caratteristica         | GPT-4             | MiMo-7B       | Claude 3 |
+| ---------------------- | ----------------- | ------------- | -------- |
+| Ragionamento esplicito | Solo su richiesta | Sempre attivo | Parziale |
+| Precisione matematica  | 68%               | 72%           | 75%      |
+| Gestione ambiguità     | Media             | Alta          | Alta     |
 
 ### Limiti fondamentali  
 - **Pensiero controfattuale**:  
@@ -255,46 +245,53 @@ Questo processo trasforma un "pappagallo statistico" in uno strumento profession
 ---
 
 ## Contesto tecnologico e interdisciplinare  
-### Posizionamento nell'ecosistema AI  
-```mermaid  
-graph TD  
-    A[Intelligenza Artificiale] --> B[Machine Learning]  
-    B --> C[Deep Learning]  
-    C --> D[Reti Neurali]  
-    D --> E[Transformer]  
-    E --> F[LLM]  
-    F --> G[Applicazioni NLP]  
-```  
+### Posizionamento nell'ecosistema AI   
 
-### Differenze chiave vs. Sistemi Classici  
+```mermaid  
+graph TD
+    %% Definizione delle aree concettuali
+    subgraph IA [Intelligenza Artificiale]
+        subgraph ML [Machine Learning]
+            subgraph DL [Deep Learning]
+                subgraph RN [Reti Neurali]
+                    Transformer
+                end
+            end
+        end
+    end
+
+    Transformer --> LLM
+    LLM --> NLP[Applicazioni NLP]
+``` 
+### Differenze chiave con i sistemi classici  
 - **Approccio simbolico tradizionale**:  
   Regola fissa: SE domanda CONTIENE "Divina Commedia" ALLORA rispondi "Dante"  
 - **Approccio LLM**:  
   Genera risposta basata su:  
   - Frequenza co-occorrenza nei testi  
-  - Contesto conversazionale  
+  - Contesto di conversazione  
   - Pattern appresi in 300+ miliardi di token  
 
 ---
 
-## Stato dell'Arte (2024): Capacità e Limiti  
-### Innovazioni Recenti  
+## Stato dell'arte (2024): capacità e limiti  
+### Innovazioni recenti  
 - **Memoria contestuale estesa**:  
-  - GPT-4 Turbo: 128K token (≈ 300 pagine)  
-  - Claude 3: 200K token (analisi interi libri)  
+	- GPT-4 Turbo: 128K token (≈ 300 pagine)  
+	- Claude 3: 200K token (analisi interi libri)  
 
 - **Multimodalità avanzata**:  
   Gemini 1.5 processa:  
-  - Testo + immagini: *"Descrivi il grafico sulla crescita PIL"*  
-  - Audio: Trascrizione e analisi tono di voce  
+	- Testo + immagini: *"Descrivi il grafico sulla crescita PIL"*  
+	- Audio: trascrizione e analisi tono di voce  
 
 - **Specializzazione settoriale**:  
-  - Med-PaLM 2: Diagnosi mediche con 86% accuratezza  
-  - CodeLLaMA: Generazione codice con debug integrato  
+	- Med-PaLM 2: Diagnosi mediche con 86% accuratezza  
+	- CodeLLaMA: Generazione codice con debug integrato  
 
 ### Problemi aperti  
 - **Allucinazioni strutturali**:  
-  Inventa citazioni plausibili: *"Come scriveva Kant nella 'Critica del Gusto'..."* (opera inesistente)  
+  Inventa citazioni plausibili: *"Come scriveva Kant nella 'Critica del Gusto'..."* (opera inesistente)
 
 - **Bias sistemici**:  
   Addestramento su dati occidentali → Errori su culture minoritarie:  
@@ -332,15 +329,18 @@ graph TD
 ---
 
 ## Conclusione: tra potenziale e precauzione  
+
 Gli LLM rappresentano una **rivoluzione epistemologica**: per la prima volta, macchine manipolano linguaggio con fluidità quasi umana. Tuttavia:  
 
 - **Non sono coscienti**: Simulano comprensione senza esperienza soggettiva.  
 - **Sono specchi culturali**: Amplificano pregiudizi presenti nei dati di addestramento.  
 - **Richiedono governance**: Il quadro UE sull'AI (AI Act) classifica gli LLM come "ad alto rischio" per disinformazione.  
 
-> **Scenario futuro**: Entro il 2030, gli LLM diverranno "collaboratori pervasivi":  
-> - In medicina: Diagnostica assistita  
-> - In educazione: Tutor personalizzati  
-> - In arte: Co-creazione uomo-macchina  
->  
-> La sfida è bilanciare innovazione con salvaguardia umanistica, evitando la deriva verso un'**intelligenza senza comprensione**.
+### Scenario futuro
+ Entro il 2030, gli LLM diverranno "collaboratori pervasivi"
+ - In medicina: diagnostica assistita  
+ - In educazione: tutor personalizzati  
+ - In arte: co-creazione uomo-macchina  
+  
+ La sfida è **bilanciare** innovazione con salvaguardia umanistica, evitando la deriva verso un'**intelligenza senza comprensione**.
+
