@@ -3,8 +3,9 @@
 
 ---
 
-## Cosa sono gli LLM: Fondamenti e Meccanismi  
+## Cosa sono gli LLM: fondamenti e meccanismi  
 I **Large Language Models (LLM)** sono sistemi di intelligenza artificiale basati su architetture neurali che processano e generano linguaggio umano. A differenza dei software tradizionali, **non seguono regole predefinite** ma apprendono probabilisticamente da dati testuali.  
+In pratica, eseguoo un numero elevatissimo di calcoli al secondo per trovare la risposta ststisticamente più probabile alla domanda che gli viene posta.  
 
 ### Meccanismi di funzionamento avanzati  
 - **Autocompletamento evoluto**:  
@@ -13,7 +14,7 @@ I **Large Language Models (LLM)** sono sistemi di intelligenza artificiale basat
   2. Valutano alternative come "panna" (probabilità bassa, es. 3%)  
   3. Combinano migliaia di tali predizioni in cascata  
 
-- **Scalabilità estrema**:  
+- **Scalabilità estrema.** Alcuni modelli presi come esempio:  
   | Modello       | Parametri | Dati di addestramento      |  
   |---------------|-----------|----------------------------|  
   | GPT-3         | 175B      | 45 TB di testo (≈ 20M libri)|  
@@ -27,13 +28,13 @@ I **Large Language Models (LLM)** sono sistemi di intelligenza artificiale basat
 
 ---
 
-## Evoluzione Storica: Dalle Origini alla Rivoluzione  
+## Evoluzione storica: dalle origini alla rivoluzione  
 ### Tappe fondamentali con esempi concreti:  
 1. **1966 - ELIZA**:  
    - Esempio: All'input *"Mi sento triste"*, rispondeva *"Perché pensi di essere triste?"* usando sostituzioni lessicali predefinite.  
    - Limite: Nessuna comprensione reale, solo pattern matching.  
 
-2. **2017 - La Svolta Transformer**:  
+2. **2017 - La svolta Transformer**:  
    - **Meccanismo di attenzione**: In *"La banca del fiume è piena di pesci"*, il modello:  
      - Assegna peso 0.8 a "fiume" quando processa "banca"  
      - Peso 0.1 a "istituto finanziario"  
@@ -47,27 +48,27 @@ I **Large Language Models (LLM)** sono sistemi di intelligenza artificiale basat
 
 ---
 
-## Anatomia di un LLM: Struttura e Processi  
-### 1. Architettura Transformer Estesa  
-- **Embedding contestuale**:  
+## Anatomia di un LLM: struttura e processi  
+### 1. Architettura Transformer estesa  
+- Embedding contestuale:  
   La parola "mela" assume vettori diversi in:  
   *"La mela è frutto"* (embedding botanico)  
   *"Apple lancia iPhone"* (embedding tecnologico)  
 
-- **Attenzione multi-testa**:  
+- Attenzione multi-testa:  
   Ogni "testa" d'attenzione focalizza su diversi aspetti:  
   - Testa 1: Relazioni grammaticali  
   - Testa 2: Coerenza tematica  
   - Testa 3: Intenzionalità comunicativa  
 
-### 2. Fasi di Apprendimento Stratificate  
-- **Pre-training**:  
-  - **Masked Language Modeling** (BERT):  
+### 2. Fasi di apprendimento stratificate  
+- Pre-training:  
+  - Masked Language Modeling (BERT):  
     *"Il [MASK] mangia la foglia" → "bruco" (predizione)*  
-  - **Next Token Prediction** (GPT):  
+  - Next Token Prediction (GPT):  
     *"Roma è la capitale della..." → "Italia"*  
 
-- **Fine-tuning specializzato**:  
+- Fine-tuning specializzato:  
   Esempio per assistenti medici:  
   ```python  
   dataset = [  
@@ -76,12 +77,12 @@ I **Large Language Models (LLM)** sono sistemi di intelligenza artificiale basat
   ]  
   ```  
 
-- **RLHF (Reinforcement Learning from Human Feedback)**:  
+- RLHF (Reinforcement Learning from Human Feedback):  
   1. Generazione di 5 risposte a *"Cause riscaldamento globale"*  
   2. Umani classificano: Risposta 3 > 1 > 5 > 2 > 4  
   3. Il modello impara a preferire strutture esplicative  
 
-### 3. Generazione del Testo: Tecniche Avanzate  
+### 3. Generazione del testo: tecniche avanzate  
 - **Temperature sampling**:  
   - Bassa (0.2): Risposte conservative *"La capitale è Parigi"*  
   - Alta (1.0): Risposte creative *"Parigi, città dell'amore, capitale della Francia..."*  
@@ -91,7 +92,7 @@ I **Large Language Models (LLM)** sono sistemi di intelligenza artificiale basat
 
 ---
 
-## LLM Reasoning: Capacità Logiche e Limiti  
+## LLM Reasoning: capacità logiche e limiti  
 ### Meccanismi di Ragionamento  
 - **Chain-of-Thought (CoT)**:  
   Input: *"Se ho 5 mele, ne do 2 a Marco e 3 a Sara, quante mele ho?"*  
@@ -113,7 +114,7 @@ I **Large Language Models (LLM)** sono sistemi di intelligenza artificiale basat
 | Precisione matematica| 68%               | 72%               | 75%               |  
 | Gestione ambiguità   | Media             | Alta              | Alta              |  
 
-### Limiti Fondamentali  
+### Limiti fondamentali  
 - **Pensiero controfattuale**:  
   Fatica con scenari ipotetici: *"Se la gravità cessasse, cosa accadrebbe?"* tende a risposte fisicamente inesatte.  
 
@@ -123,7 +124,7 @@ I **Large Language Models (LLM)** sono sistemi di intelligenza artificiale basat
 
 ---
 
-## Contesto Tecnologico e Interdisciplinare  
+## Contesto tecnologico e interdisciplinare  
 ### Posizionamento nell'ecosistema AI  
 ```mermaid  
 graph TD  
@@ -161,7 +162,7 @@ graph TD
   - Med-PaLM 2: Diagnosi mediche con 86% accuratezza  
   - CodeLLaMA: Generazione codice con debug integrato  
 
-### Problemi Aperti  
+### Problemi aperti  
 - **Allucinazioni strutturali**:  
   Inventa citazioni plausibili: *"Come scriveva Kant nella 'Critica del Gusto'..."* (opera inesistente)  
 
@@ -174,8 +175,8 @@ graph TD
 
 ---
 
-## Futuro e Sfide: Direzioni di Ricerca  
-### Evoluzioni Imminenti  
+## Futuro e sfide: direzioni di ricerca  
+### Evoluzioni imminenti  
 1. **Modelli neuro-simbolici**:  
    Combinano ragionamento statistico (LLM) con logica formale (es. Prolog).  
    Esempio: Verifica automatica di teoremi matematici.  
@@ -188,7 +189,7 @@ graph TD
    - 30% meno energia  
    - 6x più veloci in inferenza  
 
-### Questioni Etiche Fondamentali  
+### Questioni etiche fondamentali  
 - **Proprietà intellettuale**:  
   Chi possiede il diritto d'autore di un testo generato da LLM su input umano?  
 
@@ -200,7 +201,7 @@ graph TD
 
 ---
 
-## Conclusione: Tra Potenziale e Precauzione  
+## Conclusione: tra potenziale e precauzione  
 Gli LLM rappresentano una **rivoluzione epistemologica**: per la prima volta, macchine manipolano linguaggio con fluidità quasi umana. Tuttavia:  
 
 - **Non sono coscienti**: Simulano comprensione senza esperienza soggettiva.  
