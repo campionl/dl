@@ -1,6 +1,6 @@
 # REPO DL
 
-In questo repo sono riportati tutti i progressi fatti sullo studio di Git, Github e reti neurali fatti nel percorso di PCTO di:
+In questo repository sono riportati tutti i progressi fatti sullo studio di Markdown, Git, GitHub, reti neurali e LLM fatti nel percorso di PCTO di:
 - [Luca Campion](mailto:21048@studenti.marconiverona.edu.it)
 - [Nicola Accordini](mailto:20536@studenti.marconiverona.edu.it)
 - [Emanuele Ionut Gadean](mailto:20265@studenti.marconiverona.edu.it)
@@ -10,7 +10,7 @@ In questo repo sono riportati tutti i progressi fatti sullo studio di Git, Githu
 - [Francesco Pesaresi](mailto:20396@studenti.marconiverona.edu.it)
 - [Lorenzo Marella](mailto:20343@studenti.marconiverona.edu.it)
 
-## Introduzione al linguaggio Markdown e a Git
+## Documentazione propedeutica: linguaggio Markdown, Git e GitHub
 
 - [Documentazione su Markdown](./docs/git/markdown.md)
 - [Documentazione su Git e GitHub](./docs/git/git_github.md)
@@ -23,7 +23,15 @@ Il Deep Learning è un ramo dell'intelligenza artificiale (IA) che si concentra 
 
 Le reti neurali sono modelli computazionali ispirati al funzionamento del cervello umano. Sono composte da strati di nodi (neuroni artificiali) che elaborano informazioni e apprendono da dati. Vengono utilizzate in molti campi, come il riconoscimento di immagini, il linguaggio naturale e la previsione di dati.
 
-### Documentazione sulle reti neurali
+- Documentazione
+	- Reti neurali
+	- Convoluzione e reti neurali convoluzionali
+	- YOLO
+- Codice
+	- ...
 
-- [Reti neurali](./docs/reti%20neurali/reti_neurali.md)
-- [Convoluzione e reti convoluzionali](./docs/reti%20neurali/convoluzione_cnn.md)
+## LLM
+...
+
+## Progetto: mouse a controllo facciale
+...
