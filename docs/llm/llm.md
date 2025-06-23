@@ -1,18 +1,16 @@
 # LLM: Large Language Models  
-**Modelli Linguistici su Larga Scala - Un'analisi completa**
 
----
+## Cosa sono gli LLM: fondamenti e meccanismi
 
-## Cosa sono gli LLM: fondamenti e meccanismi  
-I **Large Language Models (LLM)** sono sistemi di intelligenza artificiale basati su architetture neurali che processano e generano linguaggio umano. A differenza dei software tradizionali, **non seguono regole predefinite** ma apprendono probabilisticamente da dati testuali.  
-In pratica, eseguoo un numero elevatissimo di calcoli al secondo per trovare la risposta ststisticamente più probabile alla domanda che gli viene posta.  
+I **Large Language Models (LLM)** sono sistemi di intelligenza artificiale basati su architetture neurali che processano e generano linguaggio umano. A differenza dei software tradizionali, **non seguono regole predefinite**, ma apprendono probabilisticamente da dati testuali.  
+In pratica, eseguono un numero elevatissimo di calcoli al secondo per trovare la risposta statisticamente più probabile alla domanda che gli viene posta.  
 
 ### Meccanismi di funzionamento avanzati  
 - **Autocompletamento evoluto**:  
   Gli LLM predicono sequenze di token (parole o sottounità) calcolando distribuzioni di probabilità. Ad esempio, alla domanda *"Come si prepara la carbonara?"*:  
-  1. Calcolano la probabilità che "uova" segua "tuorli di" (es. 92%)  
-  2. Valutano alternative come "panna" (probabilità bassa, es. 3%)  
-  3. Combinano migliaia di tali predizioni in cascata  
+  1. Calcolano la probabilità che "uova" segua "tuorli di" (es. 92%)
+  2. Valutano alternative come "panna" (probabilità bassa, es. 3%)
+  3. Combinano migliaia di tali predizioni in cascata
 
 - **Scalabilità estrema.** Alcuni modelli presi come esempio:  
   | Modello       | Parametri | Dati di addestramento      |  
@@ -26,30 +24,26 @@ In pratica, eseguoo un numero elevatissimo di calcoli al secondo per trovare la 
   - **Memoria a lungo termine** (pesi neurali fissi post-addestramento)  
   - **Memoria a breve termine** (contesto della conversazione corrente)  
 
----
-
 ## Evoluzione storica: dalle origini alla rivoluzione  
-### Tappe fondamentali con esempi concreti:  
+### Tappe fondamentali:  
 1. **1966 - ELIZA**:  
-   - Esempio: All'input *"Mi sento triste"*, rispondeva *"Perché pensi di essere triste?"* usando sostituzioni lessicali predefinite.  
-   - Limite: Nessuna comprensione reale, solo pattern matching.  
+   - **Esempio**: all'input *"Mi sento triste"*, rispondeva *"Perché pensi di essere triste?"* usando sostituzioni lessicali predefinite.  
+   - **Limite**: nessuna comprensione reale, solo pattern matching.  
 
 2. **2017 - La svolta Transformer**:  
-   - **Meccanismo di attenzione**: In *"La banca del fiume è piena di pesci"*, il modello:  
+   - **Meccanismo di attenzione**: in *"La banca del fiume è piena di pesci"*, il modello:  
      - Assegna peso 0.8 a "fiume" quando processa "banca"  
      - Peso 0.1 a "istituto finanziario"  
-   - **Parallelizzazione**: Processa tutte le parole simultaneamente, non sequenzialmente come le RNN.  
+   - **Parallelizzazione**: processa tutte le parole simultaneamente, non sequenzialmente come le RNN (*Recurrent Neural Network*).
 
 3. **2020 - GPT-3 e l'emergenza**:  
-   - **Capacità inaspettate**: Pur addestrato solo a predire parole, sviluppò abilità di:  
+   - **Capacità inaspettate**: pur addestrato solo a predire parole, sviluppò abilità di:  
      - Traduzione (senza essere esplicitamente addestrato)  
      - Risoluzione di problemi matematici semplici  
      - Generazione di codice Python  
 
----
-
 ## Anatomia di un LLM: struttura e processi  
-### 1. Architettura Transformer estesa  
+### 1 - Architettura Transformer estesa  
 - Embedding contestuale:  
   La parola "mela" assume vettori diversi in:  
   *"La mela è frutto"* (embedding botanico)  
@@ -57,18 +51,18 @@ In pratica, eseguoo un numero elevatissimo di calcoli al secondo per trovare la 
 
 - Attenzione multi-testa:  
   Ogni "testa" d'attenzione focalizza su diversi aspetti:  
-  - Testa 1: Relazioni grammaticali  
-  - Testa 2: Coerenza tematica  
-  - Testa 3: Intenzionalità comunicativa  
+  - Testa 1: **relazioni grammaticali**  
+  - Testa 2: **coerenza tematica**  
+  - Testa 3: **intenzionalità comunicativa**  
 
-### 2. Fasi di apprendimento stratificate  
-- Pre-training:  
-  - Masked Language Modeling (BERT):  
-    *"Il [MASK] mangia la foglia" → "bruco" (predizione)*  
-  - Next Token Prediction (GPT):  
-    *"Roma è la capitale della..." → "Italia"*  
+### 2 - Fasi di apprendimento stratificate  
+- **Pre-training**:
+	- Masked Language Modeling (BERT):
+	  *"Il `BLANK` mangia la foglia" → "bruco" (predizione)*  
+	- Next Token Prediction (GPT):
+	  *"Roma è la capitale della..." → "Italia"*  
 
-- Fine-tuning specializzato:  
+- **Fine-tuning specializzato**:  
   Esempio per assistenti medici:  
   ```python  
   dataset = [  
@@ -77,20 +71,17 @@ In pratica, eseguoo un numero elevatissimo di calcoli al secondo per trovare la 
   ]  
   ```  
 
-- RLHF (Reinforcement Learning from Human Feedback):  
+- **RLHF (*Reinforcement Learning from Human Feedback*)**:  
   1. Generazione di 5 risposte a *"Cause riscaldamento globale"*  
   2. Umani classificano: Risposta 3 > 1 > 5 > 2 > 4  
   3. Il modello impara a preferire strutture esplicative  
 
-### 3. Generazione del testo: tecniche avanzate  
+### 3 - Generazione del testo: tecniche avanzate  
 - **Temperature sampling**:  
-  - Bassa (0.2): Risposte conservative *"La capitale è Parigi"*  
-  - Alta (1.0): Risposte creative *"Parigi, città dell'amore, capitale della Francia..."*  
-
+	- Bassa (0.2): Risposte conservative *"La capitale è Parigi"*  
+	- Alta (1.0): Risposte creative *"Parigi, città dell'amore, capitale della Francia..."*  
 - **Top-p sampling**:  
   Seleziona solo da parole cumulativamente probabili al 90%, scartando outlier.  
-
----
 
 ## LLM Reasoning: capacità logiche e limiti  
 ### Meccanismi di Ragionamento  
