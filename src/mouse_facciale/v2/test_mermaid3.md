@@ -17,5 +17,5 @@ flowchart TD
     
     B -->|"recalibra?"| J[Calibration]
     J -->|"nuovo centro (x,y)"| B
-    I -->|"passa (x, y)"| E
+    A -->|"passa (x, y)"| E
 ```

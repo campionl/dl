@@ -204,7 +204,7 @@ class SwitchMode_action(BaseAction):
         self.switch_cooldown = 1.0  # 1 secondo di cooldown
     
     def switch_mode(self, current_mode):
-        """Cambia la modalità"""
+        """Cambia la modalità con controllo aggiuntivo"""
         current_time = time.time()
         if current_time - self.last_switch_time < self.switch_cooldown:
             return current_mode
@@ -212,6 +212,12 @@ class SwitchMode_action(BaseAction):
         new_mode = 'scroll' if current_mode == 'pointer' else 'pointer'
         print(f"Modalità cambiata: {new_mode}")
         self.last_switch_time = current_time
+        
+        # Reset degli stati degli eventi per evitare conflitti
+        if hasattr(self, 'open_mouth_event'):
+            self.open_mouth_event.event_detected = False
+            self.open_mouth_event.mouth_open = False
+        
         return new_mode
     
     def execute(self, current_mode):
@@ -577,11 +583,11 @@ class HeadMouseController:
 
 
     def process_frame(self, frame):
-        """Processa e disegna tutto su un frame"""
         frame = cv2.flip(frame, 1)
         rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         results = self.face_mesh.process(rgb_frame)
 
+        face_detected = False
         if results.multi_face_landmarks:
             h, w = frame.shape[:2]
             landmarks_np = np.array(
@@ -589,18 +595,25 @@ class HeadMouseController:
                 dtype=np.float64
             )
             tracking_point = landmarks_np[self.NOSE_TIP]
+            face_detected = True
+
+            # Update status
+            self.update_status(tracking_point)
 
             if not self.paused:
                 self.process_nose_movement(tracking_point)
                 self.process_events(tracking_point, landmarks_np)
 
-            self.draw_interface(frame, tracking_point, landmarks_np)
+            # Draw minimal interface for web
+            self.draw_minimal_interface(frame, tracking_point, landmarks_np)
         else:
-            cv2.putText(frame, "VISO NON RILEVATO", (20, 50), 
-                        cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2)
+            # Se non rileva il volto ma siamo in modalità pointer e il mouse si muove
+            # considera comunque il volto come rilevato per evitare falsi negativi
+            self.update_status(None)
+            if not self.paused and self.current_mode == 'pointer' and self.mouse_cursor.position_history:
+                face_detected = True
 
         return frame
-
 
 
     def reset_mouse_position(self):
@@ -639,6 +652,7 @@ class HeadMouseController:
         """Processa tutti gli eventi registrati"""
         if self.paused or not self.calibration.center_calculated:
             return
+            
         current_mouse_pos = self.mouse_cursor.get_current_position()
 
         # Gestione cambio modalità
@@ -646,36 +660,39 @@ class HeadMouseController:
             old_mode = self.current_mode
             new_mode = self.switch_mode_action.execute(self.current_mode)
             if new_mode != old_mode:
-                # Solo se c'è un effettivo cambio
                 self.current_mode = new_mode
                 if self.current_mode == 'scroll':
-                    # Passa a modalità scroll: salva la posizione corrente
                     print("Passaggio a modalità SCROLL")
                     self.last_mouse_pos_before_scroll = current_mouse_pos.copy()
+                    # Resetta lo stato del mouse cursor
+                    self.mouse_cursor.position_history.clear()
                 elif self.current_mode == 'pointer':
-                    # Torna a modalità pointer: ripristina la posizione
                     print("Passaggio a modalità POINTER")
-                    self.mouse_cursor.current_mouse_pos = self.last_mouse_pos_before_scroll.copy()
+                    if self.last_mouse_pos_before_scroll is not None:
+                        self.mouse_cursor.current_mouse_pos = self.last_mouse_pos_before_scroll.copy()
+                        self.mouse_cursor.position_history.clear()
+                        # Forza l'aggiornamento della posizione
+                        try:
+                            pyautogui.moveTo(int(self.mouse_cursor.current_mouse_pos[0]), 
+                                        int(self.mouse_cursor.current_mouse_pos[1]))
+                        except Exception as e:
+                            print(f"Errore movimento: {e}")
 
         # Processa eventi specifici per modalità
         if self.current_mode == 'pointer':
             # Eventi di click solo in modalità puntatore
             for mapping in self.event_action_mappings:
-                # Prepara gli argomenti per l'evento
-                event_args = mapping['event_args_mapper'](tracking_point, landmarks, current_mouse_pos)
-                # Verifica se l'evento è attivo
-                if mapping['event'].check_event(*event_args):
-                    # Prepara gli argomenti per l'azione
-                    action_args = mapping['action_args_mapper'](tracking_point, landmarks, current_mouse_pos)
-                    # Esegui l'azione associata
-                    mapping['action'].execute(*action_args)
+                if isinstance(mapping['event'], (LeftEye_event, RightEye_event)):
+                    event_args = mapping['event_args_mapper'](tracking_point, landmarks, current_mouse_pos)
+                    if mapping['event'].check_event(*event_args):
+                        action_args = mapping['action_args_mapper'](tracking_point, landmarks, current_mouse_pos)
+                        mapping['action'].execute(*action_args)
         elif self.current_mode == 'scroll':
             # Gestione scroll
             direction, _, effective_distance = self.nose_joystick.get_movement_vector(
                 tracking_point, self.calibration.center_position
             )
             if direction is not None:
-                # Usiamo solo la componente verticale per lo scrolling
                 scroll_direction = np.array([0, direction[1]])  # Solo componente Y
                 self.scroll_action.execute(scroll_direction, effective_distance)
 

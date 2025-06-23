@@ -313,6 +313,38 @@
             margin-top: 40px;
         }
 
+        /* Stili per la configurazione delle associazioni */
+        .mapping-item {
+            background: rgba(13, 17, 23, 0.8);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid #30363d;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .mapping-item select {
+            background: #0d1117;
+            color: #c9d1d9;
+            border: 1px solid #30363d;
+            padding: 6px 10px;
+            border-radius: 4px;
+            flex: 1;
+        }
+
+        .mapping-item .mapping-label {
+            min-width: 80px;
+            font-size: 0.85em;
+        }
+
+        .mapping-loading {
+            text-align: center;
+            padding: 20px;
+            color: #8b949e;
+        }
+
         /* Responsive design */
         @media (max-width: 1200px) {
             .container {
@@ -336,6 +368,15 @@
 
             .status-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .mapping-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .mapping-item select {
+                width: 100%;
             }
         }
     </style>
@@ -421,6 +462,18 @@
                         <span id="scrollSensitivity" style="min-width: 40px; text-align: center;">2.0</span>
                         <button class="sensitivity-btn" onclick="adjustSensitivity('up')">+</button>
                     </div>
+                </div>
+            </div>
+
+            <!-- Event-Action Mapping Section -->
+            <div class="control-section">
+                <h3>⚙️ Event-Action Mapping</h3>
+                <div id="mappingContainer">
+                    <div class="mapping-loading">Loading mappings...</div>
+                </div>
+                <div class="control-buttons" style="margin-top: 15px;">
+                    <button class="btn" id="saveMappings">💾 Save Mappings</button>
+                    <button class="btn warning" id="resetMappings">🔄 Reset to Default</button>
                 </div>
             </div>
 
@@ -534,11 +587,114 @@
                 });
         }
 
+        // Mapping functions
+        function loadMappings() {
+            fetch('/get_mappings')
+                .then(response => response.json())
+                .then(data => {
+                    const container = document.getElementById('mappingContainer');
+                    container.innerHTML = '';
+                    
+                    data.current_mappings.forEach((mapping, index) => {
+                        const mappingEl = document.createElement('div');
+                        mappingEl.className = 'mapping-item';
+                        
+                        mappingEl.innerHTML = `
+                            <span class="mapping-label">When:</span>
+                            <select id="event-${index}" class="event-select">
+                                ${data.events.map(event => 
+                                    `<option value="${event}" ${event === mapping.event ? 'selected' : ''}>
+                                        ${formatEventName(event)}
+                                    </option>`
+                                ).join('')}
+                            </select>
+                            <span class="mapping-label">Do:</span>
+                            <select id="action-${index}" class="action-select">
+                                ${data.actions.map(action => 
+                                    `<option value="${action}" ${action === mapping.action ? 'selected' : ''}>
+                                        ${formatActionName(action)}
+                                    </option>`
+                                ).join('')}
+                            </select>
+                        `;
+                        
+                        container.appendChild(mappingEl);
+                    });
+                });
+        }
+
+        function formatEventName(event) {
+            const names = {
+                'left_eye_blink': '👈 Left Eye Blink',
+                'right_eye_blink': '👉 Right Eye Blink',
+                'open_mouth': '👄 Open Mouth'
+            };
+            return names[event] || event;
+        }
+
+        function formatActionName(action) {
+            const names = {
+                'left_click': '🖱️ Left Click',
+                'right_click': '🖱️ Right Click',
+                'switch_mode': '🔄 Switch Mode'
+            };
+            return names[action] || action;
+        }
+
+        // Save mappings
+        document.getElementById('saveMappings').addEventListener('click', function() {
+            const mappings = [];
+            const eventSelects = document.querySelectorAll('.event-select');
+            const actionSelects = document.querySelectorAll('.action-select');
+            
+            for (let i = 0; i < eventSelects.length; i++) {
+                mappings.push({
+                    event: eventSelects[i].value,
+                    action: actionSelects[i].value
+                });
+            }
+            
+            fetch('/update_mappings', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ mappings })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('✅ Mappings saved successfully!');
+                    updateStatus();
+                } else {
+                    alert('❌ Error saving mappings');
+                }
+            });
+        });
+
+        // Reset mappings
+        document.getElementById('resetMappings').addEventListener('click', function() {
+            if (confirm('Reset all mappings to default?')) {
+                fetch('/reset_mappings')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('🔄 Mappings reset to default');
+                            loadMappings();
+                            updateStatus();
+                        }
+                    });
+            }
+        });
+
         // Auto-update status every 500ms
         setInterval(updateStatus, 500);
 
         // Initial status update
         updateStatus();
+
+        // Load mappings when page loads
+        document.addEventListener('DOMContentLoaded', loadMappings);
 
         // Video stream error handling
         document.getElementById('videoStream').addEventListener('error', function() {

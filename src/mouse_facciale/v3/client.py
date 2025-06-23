@@ -1,99 +1,34 @@
-# Manda il segnale mouse 
 import bluetooth
 import pyautogui
-import threading
 import time
-from pynput import mouse
 
-class BluetoothMouseClient:
-    def __init__(self):
-        self.socket = None
-        self.running = False
-        self.device_address = None
-        self.port = 1  # RFCOMM
-        self.lock = threading.Lock()
+SERVER_ADDRESS = "00:00:00:00:00:00"  # Sostituisci con l'indirizzo Bluetooth del server
+PORT = 1
+
+def run_client():
+    # Ottieni dimensioni schermo
+    w, h = pyautogui.size()
     
-    def discover_devices(self):
-        print("Cerca dispositivi Bluetooth...")
-        devices = bluetooth.discover_devices(lookup_names=True)
-        if not devices:
-            print("Nessun dispositivo trovato.")
-            return None
-
-        for i, (addr, name) in enumerate(devices):
-            print(f"{i + 1}. {name} ({addr})")
-
-        choice = input("Scegli il numero del dispositivo: ")
-        try:
-            index = int(choice) - 1
-            return devices[index][0]
-        except:
-            print("Scelta non valida.")
-            return None
+    # Connetti al server
+    sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
+    sock.connect((SERVER_ADDRESS, PORT))
     
-    def connect(self):
-        addr = self.discover_devices()
-        if not addr:
-            return False
-        
-        self.device_address = addr
-        print(f"Connessione a {addr}...")
-        try:
-            self.socket = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
-            self.socket.connect((addr, self.port))
-            print("✅ Connessione avvenuta.")
-            return True
-        except Exception as e:
-            print(f"Errore nella connessione: {e}")
-            return False
+    # Invia dimensioni schermo
+    sock.send(f"{w},{h}".encode('utf-8'))
+    
+    # Attendi conferma
+    if sock.recv(1024).decode('utf-8') != "OK":
+        print("Errore di connessione")
+        sock.close()
+        return
 
-    def send(self, message):
-        try:
-            with self.lock:
-                self.socket.send(message.encode())
-        except Exception as e:
-            print(f"Errore durante l'invio: {e}")
-            self.running = False
-
-    def start_mouse_monitor(self):
-        def on_move(x, y):
-            self.send(f"POS {x} {y}\n")
-
-        def on_click(x, y, button, pressed):
-            if pressed:
-                if button.name == 'left':
-                    self.send("CLICK\n")
-                elif button.name == 'right':
-                    self.send("RIGHT_CLICK\n")
-
-        def on_scroll(x, y, dx, dy):
-            self.send(f"SCROLL {dx} {dy}\n")
-
-        listener = mouse.Listener(on_move=on_move, on_click=on_click, on_scroll=on_scroll)
-        listener.start()
-
-    def run(self):
-        if not self.connect():
-            return
-
-        self.running = True
-        self.start_mouse_monitor()
-
-        print("🖱 Mouse mirroring in corso. Premi Ctrl+C per uscire.")
-        try:
-            while self.running:
-                time.sleep(0.1)
-        except KeyboardInterrupt:
-            print("🔚 Interrotto da utente.")
-        finally:
-            self.stop()
-
-    def stop(self):
-        self.running = False
-        if self.socket:
-            self.socket.close()
-            self.socket = None
+    try:
+        while True:
+            x, y = pyautogui.position()
+            sock.send(f"{x},{y}".encode('utf-8'))
+            time.sleep(0.03)  # Aggiornamento a ~33fps
+    except:
+        sock.close()
 
 if __name__ == "__main__":
-    client = BluetoothMouseClient()
-    client.run()
+    run_client()
