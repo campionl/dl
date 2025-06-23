@@ -50,32 +50,6 @@ Con MiMo-7B, Xiaomi si posiziona come **nuovo attore** competitivo nell’ambito
 
 È tra i primi LLM capaci di funzionare **interamente on-device**, senza bisogno di cloud.
 
-## LLM Reasoning: cos’è e perché MiMo è diverso
-
-Il ***reasoning***, ovvero la capacità di ragionamento logico e deduttivo, è una caratteristica avanzata nei modelli linguistici.
-Serve per affrontare problemi più complessi: domande con più passaggi, risoluzione di ambiguità, catene logiche, deduzioni.
-
-### Come si comportano gli LLM più noti:
-
-Modelli come **GPT-4**, **Claude**, o **Gemini** sono capaci di *reasoning*, ma **tendono a mostrare solo il risultato finale**, a meno che non siano istruiti esplicitamente per fare il contrario. Spesso il ragionamento rimane quindi **nascosto all'utente**.
-
-### Come si comporta MiMo-7B:
-
-MiMo-7B, invece, tende per impostazione predefinita a **stampare tutto il processo logico**:
-* Spiega il contesto
-* Descrive i passaggi intermedi
-* Mostra chiaramente **come è arrivato alla risposta**
-
-Questo comportamento è utile perché:
-* Rende il modello **più trasparente e interpretabile**
-* Facilita la **debuggabilità** in ambiti tecnici
-* Aiuta gli utenti a **seguire e verificare il ragionamento**
-
-In un certo senso, MiMo-7B si avvicina a un **tutor esplicito**, che non ti dà solo la soluzione ma te la **spiega passo per passo**, anche senza che tu lo chieda.
-
-Questa scelta progettuale lo differenzia dai modelli “cloud-first” e lo rende molto interessante per applicazioni educative, assistenti vocali intelligenti o ambienti dove serve **spiegabilità nativa**.
-
-
 ## Sviluppi futuri possibili
 
 * **Versioni più grandi**: Xiaomi potrebbe rilasciare varianti con 13B, 30B o oltre
