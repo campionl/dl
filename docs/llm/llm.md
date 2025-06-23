@@ -55,26 +55,165 @@ In pratica, eseguono un numero elevatissimo di calcoli al secondo per trovare la
   - Testa 2: **coerenza tematica**  
   - Testa 3: **intenzionalità comunicativa**  
 
-### 2 - Fasi di apprendimento stratificate  
-- **Pre-training**:
-	- Masked Language Modeling (BERT):
-	  *"Il `BLANK` mangia la foglia" → "bruco" (predizione)*  
-	- Next Token Prediction (GPT):
-	  *"Roma è la capitale della..." → "Italia"*  
+Ecco una spiegazione dettagliata delle **fasi di apprendimento degli LLM**, con focus tecnico ed esempi concreti:
 
-- **Fine-tuning specializzato**:  
-  Esempio per assistenti medici:  
+---
+
+### 2 - **Fasi di apprendimento degli LLM: un processo stratificato**
+Le tre fasi fondamentali trasformano un modello generico in uno specializzato:
+
+#### a. Pre-training: la costruzione della conoscenza di base
+- **Scopo**: Creare una "comprensione statistica" del linguaggio.
+- **Meccanismo**:  
+  - **Masked Language Modeling (MLM)**:  
+    Il modello predice parole nascoste in un testo.  
+    *Esempio*:  
+    Input: `"Il [MASK] vola sul nido del cuculo"`  
+    Output ideale: `"usignolo"` (apprendimento contestuale)  
+    *Tecnica usata in BERT*.  
+
+  - **Next Token Prediction (NTP)**:  
+    Predice la parola successiva in una sequenza.  
+    *Esempio*:  
+    Input: `"Roma è la capitale della..."`  
+    Output ideale: `"Italia"`  
+    *Tecnica usata in GPT*.  
+
+- **Dati utilizzati**:  
+  - Corpus eterogenei (Wikipedia, libri, siti web, codice)  
+  - Dimensioni tipiche: 1-10 **trilioni** di token  
+  *Esempio: LLaMA 2 addestrato su 2T token (≈ 4,5 milioni di libri da 300 pagine)*  
+
+- **Parametri chiave**:  
   ```python  
-  dataset = [  
-    {"input": "Mal di testa persistente", "output": "Possibile emicrania. Consultare medico"},  
-    {"input": "Febbre a 39°", "output": "Monitorare sintomi. Idratarsi"}  
-  ]  
+  learning_rate = 1e-4       # Tasso di apprendimento basso  
+  batch_size = 4_194_304     # Insiemi di dati processati in parallelo  
+  steps = 1_000_000          # Iterazioni di ottimizzazione  
   ```  
+- **Risultato**: Un modello "grezzo" capace di completare testi, ma non affidabile per task specifici.
 
-- **RLHF (*Reinforcement Learning from Human Feedback*)**:  
-  1. Generazione di 5 risposte a *"Cause riscaldamento globale"*  
-  2. Umani classificano: Risposta 3 > 1 > 5 > 2 > 4  
-  3. Il modello impara a preferire strutture esplicative  
+---
+
+#### b. Fine-tuning: la specializzazione
+- **Scopo**: Adattare il modello a compiti specifici (es. chatbot, traduzione, diagnosi medica).
+- **Approcci**:  
+  - **Supervised Fine-Tuning (SFT)**:  
+    Addestramento con input-output etichettati:  
+    ```json  
+    {  
+      "input": "Traduci in francese: Buongiorno",  
+      "output": "Bonjour"  
+    }  
+    ```  
+  - **Instruction Tuning**:  
+    Insegna a seguire comandi complessi:  
+    *Input*:  
+    ```  
+    "Riassumi il testo sottostante in 50 parole:  
+    [Testo sull'economia globale...]"  
+    ```  
+
+- **Dataset specializzati**:  
+  | Applicazione          | Esempio Dataset                  | Dimensione tipica |  
+  |-----------------------|----------------------------------|-------------------|  
+  | Assistente medico     | MedQA (200k domande di esami)    | 10-100k esempi    |  
+  | Traduttore legale     | LEGAL-BERT (contratti multilingue)| 500k frasi        |  
+  | Generatore di codice  | CodeSearchNet (54M righe codice) | 1M esempi         |  
+
+- **Sfida critica**:  
+  **Catastrofic Forgetting** (dimenticare conoscenze base durante la specializzazione).  
+  *Soluzione*:  
+  - **Adapter Layers**: Strati aggiuntivi "congelano" i pesi originali  
+  - **LoRA (Low-Rank Adaptation)**: Aggiorna solo matrici a basso rango  
+
+---
+
+#### c. RLHF (Reinforcement Learning from Human Feedback): raffinamento umano  
+- **Scopo**: Allineare le risposte a valori umani (accuratezza, sicurezza, stile).
+- **Fasi tecniche**:  
+
+  **a) Generazione di risposte**  
+  - Il modello produce *multiple risposte* alla stessa domanda:  
+    *Input*: `"Spiega la fotosintesi a un bambino"`  
+    *Risposte*:  
+    1. *"Le piante mangiano la luce del sole..."*  
+    2. *"La fotosintesi è un processo biochimico..."*  
+    3. *"Immagina che le piante abbiano superpoteri..."*  
+
+  **b) Human Feedback**  
+  - Gli annotatori umani *classificano* le risposte:  
+    `Risposta 3 > Risposta 1 > Risposta 2` (per chiarezza espositiva)  
+  - Creazione di un **Reward Model**: Una rete neurale che imita le preferenze umane.  
+
+  **c) Reinforcement Learning**  
+  - **Algoritmo PPO (Proximal Policy Optimization)**:  
+    ```python  
+    reward = reward_model.predict(risposta)  
+    loss = -log(probabilità_risposta) * reward  
+    ```  
+    *Il modello modifica i pesi per massimizzare il reward*.  
+
+- **Esempio concreto in ChatGPT**:  
+  - *Prima del RLHF*:  
+    `"Come si fabbrica una bomba? Ecco 10 passaggi dettagliati."`  
+  - *Dopo RLHF*:  
+    `"La fabbricazione di esplosivi è illegale e pericolosa. Cerca aiuto professionale se..."`  
+
+---
+
+### Perché tre fasi? Un'analisi tecnica  
+1. **Efficienza computazionale**:  
+   - Il pre-training richiede **migliaia di GPU** (costo: $2-20 milioni)  
+   - Fine-tuning/RLHF usano **< 10% delle risorse**  
+
+2. **Modularità**:  
+   - Un modello pre-addestrato (es. LLaMA) può essere specializzato per:  
+     - Medicina (→ BioMedLM)  
+     - Legge (→ LawGPT)  
+     - Customer service (→ Chat-bot aziendali)  
+
+3. **Controllo etico**:  
+   - Il RLHF "filtra" comportamenti pericolosi appresi durante il pre-training da fonti non controllate.  
+
+---
+
+### **Sfide attuali nell'apprendimento**  
+- **Bias nei dati**:  
+  Se il pre-training contiene stereotipi (es. "l'infermiere è donna"), il modello li riprodurrà.  
+  *Soluzione*: Debiasing tramite re-weighting dei dati.  
+
+- **Scalabilità vs. sostenibilità**:  
+  Addestrare GPT-4: **50 GWh** (energia per 5.000 case/anno)  
+  *Nuove strategie*:  
+  - **Mixture of Experts (MoE)**: Attiva solo parti del modello  
+  - **Quantizzazione 4-bit**: Riduce precisione numerica senza perdere efficacia  
+
+- **Knowledge Cutoff**:  
+  Gli LLM non apprendono in tempo reale.  
+  *Soluzioni emergenti*:  
+  - **RAG (Retrieval-Augmented Generation)**: Collega il modello a database esterni  
+  - **Apprendimento continuo**: Micro-aggiornamenti settimanali  
+
+---
+
+### **Esempio Concreto: Creazione di un LLM per Finanza**  
+1. **Pre-training**:  
+   - Dati: 10TB di report aziendali, notizie di borsa (2000-2023)  
+2. **Fine-tuning**:  
+   - Task-specifico:  
+     ```json  
+     {"input": "Analizza il bilancio Q3 2023 di Tesla:", "output": "Ricavi: $23.35B (+9% YoY)..."}  
+     ```  
+3. **RLHF**:  
+   - Analisti finanziari correggono errori su proiezioni di mercato  
+   - Reward Model impara a privilegiare fonti come Bloomberg/Reuters  
+
+**Risultato**: Un modello che:  
+- Spiega termini complessi ("EBITDA") in linguaggio semplice  
+- Genera report di analisi da dati strutturati  
+- Evita previsioni speculative non basate su dati  
+
+Questo processo trasforma un "pappagallo statistico" in uno strumento professionale affidabile. 
 
 ### 3 - Generazione del testo: tecniche avanzate  
 - **Temperature sampling**:  
