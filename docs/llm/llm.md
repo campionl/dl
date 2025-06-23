@@ -1,7 +1,3 @@
-Ecco una versione approfondita e arricchita del testo sugli LLM, con esempi pratici, dettagli tecnici e sviluppi concettuali:
-
----
-
 # LLM: Large Language Models  
 **Modelli Linguistici su Larga Scala - Un'analisi completa**
 
