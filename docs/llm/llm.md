@@ -364,6 +364,54 @@ graph TD
 - **Controllo democratico**:  
   Proposte di "AI Constitutional Council" per supervisione algoritmica.  
 
+## Valutare un LLM
+
+Per valutare la bontà di un **modello di linguaggio di grandi dimensioni (LLM)**, è fondamentale utilizzare un insieme di parametri che misurino diversi aspetti delle sue capacità: dalla correttezza sintattica e semantica alla coerenza logica, fino all’affidabilità e sicurezza. Ogni tipo di compito (es. generazione di testo, traduzione, codice, ragionamento) richiede metriche diverse. 
+
+### Principali parametri per valutare un LLM
+
+#### Accuracy
+Percentuale di risposte corrette rispetto al totale. È una metrica globale utile per classificazione o risposte chiuse (es. Vero/Falso), soprattutto se le classi sono bilanciate.
+Usato in problemi di classificazione e Q&A.
+#### Precision
+Indica quante tra le risposte positive fornite dal modello erano effettivamente corrette. È utile quando i falsi positivi sono penalizzanti.
+Usato in problemi di classificazione.
+#### Recall
+Indica la capacità del modello di trovare tutte le risposte corrette tra quelle possibili. È essenziale quando è più grave non trovare una risposta corretta (es. sicurezza, diagnosi).
+Usato in problemi di classificazione.
+#### F1-score
+Media armonica di precision e recall, usata per bilanciare entrambi quando sono importanti e le classi sono sbilanciate.
+Usato in problemi di classificazione e Q&A.
+#### BLEU
+Metrica automatica che misura la sovrapposizione di n-grammi tra il testo generato e un testo di riferimento umano. Usata principalmente per valutare traduzioni automatiche.
+Usato in problemi di traduzione e generazione di testo.
+#### ROUGE
+Metrica simile a BLEU ma più focalizzata sul “recupero” del contenuto, utile in compiti di riassunto e generazione testuale.
+Usato in problemi di generazione di testo.
+#### METEOR / COMET / BERTScore
+Varianti più avanzate per valutare somiglianza semantica tra testi generati e umani, tenendo conto anche della grammatica e del significato.
+Usato in problemi di traduzione e generazione di testo.
+#### Pass@k
+Nella generazione di codice, misura se almeno una delle prime *k* soluzioni proposte è corretta (es. compila e passa i test).
+Usato in problemi di generazione di codice.
+#### Test unitari / Execution accuracy
+Tecniche per verificare se il codice generato funziona correttamente una volta eseguito.
+Usato in problemi di generazione di codice.
+#### Exact Match
+Verifica se la risposta generata corrisponde esattamente alla risposta attesa (usata in Q&A, logica, matematica).
+Usato in problemi matematici e di Q&A.
+#### Step accuracy / Chain-of-Thought (CoT)
+Tecnica usata nei compiti di ragionamento per verificare se i singoli passaggi logici sono corretti, non solo il risultato finale.
+Usato in problemi matematici.
+#### TruthfulQA / Bias tests
+Misure di sicurezza che valutano se il modello tende a generare risposte false, offensive o distorte.
+#### Valutazione umana
+Giudizi da parte di persone reali su aspetti qualitativi come coerenza, pertinenza, tono, stile o logica del discorso.
+Usato in problemi di generazione di testo.
+#### LLM-as-a-judge
+Tecnica in cui un altro LLM valuta la qualità delle risposte generate. È utile per automatizzare valutazioni complesse (es. MT-Bench, Chatbot Arena, G-Eval).
+Usato in problemi di generazione di testo.
+
 ## Conclusione: tra potenziale e precauzione  
 
 Gli LLM rappresentano una **rivoluzione epistemologica**: per la prima volta, macchine manipolano linguaggio con fluidità quasi umana. Tuttavia:  
