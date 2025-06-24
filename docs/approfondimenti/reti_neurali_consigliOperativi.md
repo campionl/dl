@@ -7,16 +7,16 @@ qui sotto c'è una guida per queste decisioni.
 
 | Caso / Configurazione                         | Esempio (neuroni per layer) | Motivo                                                                                       | Quando usarla                                                                                 |
 |----------------------------------------------|------------------------------|----------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------|
-| 🔹 Input scarso, output ricco                 | 1 → 4                        | Estrazione di molte feature da pochi input. Serve espansione di rappresentazione.            | Quando hai un input semplice ma vuoi modellare fenomeni complessi (es. 1 valore → 4 categorie). |
-| 🔹 Input ricco, output semplice               | 8 → 2                        | Compressione: i layer successivi imparano a sintetizzare le informazioni.                    | Es. immagini 28x28 → classificazione binaria.                                                   |
-| 🔹 Struttura a clessidra (bottleneck)         | 16 → 4 → 16                  | Compressione e decompressione (tipo autoencoder). Il layer stretto forza l’apprendimento utile. | Compressione dati, denoising, feature extraction.                                               |
-| 🔹 Architettura piramidale (decrescente)      | 64 → 32 → 16                 | Riduzione progressiva della dimensionalità → migliora generalizzazione.                      | Classificazione, regressione, riduzione del rumore.                                             |
-| 🔹 Architettura piramide inversa (crescente)  | 8 → 16 → 32                  | Usata per generazione o upscaling (es. GAN, decoder, generazione testi o immagini).          | Decoder, generatori (es. VAE decoder, GAN generator).                                           |
-| 🔹 Stesso numero di neuroni in ogni layer     | 16 → 16 → 16                 | Stessa capacità elaborativa a ogni livello. Rischia overfitting.                             | Quando non conosci bene i dati e vuoi una base uniforme.                                        |
-| 🔹 Troppi neuroni nel primo layer             | 128 → 64 → 32                | Rischia overfitting: troppa capacità sin dall'inizio.                                        | Da evitare se l’input è semplice o rumoroso.                                                    |
-| 🔹 Pochi neuroni nel primo layer              | 2 → 8 → 16                   | Primo layer perde informazione; il secondo tenta di ricostruirla → inefficienza.             | Evitare se l’input ha molte feature importanti.                                                 |
-| 🔹 Layer centrale troppo piccolo              | 64 → 2 → 64                  | Bottleneck troppo stretto → perde troppe info.                                                | Utile solo se vuoi forzare un embedding molto compatto.                                         |
-| 🔹 Tanti layer con pochi neuroni              | 8 → 8 → 8 → 8 → 8            | Approfondisci la rete senza aumentare la capacità troppo.                                    | NLP, RNN, transformers con deep attention.                                                      |
+| - Input scarso, output ricco                 | 1 → 4                        | Estrazione di molte feature da pochi input. Serve espansione di rappresentazione.            | Quando hai un input semplice ma vuoi modellare fenomeni complessi (es. 1 valore → 4 categorie). |
+| - Input ricco, output semplice               | 8 → 2                        | Compressione: i layer successivi imparano a sintetizzare le informazioni.                    | Es. immagini 28x28 → classificazione binaria.                                                   |
+| - Struttura a clessidra (bottleneck)         | 16 → 4 → 16                  | Compressione e decompressione (tipo autoencoder). Il layer stretto forza l’apprendimento utile. | Compressione dati, denoising, feature extraction.                                               |
+| - Architettura piramidale (decrescente)      | 64 → 32 → 16                 | Riduzione progressiva della dimensionalità → migliora generalizzazione.                      | Classificazione, regressione, riduzione del rumore.                                             |
+| - Architettura piramide inversa (crescente)  | 8 → 16 → 32                  | Usata per generazione o upscaling (es. GAN, decoder, generazione testi o immagini).          | Decoder, generatori (es. VAE decoder, GAN generator).                                           |
+| - Stesso numero di neuroni in ogni layer     | 16 → 16 → 16                 | Stessa capacità elaborativa a ogni livello. Rischia overfitting.                             | Quando non conosci bene i dati e vuoi una base uniforme.                                        |
+| - Troppi neuroni nel primo layer             | 128 → 64 → 32                | Rischia overfitting: troppa capacità sin dall'inizio.                                        | Da evitare se l’input è semplice o rumoroso.                                                    |
+| - Pochi neuroni nel primo layer              | 2 → 8 → 16                   | Primo layer perde informazione; il secondo tenta di ricostruirla → inefficienza.             | Evitare se l’input ha molte feature importanti.                                                 |
+| - Layer centrale troppo piccolo              | 64 → 2 → 64                  | Bottleneck troppo stretto → perde troppe info.                                                | Utile solo se vuoi forzare un embedding molto compatto.                                         |
+| - Tanti layer con pochi neuroni              | 8 → 8 → 8 → 8 → 8            | Approfondisci la rete senza aumentare la capacità troppo.                                    | NLP, RNN, transformers con deep attention.                                                      |
 
 ---
 
@@ -33,9 +33,9 @@ qui sotto c'è una guida per queste decisioni.
 
 ## Tip Tecnici
 
-- ✅ Troppi neuroni/layers = **Overfitting**
-- ❌ Troppo pochi = **Underfitting**
-- 🎯 Trova il giusto equilibrio con:
+- Troppi neuroni/layers = **Overfitting**
+- Troppo pochi = **Underfitting**
+- Trova il giusto equilibrio con:
   - **Validazione cross**
   - **Early stopping**
   - **Regularizzazione**
@@ -44,14 +44,14 @@ qui sotto c'è una guida per queste decisioni.
 
 | Cosa Modificare           | Quando Farlo                                                             | Effetto Principale                                                 | Esempio Applicativo                                               |
 |---------------------------|--------------------------------------------------------------------------|---------------------------------------------------------------------|-------------------------------------------------------------------|
-| 🔹 Aggiungere un **neurone** in un layer | Quando il modello **underfitta leggermente** e hai ancora margine di capacità | Aumenta la **capacità locale** del layer                            | Un layer da 16 neuroni → 32 per migliorare accuratezza del training |
-| 🔹 Aggiungere **molti neuroni**         | Quando il layer è **troppo piccolo** per catturare relazioni complesse          | Più potenza computazionale ma rischio overfitting                   | Classificatore con molti input ma scarsi risultati                |
-| 🔹 Aggiungere **un nuovo layer**        | Quando la rete non riesce a catturare **relazioni gerarchiche o profonde**     | Aumenta la **profondità**, quindi astrazione progressiva             | Immagine: primo layer → bordi, secondo → forme, terzo → oggetti   |
-| 🔹 Aggiungere **più layer**             | Se il problema è complesso e hai **tanti dati di addestramento**               | Profondità = più astrazione, ma più difficile da addestrare         | Riconoscimento facciale, NLP, visione profonda                    |
-| 🔹 Aggiungere layer **solo in coda**    | Quando vuoi aumentare la **decodifica finale o raffinamento**                  | Rafforza la parte decisionale, utile per classificazione             | Rete che migliora output finale (es. 10 classi)                   |
-| 🔹 Aggiungere layer **intermedi**       | Quando serve maggiore **trasformazione tra le feature**                        | Aumenta la trasformazione astratta tra input e output                | Modelli che imparano da dati multivariati complessi              |
-| 🔹 Ridurre neuroni                      | Per ridurre overfitting o aumentare generalizzazione                            | Meno parametri = meno rischio overfitting                           | Da 128 a 64 se accuracy test > accuracy train                     |
-| 🔹 Ridurre layer                        | Quando il modello è troppo lento o non migliora con più profondità              | Meno complessità, più generalizzazione, più veloce                   | Applicazioni embedded o mobile                                   |
+| - Aggiungere un **neurone** in un layer | Quando il modello **underfitta leggermente** e hai ancora margine di capacità | Aumenta la **capacità locale** del layer                            | Un layer da 16 neuroni → 32 per migliorare accuratezza del training |
+| - Aggiungere **molti neuroni**         | Quando il layer è **troppo piccolo** per catturare relazioni complesse          | Più potenza computazionale ma rischio overfitting                   | Classificatore con molti input ma scarsi risultati                |
+| - Aggiungere **un nuovo layer**        | Quando la rete non riesce a catturare **relazioni gerarchiche o profonde**     | Aumenta la **profondità**, quindi astrazione progressiva             | Immagine: primo layer → bordi, secondo → forme, terzo → oggetti   |
+| - Aggiungere **più layer**             | Se il problema è complesso e hai **tanti dati di addestramento**               | Profondità = più astrazione, ma più difficile da addestrare         | Riconoscimento facciale, NLP, visione profonda                    |
+| - Aggiungere layer **solo in coda**    | Quando vuoi aumentare la **decodifica finale o raffinamento**                  | Rafforza la parte decisionale, utile per classificazione             | Rete che migliora output finale (es. 10 classi)                   |
+| - Aggiungere layer **intermedi**       | Quando serve maggiore **trasformazione tra le feature**                        | Aumenta la trasformazione astratta tra input e output                | Modelli che imparano da dati multivariati complessi              |
+| - Ridurre neuroni                      | Per ridurre overfitting o aumentare generalizzazione                            | Meno parametri = meno rischio overfitting                           | Da 128 a 64 se accuracy test > accuracy train                     |
+| - Ridurre layer                        | Quando il modello è troppo lento o non migliora con più profondità              | Meno complessità, più generalizzazione, più veloce                   | Applicazioni embedded o mobile                                   |
 
 ---
 
@@ -75,15 +75,15 @@ qui sotto c'è una guida per queste decisioni.
 
 ---
 
-# 🧠 Tutti i Layer delle Reti Neurali - Spiegati in modo semplice
+# Tutti i Layer delle Reti Neurali - Spiegati in modo semplice
 
 > Ogni layer è come una fase della lavorazione di un'informazione. Vediamo cosa fanno.
 
 ---
 
-# 📚 Keras Layers – Guida Completa
+# Keras Layers – Guida Completa
 
-## 🧱 1. Core Layers
+## 1. Core Layers
 
 | Layer                 | Descrizione                                                    | Uso                         |
 |-----------------------|----------------------------------------------------------------|-----------------------------|
@@ -96,7 +96,7 @@ qui sotto c'è una guida per queste decisioni.
 
 ---
 
-## 🧠 2. Convolutional Layers
+## 2. Convolutional Layers
 
 | Layer                  | Descrizione                                             | Uso                     |
 |------------------------|---------------------------------------------------------|--------------------------|
@@ -107,7 +107,7 @@ qui sotto c'è una guida per queste decisioni.
 
 ---
 
-## 🌀 3. Pooling Layers
+## 3. Pooling Layers
 
 | Layer                      | Descrizione                                          | Uso                           |
 |----------------------------|------------------------------------------------------|-------------------------------|
@@ -118,7 +118,7 @@ qui sotto c'è una guida per queste decisioni.
 
 ---
 
-## 📏 4. Normalizzazione e Rumore
+## 4. Normalizzazione e Rumore
 
 | Layer                     | Descrizione                                            | Uso                        |
 |---------------------------|--------------------------------------------------------|-----------------------------|
@@ -129,7 +129,7 @@ qui sotto c'è una guida per queste decisioni.
 
 ---
 
-## ⏳ 5. Reti Ricorrenti (RNN)
+## 5. Reti Ricorrenti (RNN)
 
 | Layer                 | Descrizione                                  | Uso                |
 |-----------------------|----------------------------------------------|---------------------|
@@ -139,7 +139,7 @@ qui sotto c'è una guida per queste decisioni.
 
 ---
 
-## 🧩 6. Altri Layer Utili
+## 6. Altri Layer Utili
 
 | Layer                       | Descrizione                                  | Uso                     |
 |-----------------------------|----------------------------------------------|--------------------------|
@@ -152,7 +152,7 @@ qui sotto c'è una guida per queste decisioni.
 
 ---
 
-## 🔁 7. Functional API
+## 7. Functional API
 
 | Elemento                  | Descrizione                                 |
 |---------------------------|---------------------------------------------|
@@ -161,11 +161,11 @@ qui sotto c'è una guida per queste decisioni.
 
 ---
 
-## ✅ Consigli d'Uso
+## Consigli d'Uso
 
-- 🔹 Usa `Sequential()` per modelli semplici: `input_shape` va nel primo layer.
-- 🔸 Usa `Input()` solo se lavori con la **Functional API**.
-- ⚠️ In molti layer come `Conv2D` e `Dense`, puoi mettere direttamente l’attivazione con `activation='relu'`.
+- Usa `Sequential()` per modelli semplici: `input_shape` va nel primo layer.
+- Usa `Input()` solo se lavori con la **Functional API**.
+- In molti layer come `Conv2D` e `Dense`, puoi mettere direttamente l’attivazione con `activation='relu'`.
 
 ---
 
@@ -219,7 +219,7 @@ qui sotto c'è una guida per queste decisioni.
 
 ---
 
-## 🎯 In Sintesi
+## In Sintesi
 
 | Tipo di Layer       | Cosa Fa                                                |
 |---------------------|--------------------------------------------------------|
@@ -234,8 +234,3 @@ qui sotto c'è una guida per queste decisioni.
 | Embedding           | Codifica parole in numeri                              |
 | Transformer         | "Attenzione" tra elementi in una sequenza              |
 | LSTM / GRU          | Gestione memoria nel tempo per dati sequenziali        |
-
----
-
-## ✅ Vuoi un esempio pratico in codice?
-Posso scriverti un esempio in PyTorch o Keras con questi layer, basta chiedere.

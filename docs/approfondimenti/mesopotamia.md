@@ -1,3 +1,5 @@
+# Di Nicola Accordini
+
 # Reti neurali per un mesopotamico 
 
 ## Prompt
