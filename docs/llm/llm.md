@@ -57,8 +57,6 @@ In pratica, eseguono un numero elevatissimo di calcoli al secondo per trovare la
 	- Testa 2: **coerenza tematica**  
 	- Testa 3: **intenzionalità comunicativa**  
 
-Ecco una spiegazione dettagliata delle **fasi di apprendimento degli LLM**, con focus tecnico ed esempi concreti:
-
 ### 2 - Fasi di apprendimento degli LLM: un processo stratificato
 Le tre fasi fondamentali trasformano un modello generico in uno specializzato:
 
