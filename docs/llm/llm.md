@@ -44,6 +44,44 @@ In pratica, eseguono un numero elevatissimo di calcoli al secondo per trovare la
      - Risoluzione di problemi matematici semplici  
      - Generazione di codice Python  
 
+### Il Problema delle "Capacità emergenti" nell'IA: un riassunto veloce
+
+Il fenomeno delle **capacità emergenti** si riferisce a nuove abilità che i sistemi di intelligenza artificiale, in particolare i **Grandi Modelli Linguistici (LLM)**, manifestano **improvvisamente** e **senza essere stati programmati** per farlo.
+
+### Quando e perché sono comparse?
+
+Questo fenomeno ha iniziato a diventare evidente attorno al **2020**, con l'avvento di modelli come **GPT-3**, ed è stato formalmente studiato nel 2022 dal team di Wei et al. con il paper "Emergent Abilities of Large Language Models".
+
+**Non sono state volute né previste**. Sono emerse come una sorpresa, un po' come un "salto" qualitativo nelle capacità del modello, piuttosto che un miglioramento graduale. I ricercatori si sono trovati di fronte a comportamenti inaspettati.
+
+### Quanto deve essere grande una rete?
+
+Non c'è una dimensione esatta, ma queste capacità si manifestano solo quando i modelli raggiungono una **certa soglia di scala** in termini di:
+* **Numero di parametri** (spesso decine o centinaia di miliardi).
+* **Quantità e qualità dei dati di addestramento**.
+* **Potenza computazionale** impiegata.
+
+Sotto questa soglia, le prestazioni sono spesso basse; una volta superata, si osserva un **miglioramento improvviso e drammatico**. Alcuni suggeriscono che la **"loss" di pre-addestramento** (quanto bene il modello impara dai dati) possa essere un indicatore migliore della loro comparsa rispetto alla sola dimensione.
+
+### Quali sono queste capacità?
+
+Tra le più notevoli troviamo:
+* **Ragionamento multi-step:** risolvere problemi complessi che richiedono più passaggi logici.
+* **Apprendimento in-context (Zero-shot/Few-shot learning):** eseguire compiti senza aver ricevuto esempi specifici (zero-shot) o con pochissimi esempi (few-shot) direttamente nel prompt, senza un riaddestramento.
+* **"Chain-of-Thought Prompting":** la capacità di migliorare il ragionamento se invitato a mostrare i passaggi intermedi.
+* **Generazione di codice.**
+* **Traduzione multilingue.**
+* **Capacità di superare esami complessi** (es. Bar Exam, SAT).
+
+### Come vengono spiegate?
+
+Le spiegazioni principali sono:
+1.  **Complessità e scala:** la teoria più diffusa è che, aumentando la dimensione del modello, il sistema sviluppa una complessità tale da permettere l'emergere di nuove connessioni e pattern non possibili in modelli più piccoli, un po' come una **"transizione di fase"** in fisica.
+2.  **Apprendimento in-context:** questa abilità è vista come un meccanismo fondamentale che abilita molte altre capacità emergenti.
+3.  **Teoria del "Miraggio":** una prospettiva più critica suggerisce che alcune di queste "emergenze" potrebbero essere un **artefatto della metrica di valutazione** utilizzata. Se si usano metriche binarie (passa/fallisce) anziché continue, un miglioramento graduale potrebbe apparire come un salto improvviso quando si supera una certa soglia di prestazione.
+
+---
+
 ## Anatomia di un LLM: struttura e processi  
 ### 1 - Architettura Transformer estesa  
 - Embedding contestuale:  
