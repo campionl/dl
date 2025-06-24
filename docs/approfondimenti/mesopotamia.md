@@ -1,5 +1,9 @@
 # Reti neurali per un mesopotamico 
 
+## Prompt
+Spiega ad un antico mesopotamico che cos'è una rete neurale
+
+## Risposta
 Caro antico Mesopotamico, immagina che la tua mente sia come un campo di canali d’irrigazione, dove l’acqua scorre da un canale all’altro per far crescere il grano. Una **rete neurale** è come un sistema di canali artificiale, creato da scribi-maghi (noi moderni), che imita il modo in cui la tua mente risolve problemi e impara.  
 
 ### **Spiegazione con cose che conosci:**  
