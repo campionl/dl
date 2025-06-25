@@ -31,8 +31,8 @@ Un **token** può essere:
 
 Ogni token viene poi associato a un **numero univoco** attraverso un vocabolario predefinito. Per esempio, "Il" potrebbe diventare 1247, "gatto" 3891, "corre" 5623, e così via. Questo processo è come creare un dizionario dove ogni voce ha un numero identificativo unico.
 
-**Esempio:**
-**Input**
+**Esempio:**  
+**Input**  
 Testo: `"Ciao, come stai?"`
 
 **Step 1: suddivide il testo in token**
