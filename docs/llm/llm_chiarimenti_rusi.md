@@ -76,42 +76,20 @@ Per problemi più complessi, può sbagliare — proprio perché **non capisce la
 ---
 
 ```mermaid  
-flowchart TD
-    A[FASE DI APPRENDIMENTO (Training)] --> B[Input]
-    A --> C[Elaborazione]
-    A --> D[Output]
-    E[FASE DI INFERENZA (Inference)] --> F[Input]
-    E --> G[Elaborazione]
-    E --> H[Output]
+graph TD
+    A1[📘 FASE 1: TRAINING] --> A2[📥 INPUT<br>• Testi in linguaggio naturale<br>• Tokenizzazione<br>• Embedding numerico]
+    A2 --> A3[⚙️ ELABORAZIONE<br>• Transformer con self-attention<br>• Previsione del token successivo<br>• Calcolo errore]
+    A3 --> A4[🔁 BACKPROPAGATION<br>• Aggiornamento pesi<br>• Ottimizzazione (es: Adam)]
+    A4 --> A5[✅ OUTPUT<br>• Probabilità dei token<br>• Nessun testo generato, solo apprendimento]
 
-    %% Training Phase
-    B --> B1["Testo originale (e.g., libri, codice)"]
-    B --> B2["Tokenizzazione (spezzare in 'token')"]
-    B --> B3["Embedding (token → vettori numerici)"]
-    
-    C --> C1["Transformer Layers"]
-    C1 --> C1a["Self-Attention (pesi delle parole)"]
-    C1 --> C1b["Calcoli matematici (pesi, bias)"]
-    C1 --> C1c["Predizione del token successivo"]
-    C --> C2["Backpropagation (aggiornamento pesi)"]
-    
-    D --> D1["Probabilità dei token (e.g., 80% 'miao')"]
-    D --> D2["Nessun testo generato: solo ottimizzazione"]
+    B1[💬 FASE 2: INFERENZA] --> B2[📥 INPUT<br>• Prompt utente<br>• Tokenizzazione<br>• Embedding]
+    B2 --> B3[⚙️ ELABORAZIONE<br>• Transformer con pesi già appresi<br>• Previsione token successivo]
+    B3 --> B4[🔁 LOOP<br>• Aggiunta token generato al contesto<br>• Nuova previsione]
+    B4 --> B5[📤 OUTPUT<br>• Token generati → Testo leggibile<br>• Risposta del modello]
 
-    %% Inference Phase
-    F --> F1["Prompt utente (e.g., 'Il Sole è una')"]
-    F --> F2["Tokenizzazione + Embedding"]
-    
-    G --> G1["Transformer Layers (pesi fissi)"]
-    G1 --> G1a["Self-Attention (contesto)"]
-    G1 --> G1b["Generazione token step-by-step"]
-    
-    H --> H1["Decoding (token → testo)"]
-    H --> H2["Risposta generata (e.g., 'stella')"]
+    style A1 fill:#c2f0c2,stroke:#333,stroke-width:2
+    style B1 fill:#cce5ff,stroke:#333,stroke-width:2
 
-    %% Esempio Matematico
-    I["Esempio: Matematica"] --> I1["Training: Ha visto '2+2=4' in molti testi"]
-    I --> I2["Inference: Simula la risposta (non calcola)"]
 ```
 
 ---
