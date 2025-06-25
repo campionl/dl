@@ -66,7 +66,7 @@ Il settore dei trasporti è uno dei maggiori consumatori di energia a livello gl
 - Per esempio, Google ha dichiarato nel 2022 un consumo di circa **5,6 miliardi di litri d’acqua** per il raffreddamento dei propri data center.
 - L’uso idrico è un problema serio soprattutto in aree geografiche già stressate da siccità o carenza d’acqua.
 
-![Confronto Consumo Idrico](https://bryantresearch.co.uk/wp-content/uploads/2025/05/AI-Water-Use-Comparison.png)
+![Confronto Consumo Idrico]([https://bryantresearch.co.uk/wp-content/uploads/2025/05/AI-Water-Use-Comparison.png](https://www.eticasgr.com/app/uploads/2024/09/base-etica-sgr.jpg))
 
 *Fonte: [Bryant Research](https://bryantresearch.co.uk/insight-items/comparing-water-footprint-ai/)*
 
