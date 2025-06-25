@@ -15,6 +15,8 @@ $w_i =$ peso del segnale
 $b =$ bias (termine costante indipendente)  
 $\chi =$ funzione di attivazione  
 
+**Alcuni esempi di funzioni di attivazione:**
+
 ![schema](../../assets/func_act.jpeg)
 
 
