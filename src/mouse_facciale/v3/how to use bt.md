@@ -18,30 +18,6 @@ pip install pyautogui pynput pyobjc  # macOS richiede pyobjc
 
 ---
 
-# Caratteristiche Avanzate
-
-## Cross-Platform
-- Supporto nativo per Windows, Linux e macOS
-- Gestione automatica delle differenze tra sistemi operativi
-
-## Performance Ottimizzate
-- Frequenza aggiornamento 120Hz (8ms)
-- Deadzone per eliminare il jitter
-- Coda di invio per gestire picchi di traffico
-
-## Funzionalità Complete
-- Movimento fluido del cursore
-- Supporto pulsanti (sinistro, destro, centrale)
-- Scrolling verticale/orizzontale
-- Gestione connessioni robusta
-
-## Sicurezza
-- Utilizza il pairing Bluetooth del sistema
-- Chiusura pulita delle connessioni
-- Gestione errori avanzata
-
----
-
 # Risoluzione Problemi Comuni
 
 ## Connessione fallita su macOS
