@@ -80,17 +80,17 @@ Il modello **prevede una parola alla volta**, basandosi su ciò che ha "visto" d
 ## **3. Cosa Possono Fare (e Dove Ancora Faticano)**  
 
 ### **Punti di Forza**  
-✅ **Scrivere testi** (temi, articoli, storie).  
-✅ **Rispondere a domande** (come un motore di ricerca avanzato).  
-✅ **Tradurre lingue** (anche senza essere esplicitamente addestrati).  
-✅ **Aiutare a programmare** (suggerire codice in Python, JavaScript, ecc.).  
+**Scrivere testi** (temi, articoli, storie).  
+**Rispondere a domande** (come un motore di ricerca avanzato).  
+**Tradurre lingue** (anche senza essere esplicitamente addestrati).  
+**Aiutare a programmare** (suggerire codice in Python, JavaScript, ecc.).  
 
 ### **Limiti**  
-❌ **"Allucinazioni"**: A volte inventano risposte plausibili ma false.  
+**"Allucinazioni"**: A volte inventano risposte plausibili ma false.  
    - *Esempio*: Potrebbero dire che *"Kant ha scritto 'Critica del Gusto'"* (un libro che non esiste).  
-❌ **Bias culturali**: Ripetono stereotipi presenti nei dati.  
+**Bias culturali**: Ripetono stereotipi presenti nei dati.  
    - *Esempio*: Potrebbero associare automaticamente *"infermiere"* a una donna.  
-❌ **Consumo energetico**: Addestrare un LLM come GPT-4 richiede l’energia di **5.000 case per un anno!**  
+**Consumo energetico**: Addestrare un LLM come GPT-4 richiede l’energia di **5.000 case per un anno!**  
 
 ---  
 
@@ -109,4 +109,4 @@ Gli LLM sono strumenti potenti, ma **non sono perfetti**. Possono aiutarti a stu
 🔹 **Verifica** sempre le informazioni importanti.  
 🔹 **Usali come assistenti**, non come sostituti del tuo pensiero critico.  
 
-Il futuro? **Umani e AI che collaborano**, ognuno con i propri punti di forza! 🚀
+Il futuro? **Umani e AI che collaborano**, ognuno con i propri punti di forza! 
