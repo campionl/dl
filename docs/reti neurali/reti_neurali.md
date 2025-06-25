@@ -15,6 +15,8 @@ $w_i =$ peso del segnale
 $b =$ bias (termine costante indipendente)  
 $\chi =$ funzione di attivazione  
 
+**Alcuni esempi di funzioni di attivazione:**
+
 ![schema](../../assets/func_act.jpeg)
 
 
@@ -156,6 +158,31 @@ Immagina di dover imparare a riconoscere una foto di gatto:
 - Trasformazione dopo 3 strati: `+2`  
 - Output finale: `5 (input) + 2 (modifiche) = 7`  
 
+
+```mermaid
+timeline
+    title Storia delle Reti Neurali: Tappe Fondamentali
+    section Anni '40-'50
+        1943 : McCulloch & Pitts propongono il primo modello matematico di neurone
+        1949 : Hebb pubblica la "Regola di Hebb" (apprendimento per correlazione)
+        1958 : Rosenblatt introduce il Perceptron (prima rete neurale addestrabile)
+    section Anni '60-'80
+        1969 : Minsky & Papert dimostrano i limiti del Perceptron (XOR problem)
+        1974 : Werbos propone la Backpropagation (ma poco riconosciuta)
+    section Anni '90
+        1991 : Hochreiter identifica il "Vanishing Gradient" problem
+    section Anni 2000
+        2006 : Hinton et al. pubblicano su "Deep Belief Networks"
+        2009 : ImageNet dataset rilasciato (1.4M immagini etichettate)
+    section Anni 2010
+        2012 : AlexNet vince ImageNet (GPU + ReLU + Dropout)
+        2015 : ResNet (skip connections per reti molto profonde)
+        2017 : Transformer architecture (Vaswani et al.)
+    section Anni 2020
+        2020 : GPT-3 (175 miliardi di parametri)
+        2022 : ChatGPT e diffusione massiccia dei LLM
+        2023 : Sviluppi in AI multimodale (es. GPT-4)
+```
 ---
 
 #### **Perché è geniale?**  
