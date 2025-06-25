@@ -1,6 +1,4 @@
-Ecco il documento `llm.md` aggiornato con le nuove informazioni integrate in modo coerente:
 
-```markdown
 # LLM: Large Language Models  
 
 ## Cosa sono gli LLM: fondamenti e meccanismi
@@ -15,7 +13,7 @@ Per comprendere come gli LLM elaborano il testo, immaginiamo di seguire il perco
 
 I modelli di intelligenza artificiale come gli LLM sono **reti neurali** che lavorano con **vettori numerici** (detti *vettori di embedding*). Quindi prima di tutto devono **"tradurre" il testo** (sequenze di caratteri o parole) in una **forma numerica**. Questo processo si chiama ***preprocessing*** e il passo principale è la ***tokenizzazione***.
 
-#### La Tokenizzazione: Dal Testo ai Numeri
+### La Tokenizzazione: Dal Testo ai Numeri
 
 Il primo passo fondamentale è la tokenizzazione. Quando scriviamo "Il gatto corre veloce", l'LLM non può lavorare direttamente con queste parole. Deve prima convertirle in token, che sono unità più piccole di testo.
 
@@ -55,25 +53,96 @@ oppure
 | "stai" | 2074 |
 | "?"    | 30   |
 
-#### L'Embedding: Dare Significato ai Numeri
+### L'Embedding: Dare Significato ai Numeri
 
 Ora arriva la parte davvero interessante. Questi numeri vengono trasformati in quello che chiamiamo "embedding" o rappresentazioni vettoriali. Pensate a ogni parola come a un punto in uno spazio multidimensionale, tipicamente con centinaia o migliaia di dimensioni.
 
-Gli **ID dei token** vengono successivamente convertiti in **vettori di embedding**:
+#### L'Idea Fondamentale: Parole → Punti nello Spazio
+Immagina di dover disegnare una **mappa di tutte le parole** dove:
+- Parole con **significati simili** sono **vicine**  
+- Parole **diverse** sono **lontane**  
+- **Esempio**:  
+  - `gatto` e `cane` (animali domestici) → vicini  
+  - `gatto` e `computer` → lontanissimi  
 
+#### Struttura di un Embedding: Coordinate Nascoste
+Un embedding è un vettore di numeri (es. 300 dimensioni). **Ecco un esempio semplificato a 3 dimensioni**:
 ```python
-Token "ciao" → ID 5012 → Embedding: [0.12, -0.07, ..., 0.93]
+"gatto" = [0.8, -0.2, 0.4]  
+"cane"  = [0.7, -0.3, 0.3]  
+"torta" = [-0.5, 0.6, 0.1]  
+```
+- **Ogni numero** rappresenta una **caratteristica astratta** appresa dal modello  
+- **Interpretazione ipotetica delle dimensioni**:
+  - Dimensione 1: `🐶 Animalità` (positivo per animali)  
+  - Dimensione 2: `🍖 Carnivoro` (positivo per carnivori)  
+  - Dimensione 3: `🏠 Domesticità` (positivo per animali domestici)  
+
+##### Come si Calcola la Somiglianza?
+Con il **prodotto scalare** (o cosine similarity nella pratica):
+```python
+Somiglianza(gatto, cane) = (0.8*0.7) + (-0.2*-0.3) + (0.4*0.3) = 0.74  
+Somiglianza(gatto, torta) = (0.8*-0.5) + (-0.2*0.6) + (0.4*0.1) = -0.48  
+```
+- **Valore positivo alto (0.74)**: parole correlate  
+- **Valore negativo (-0.48)**: parole semanticamente opposte  
+
+##### Analogie Semantiche: Matematica con le Parole
+Gli embedding permettono operazioni come:
+```
+"re" - "uomo" + "donna" ≈ "regina"
+```
+**Esempio numerico**:
+```python
+re = [1.0, 0.0, 0.5]  
+uomo = [0.9, 0.1, 0.3]  
+donna = [0.8, -0.1, 0.4]  
+risultato = [0.9, -0.2, 0.6] ≈ regina = [0.95, -0.2, 0.6]
 ```
 
-Per visualizzare questo concetto, immaginate uno spazio tridimensionale dove le parole simili si trovano vicine tra loro. "Gatto" e "cane" sarebbero relativamente vicini, mentre "gatto" e "matematica" sarebbero più distanti. In realtà, questi spazi hanno molte più dimensioni, permettendo di catturare relazioni semantiche molto complesse.
+##### Perché 300-500 Dimensioni?
+- **Poche dimensioni** (es. 3): Non catturano complessità  
+- **Troppe dimensioni** (es. 1000): Rischio di overfitting  
+- **Range ottimale** (300-500): Bilancio tra:
+  - Sinonimi (`felino` ≈ `gatto`)  
+  - Relazioni (`Roma` - `Italia` ≈ `Parigi` - `Francia`)  
+  - Contesti (`cellulare` vicino a `batteria`, `schermo`)  
 
-I **vettori di embedding** (lunghi ad esempio 768 o 2048 elementi) codificano **informazioni complesse e astratte** su ogni token, tra cui:
-- Il significato semantico
-- Il ruolo sintattico (sostantivo, verbo, ...)
-- Il contesto d'uso (es. "banca" come edificio o istituto finanziario)
-- Le relazioni tra parole (es. "regina" - "re" ≈ "donna" - "uomo")
+##### Come si Apprendono gli Embedding?
+1. **Inizializzazione casuale**: `gatto` = [0.1, -0.4, 0.9]  
+2. **Addestramento su miliardi di frasi**:  
+   - Regola gli embedding per far sì che parole in contesti simili abbiano vettori simili  
+   - Usa **backpropagation**:  
+     - Predice parole mancanti (es. dopo *"il gatto ___"* dovrebbe predire *"miagola"*)  
+     - Aggiusta gli embedding per minimizzare l'errore  
 
-Questi embedding sono il risultato di un training su enormi quantità di testo, dove il modello ha imparato che certe parole tendono a comparire insieme in contesti simili. È qui che avviene la "magia": le relazioni matematiche tra questi vettori riflettono le relazioni semantiche tra le parole.
+##### Embedding in Azione: Esempio di Attenzione
+1. **Input**: `"Il gatto beve il latte"`  
+2. **Embedding**:  
+   - `"gatto"` = [0.8, -0.2, 0.4]  
+   - `"latte"` = [0.1, 0.6, -0.3]  
+3. **Meccanismo di attenzione**:  
+   - Calcola somiglianza tra `"beve"` e `"latte"` → alta correlazione  
+   - Assegna maggiore peso a `"latte"` quando elabora `"beve"`  
+
+**Visualizzazione**:  
+```mermaid
+graph LR
+    A[gatto] -->|embedding| B([0.8, -0.2, 0.4])
+    C[latte] -->|embedding| D([0.1, 0.6, -0.3])
+    B -->|somiglianza| E[Attenzione]
+    D -->|somiglianza| E
+```
+
+
+
+
+
+
+
+
+
+
 
 #### L'Architettura Transformer: Il Cuore del Calcolo
 
