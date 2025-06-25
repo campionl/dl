@@ -74,3 +74,42 @@ Per problemi semplici (tipo 2 + 2) è affidabile.
 Per problemi più complessi, può sbagliare — proprio perché **non capisce la matematica come un umano o un software matematico, ma la simula statisticamente.**
 
 ---
+flowchart TD
+    A[FASE DI APPRENDIMENTO (Training)] --> B[Input]
+    A --> C[Elaborazione]
+    A --> D[Output]
+    E[FASE DI INFERENZA (Inference)] --> F[Input]
+    E --> G[Elaborazione]
+    E --> H[Output]
+
+    %% Training Phase
+    B --> B1["Testo originale (e.g., libri, codice)"]
+    B --> B2["Tokenizzazione (spezzare in 'token')"]
+    B --> B3["Embedding (token → vettori numerici)"]
+    
+    C --> C1["Transformer Layers"]
+    C1 --> C1a["Self-Attention (pesi delle parole)"]
+    C1 --> C1b["Calcoli matematici (pesi, bias)"]
+    C1 --> C1c["Predizione del token successivo"]
+    C --> C2["Backpropagation (aggiornamento pesi)"]
+    
+    D --> D1["Probabilità dei token (e.g., 80% 'miao')"]
+    D --> D2["Nessun testo generato: solo ottimizzazione"]
+
+    %% Inference Phase
+    F --> F1["Prompt utente (e.g., 'Il Sole è una')"]
+    F --> F2["Tokenizzazione + Embedding"]
+    
+    G --> G1["Transformer Layers (pesi fissi)"]
+    G1 --> G1a["Self-Attention (contesto)"]
+    G1 --> G1b["Generazione token step-by-step"]
+    
+    H --> H1["Decoding (token → testo)"]
+    H --> H2["Risposta generata (e.g., 'stella')"]
+
+    %% Esempio Matematico
+    I["Esempio: Matematica"] --> I1["Training: Ha visto '2+2=4' in molti testi"]
+    I --> I2["Inference: Simula la risposta (non calcola)"]
+
+
+
