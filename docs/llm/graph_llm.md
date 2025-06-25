@@ -2,7 +2,7 @@
     flowchart TD
     A[Input Testo] --> B[Pre-elaborazione]
     B --> C[Embedding]
-    C --> D[Trasformatori]
+    C --> D[Reti Neurali Transformer]
     D --> E[Generazione Output]
     E --> F[Output Testo]
 
