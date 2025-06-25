@@ -246,7 +246,11 @@ Nei laboratori simulano farmaci e malattie, nelle fabbriche controllano la quali
 
 Una rivoluzione silenziosa che, passo dopo passo, sta rendendo le macchine sempre più "intelligenti" e utili nella vita di tutti i giorni.
 
-# Esempi di reti neurali
+### Alcune tipologie di rete
+
+Consultare il file [approfondimenti_reti](../approfondimenti/approfondimenti_reti.md) per avere degli esempi particolari di reti neurali.
+
+# Esempi pratici di reti neurali
 - [Pari dispari](../../src/neurale_paridispari.ipynb): riconosce se un numero dato in input è pari o dispari;
 - [MNIST](../../src/Rete_mnist.ipynb): riconosce un numero dato in input;
 - [EMNIST](../../src/PAROLA_rete_neurale.ipynb): riconosce una parola data in input (con lettere maiuscole o minuscole).
