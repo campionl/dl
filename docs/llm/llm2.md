@@ -1,4 +1,4 @@
-# **Alla Scoperta dei Large Language Models: Come Funzionano e Perché Sono Straordinari**  
+# **Alla scoperta dei Large Language Models: come funzionano e perché sono straordinari**  
 
 Immagina di avere un assistente personale che può scrivere temi, tradurre lingue, rispondere a domande complicate e persino aiutarti a programmare. Sembra fantascienza, eppure esiste già: si chiama **Large Language Model (LLM)**, ed è alla base di strumenti come ChatGPT, Gemini e Claude.  
 
@@ -6,16 +6,16 @@ Ma come fanno queste intelligenze artificiali a essere così capaci? Non hanno u
 
 ---  
 
-## **1. La "Scuola" degli LLM: Come Imparano a Parlare**  
+## **1. La "scuola" degli LLM: come imparano a parlare**  
 
 Prima di tutto, un LLM deve **studiare**. E non poco! Il suo percorso di apprendimento è diviso in diverse fasi, proprio come uno studente che prima impara le basi e poi si specializza.  
 
-### **La Raccolta dei Dati: La Biblioteca Infinita**  
+### **La raccolta dei dati: la "Biblioteca infinita"**  
 Per insegnare a un LLM a comprendere il linguaggio, servono **tantissimi testi**: libri, articoli, siti web, forum, persino codice di programmazione. È come dargli in mano tutte le enciclopedie del mondo e dirgli: "Leggi e impara!"  
 
 Ma non tutto ciò che si trova online è utile o corretto. Prima di usare questi dati, gli sviluppatori **puliscono il dataset**, eliminando spam, informazioni tossiche o duplicate.  
 
-### **La Tokenizzazione: Spezzare le Parole in Mattoncini**  
+### **La tokenizzazione: spezzare le parole in *mattoncini***  
 Quando noi leggiamo, riconosciamo parole intere. Per un LLM, invece, tutto è fatto di **token**, piccole unità di testo che possono essere:  
 - Parole intere ("ciao")  
 - Parti di parole ("inform-" in "informatica")  
@@ -26,20 +26,20 @@ Per esempio, la frase *"Ciao, come stai?"* potrebbe essere divisa in:
 
 Ogni token viene poi convertito in un **numero**, perché i computer lavorano meglio con i numeri che con le lettere.  
 
-### **Il Pre-Addestramento: Imparare a Completare le Frasi**  
+### **Il pre-addestramento: imparare a completare le frasi**  
 Questa è la fase più lunga e importante. Il modello legge **miliardi di frasi** e impara a prevedere cosa viene dopo.  
 
 - **Esempio**: Se vede *"Il gatto ___ sul tappeto"*, impara che la parola mancante potrebbe essere *"dorme"*.  
 - **Strumento chiave**: L’architettura **Transformer**, che usa un meccanismo chiamato **attenzione** per capire il contesto.  
 
-### **Il Fine-Tuning: Diventare un Esperto in Qualcosa**  
+### **Il Fine-Tuning: diventare un esperto in qualcosa**  
 Dopo aver imparato il linguaggio in generale, il modello può **specializzarsi**. Per esempio:  
 - Se deve fare il chatbot, viene addestrato su dialoghi.  
 - Se deve tradurre, studia testi in più lingue.  
 
 Un rischio? Dimenticare ciò che ha imparato prima (*catastrophic forgetting*), come uno studente che si concentra solo su una materia e perde le altre.  
 
-### **L’Apprendimento con Feedback Umano (RLHF): Migliorare con l’Aiuto delle Persone**  
+### **L’Apprendimento con Feedback Umano (RLHF): migliorare con l’aiuto delle persone**  
 A volte, un LLM può dare risposte strane o sbagliate. Per evitarlo, gli sviluppatori usano il **Reinforcement Learning from Human Feedback (RLHF)**:  
 1. Il modello genera più risposte a una domanda.  
 2. Un essere umano valuta quali sono le migliori.  
@@ -51,24 +51,24 @@ A volte, un LLM può dare risposte strane o sbagliate. Per evitarlo, gli svilupp
 
 ---  
 
-## **2. Cosa Succede Quando Scrivi a un LLM?**  
+## **2. Cosa succede quando scrivi a un LLM?**  
 
 Ora che il modello è addestrato, come fa a rispondere alle tue domande?  
 
-### **Step 1: Da Testo a Numeri**  
+### **Step 1: da testo a numeri**  
 Quando scrivi *"Ciao, come stai?"*, il modello:  
 1. Divide il testo in token.  
 2. Li converte in numeri.  
 3. Trasforma i numeri in **vettori matematici** (embedding), che rappresentano il significato delle parole.  
 
-### **Step 2: Il Meccanismo di Attenzione**  
+### **Step 2: il meccanismo di attenzione**  
 Il modello analizza **tutte le parole insieme** e decide quali sono più importanti per capire il contesto.  
 
 - **Esempio**:  
   - Frase: *"La banca del fiume è scoscesa."*  
   - Il modello capisce che *"banca"* si riferisce alla riva (grazie a *"fiume"*), non a una banca finanziaria.  
 
-### **Step 3: Generare la Risposta**  
+### **Step 3: generare la risposta**  
 Il modello **prevede una parola alla volta**, basandosi su ciò che ha "visto" durante l’addestramento.  
 
 - **Esempio**:  
@@ -77,7 +77,7 @@ Il modello **prevede una parola alla volta**, basandosi su ciò che ha "visto" d
 
 ---  
 
-## **3. Cosa Possono Fare (e Dove Ancora Faticano)**  
+## **3. Cosa possono fare (e dove ancora faticano)**  
 
 ### **Punti di Forza**  
 **Scrivere testi** (temi, articoli, storie).  
@@ -94,7 +94,7 @@ Il modello **prevede una parola alla volta**, basandosi su ciò che ha "visto" d
 
 ---  
 
-## **4. Il Futuro degli LLM**  
+## **4. Il futuro degli LLM**  
 
 - **Diventeranno più efficienti** (consumando meno energia).  
 - **Saranno più specializzati** (medicina, legge, ingegneria).  
@@ -102,7 +102,7 @@ Il modello **prevede una parola alla volta**, basandosi su ciò che ha "visto" d
 
 ---  
 
-## **Conclusione: Usarli con Intelligenza**  
+## **Conclusione: usarli con intelligenza**  
 
 Gli LLM sono strumenti potenti, ma **non sono perfetti**. Possono aiutarti a studiare, scrivere o programmare, ma:  
 🔹 **Sii chiaro** nelle domande.  
