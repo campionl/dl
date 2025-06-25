@@ -118,7 +118,7 @@ Le GRU usano **2 porte** per controllare le informazioni che devono passare o es
 
 ---
 
-## 💡 Quando usare una GRU?
+## Quando usare una GRU?
 
 - Quando hai **pochi dati** e vuoi un modello più leggero
 - Quando il tempo di **allenamento** è importante
