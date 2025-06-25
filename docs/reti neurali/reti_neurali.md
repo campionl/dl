@@ -167,18 +167,13 @@ timeline
     section Anni '60-'80
         1969 : Minsky & Papert dimostrano i limiti del Perceptron (XOR problem)
         1974 : Werbos propone la Backpropagation (ma poco riconosciuta)
-        1982 : Hopfield pubblica le Reti di Hopfield (memoria associativa)
-        1986 : Rumelhart & McClelland ri-scoprono la Backpropagation
     section Anni '90
         1991 : Hochreiter identifica il "Vanishing Gradient" problem
-        1997 : LSTM introdotte da Hochreiter & Schmidhuber
-        1998 : LeNet-5 (prima CNN pratica per riconoscimento digiti)
     section Anni 2000
         2006 : Hinton et al. pubblicano su "Deep Belief Networks"
         2009 : ImageNet dataset rilasciato (1.4M immagini etichettate)
     section Anni 2010
         2012 : AlexNet vince ImageNet (GPU + ReLU + Dropout)
-        2014 : GAN introdotte da Goodfellow
         2015 : ResNet (skip connections per reti molto profonde)
         2017 : Transformer architecture (Vaswani et al.)
     section Anni 2020
