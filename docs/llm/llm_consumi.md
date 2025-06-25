@@ -32,7 +32,7 @@ Questo rapporto analizza il consumo di energia e acqua delle AI in ambito mondia
 | Aviazione civile globale       | ~900                                     | N/A                                        | Settore energeticamente rilevante, AI vicino a questi valori |
 | Industria del cemento          | ~2.500                                   | Basso                                       | Elevate emissioni di CO₂, settore altamente energivoro  |
 | Cloud computing (generale)     | ~600                                     | Alto                                        | AI è una componente crescente all’interno di questo settore |
-| Agricoltura globale            | ~4.000                                   | Oltre il 70% del consumo mondiale d’acqua | Dominante per l’uso idrico                        |
+| Agricoltura globale            | ~4.000                                   | Oltre il 70% del consumo idrico mondiale    | Dominante per l’uso idrico                        |
 | Criptovalute (Bitcoin)         | 110–140                                  | Molto basso                                 | Settore ad alta controversia per consumo energetico|
 
 **Nota**: 1 TWh (terawattora) equivale a 1 miliardo di kilowattora.
@@ -58,10 +58,10 @@ Questo rapporto analizza il consumo di energia e acqua delle AI in ambito mondia
 
 ## 5. Tecnologie e Strategie per Mitigare l’Impatto
 
-- **Quantizzazione e distillazione**: metodi che riducono la dimensione dei modelli e di conseguenza il consumo computazionale.
-- **Modelli più piccoli e ottimizzati**: ad esempio LLaMA 3 8B offre un buon compromesso tra performance e consumo.
-- **Raffreddamento efficiente**: utilizzo di sistemi avanzati come il raffreddamento a immersione e il riciclo dell’acqua.
-- **Energia rinnovabile**: crescente impiego di fonti pulite per alimentare i data center, anche se la dipendenza energetica rimane elevata.
+- Quantizzazione e distillazione: metodi che riducono la dimensione dei modelli e di conseguenza il consumo computazionale.
+- Modelli più piccoli e ottimizzati: ad esempio LLaMA 3 8B offre un buon compromesso tra performance e consumo.
+- Raffreddamento efficiente: utilizzo di sistemi avanzati come il raffreddamento a immersione e il riciclo dell’acqua.
+- Energia rinnovabile: crescente impiego di fonti pulite per alimentare i data center, anche se la dipendenza energetica rimane elevata.
 - Nonostante i miglioramenti tecnologici, la domanda globale di capacità computazionale continua a crescere più velocemente dei guadagni in efficienza.
 
 ---
@@ -81,16 +81,42 @@ Per garantire uno sviluppo sostenibile è necessario:
 
 ---
 
-## Riferimenti e Fonti
+## 7. Grafici
 
-- International Energy Agency (IEA), "Data Centres and Data Transmission Networks," 2023.
-- MIT Technology Review, "The Energy Cost of Training AI Models," 2023.
-- Google Environmental Report, 2022.
-- OpenAI Research Blog.
-- Articoli e rapporti di Nature e Science, 2023-2024.
-- The New York Times, Wired, Bloomberg, AI Energy Impact Reports.
+### 7.1 Consumo Energetico dell'AI vs Altre Industrie
+
+![Consumo Energetico dell'AI vs Altre Industrie](https://cdn.statcdn.com/Infographic/images/normal/34295.jpeg)
+
+*Fonte: [Statista](https://www.statista.com/chart/34295/data-centers-electricity-generation-source/)*
+
+Il grafico mostra la crescita dell’energia consumata dai data center e l’incidenza crescente dell’AI.
 
 ---
 
-Se vuoi, posso aiutarti a generare una versione completa in PDF, o preparare grafici e tabelle per integrare questo rapporto nel tuo progetto GitHub.  
-Fammi sapere.  
+### 7.2 Consumo Idrico dell’AI e Confronto con Altre Industrie
+
+![Confronto Consumo Idrico](https://bryantresearch.co.uk/wp-content/uploads/2025/05/AI-Water-Use-Comparison.png)
+
+*Fonte: [Bryant Research](https://bryantresearch.co.uk/insight-items/comparing-water-footprint-ai/)*
+
+Confronto tra consumo idrico dell’AI e di industrie come agricoltura e produzione alimentare.
+
+---
+
+### 7.3 Proiezioni Consumo Energetico Data Center
+
+![Proiezioni Consumo Energetico Data Center](https://cdn.statcdn.com/Infographic/images/normal/34292.jpeg)
+
+*Fonte: [Statista](https://es.statista.com/grafico/34292/generacion-de-electricidad-para-abastecer-los-centros-de-datos-por-fuente-de-energia/)*
+
+Proiezioni del fabbisogno energetico dei data center, con incidenza delle fonti rinnovabili.
+
+---
+
+### 7.4 Consumo Energetico per Query AI vs Altri Servizi Digitali
+
+![Consumo Energetico per Query AI vs Altri Servizi](https://kanoppi.co/wp-content/uploads/2025/06/AI-Energy-Comparison.png)
+
+*Fonte: [Kanoppi](https://kanoppi.co/search-engines-vs-ai-energy-consumption-compared/)*
+
+Confronto del consumo energetico per singola richiesta tra AI e altri servizi digitali.
