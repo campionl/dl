@@ -61,7 +61,7 @@ Questo documento approfondisce le tecniche di ottimizzazione e le innovazioni ha
   Modelli come NVIDIA A100 e H100 offrono supporto nativo a tecniche come mixed precision e quantizzazione, migliorando l’efficienza energetica.  
   Limite: le GPU consumano comunque molta energia, e per grandi modelli sono necessari cluster enormi.
 
-  ![GPU NVIDIA H100](https://images.nvidia.com/aem-dam/Solutions/gtc/GTC-2023/A100-H100-Header-Card-1024x576.png)  
+  ![GPU NVIDIA H100](https://www.nvidia.com/content/nvidiaGDC/it/it_IT/data-center/h100/_jcr_content/root/responsivegrid/nv_container_177275295/nv_image.coreimg.100.1290.jpeg/1738320689973/hopper-h100-grace-hopper-2c50-d-2x.jpeg)  
   *Fonte: NVIDIA*
 
 - **TPU (Tensor Processing Units)**  
@@ -69,7 +69,7 @@ Questo documento approfondisce le tecniche di ottimizzazione e le innovazioni ha
   Consumo energetico per operazione inferiore rispetto alle GPU, ma meno flessibili.  
   Usate principalmente nei data center di Google e in alcune piattaforme cloud.
 
-  ![Google TPU](https://cloud.google.com/tpu/images/tpu-v4-pod-top-view.png)  
+  ![Google TPU](https://static.tecnichenuove.it/01net/2016/05/google-tpu.png)  
   *Fonte: Google Cloud*
 
 - **ASIC (Application-Specific Integrated Circuits)**  
@@ -87,8 +87,8 @@ Questo documento approfondisce le tecniche di ottimizzazione e le innovazioni ha
   - Microgrid energetiche che integrano fonti rinnovabili locali.  
   - Progettazione “free cooling” che sfrutta il clima freddo naturale per il raffreddamento passivo.
 
-  ![Data Center a immersione](https://images.unsplash.com/photo-1573164574472-7fcfbc6e06ea)  
-  *Fonte: Unsplash*
+  ![Data Center a immersione](https://qz.com/cdn-cgi/image/width=1920,quality=85,format=auto/https://assets.qz.com/media/7b2f79385bb9b77b26bda9125fe3aabc.jpg)  
+  *Fonte: Quartz*
 
 - **Localizzazione e Design**  
   Posizionare data center in regioni con clima freddo (es. Scandinavia, Canada) per minimizzare l’energia spesa nel raffreddamento.  
