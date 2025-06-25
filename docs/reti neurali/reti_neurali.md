@@ -156,6 +156,10 @@ Immagina di dover imparare a riconoscere una foto di gatto:
 - Trasformazione dopo 3 strati: `+2`  
 - Output finale: `5 (input) + 2 (modifiche) = 7`  
 
+
+```mermaid
+flowchart TD
+```
 ---
 
 #### **Perché è geniale?**  
