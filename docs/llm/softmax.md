@@ -15,21 +15,21 @@ Supponiamo che 4 cavalli abbiano questi "punteggi di velocità" (calcolati dall'
 - Cavallo C: `0.5`  
 - Cavallo D: `-1.0`  
 
-**Passaggio 1: Calcolare l'Esponenziale (e^x)**  
-Per rendere tutto positivo, calcoliamo \(e^{\text{punteggio}}\):  
-- A: $(e^{3.0} ≈ 20.08\)$
-- B: \(e^{1.0} ≈ 2.72\)  
-- C: \(e^{0.5} ≈ 1.65\)  
-- D: \(e^{-1.0} ≈ 0.37\)  
+**Passaggio 1: Calcolare l'Esponenziale $(e^x)$**  
+Per rendere tutto positivo, calcoliamo $(e^{\text{punteggio}})$:  
+- A: $(e^{3.0} ≈ 20.08)$
+- B: $(e^{1.0} ≈ 2.72)$  
+- C: $(e^{0.5} ≈ 1.65)$  
+- D: $(e^{-1.0} ≈ 0.37)$  
 
 **Passaggio 2: Somma degli Esponenziali**  
-Somma totale = \(20.08 + 2.72 + 1.65 + 0.37 = 24.82\)  
+Somma totale = $(20.08 + 2.72 + 1.65 + 0.37 = 24.82)$  
 
-**Passaggio 3: Probabilità = (e^x) / Somma**  
-- A: \(20.08 / 24.82 ≈ 0.81 → **81%**\)  
-- B: \(2.72 / 24.82 ≈ 0.11 → **11%**\)  
-- C: \(1.65 / 24.82 ≈ 0.07 → **7%**\)  
-- D: \(0.37 / 24.82 ≈ 0.01 → **1%**\)  
+**Passaggio 3: $Probabilità = (e^x) / Somma$**  
+- A: $(20.08 / 24.82 ≈ 0.81)$ → 81%  
+- B: $(2.72 / 24.82 ≈ 0.11)$ → 11%  
+- C: $(1.65 / 24.82 ≈ 0.07)$ → 7%  
+- D: $(0.37 / 24.82 ≈ 0.01)$ → 1%
 
 **Risultato:**  
 - Il cavallo A ha l'81% di probabilità di vincere.  
