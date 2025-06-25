@@ -12,35 +12,29 @@ from pynput import mouse
 # Configurazione
 BUFFER_SIZE = 128
 PORT = 4
-SEND_INTERVAL = 0.008  # 8ms per 120fps
+SEND_INTERVAL = 0.008
 DEADZONE_THRESHOLD = 1.5
 SCROLL_SCALE = 0.1
 
 # --------------------------------------------------
-# Funzioni Bluetooth Cross-Platform
+# Funzioni Bluetooth Cross-Platform (Aggiornate per Arch)
 # --------------------------------------------------
 def get_bluetooth_address():
-    """Ottieni l'indirizzo Bluetooth locale in modo affidabile"""
     system = platform.system()
     try:
         if system == 'Linux':
-            # Prova a leggere da sysfs
-            try:
-                with open('/sys/class/bluetooth/hci0/address', 'r') as f:
-                    return f.read().strip()
-            except:
-                # Fallback: usa hciconfig
-                result = subprocess.run(
-                    ['hciconfig', 'hci0'], 
-                    capture_output=True, 
-                    text=True
-                )
-                lines = result.stdout.split('\n')
-                for line in lines:
-                    if 'BD Address' in line:
-                        parts = line.split()
-                        return parts[2].strip()
-                return None
+            # Metodo specifico per Arch Linux
+            result = subprocess.run(
+                ['bluetoothctl', 'list'],
+                capture_output=True,
+                text=True
+            )
+            lines = result.stdout.split('\n')
+            for line in lines:
+                if 'Controller' in line:
+                    parts = line.split()
+                    return parts[1].strip()
+            return None
                 
         elif system == 'Windows':
             # PowerShell per ottenere l'indirizzo Bluetooth
@@ -79,18 +73,28 @@ def get_bluetooth_address():
         return None
 
 def get_bluetooth_socket():
-    """Crea un socket Bluetooth appropriato per il sistema operativo"""
+    """Crea un socket Bluetooth con fallback a PyBluez per Arch"""
     system = platform.system()
     try:
         if system == 'Linux':
-            sock = socket.socket(socket.AF_BLUETOOTH, socket.SOCK_STREAM, socket.BTPROTO_RFCOMM)
-            return sock
+            try:
+                # Prova prima con i socket standard
+                sock = socket.socket(socket.AF_BLUETOOTH, socket.SOCK_STREAM, socket.BTPROTO_RFCOMM)
+                return sock
+            except AttributeError:
+                # Fallback a PyBluez se AF_BLUETOOTH non è disponibile
+                import bluetooth
+                sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
+                return sock
+                
         elif system == 'Windows':
             sock = socket.socket(socket.AF_BLUETOOTH, socket.SOCK_STREAM, socket.BTPROTO_RFCOMM)
             return sock
-        elif system == 'Darwin':  # macOS
+            
+        elif system == 'Darwin':
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             return sock
+            
         else:
             raise OSError("Sistema operativo non supportato")
     except Exception as e:
@@ -98,12 +102,13 @@ def get_bluetooth_socket():
         return None
 
 def discover_devices():
-    """Scopri dispositivi Bluetooth nelle vicinanze"""
+    """Scopri dispositivi Bluetooth con PyBluez per Linux"""
     devices = []
     system = platform.system()
     
     try:
         if system == 'Linux':
+            # Usa PyBluez per Arch Linux
             import bluetooth
             nearby_devices = bluetooth.discover_devices(lookup_names=True, duration=8, flush_cache=True)
             devices = [(addr, name) for addr, name in nearby_devices]
@@ -114,7 +119,6 @@ def discover_devices():
             devices = [(addr, name) for addr, name in nearby_devices]
             
         elif system == 'Darwin':
-            # Utilizziamo il comando system_profiler su macOS
             result = subprocess.run(
                 ["system_profiler", "SPBluetoothDataType", "-json"],
                 capture_output=True,
@@ -149,7 +153,6 @@ class MouseServer:
         self.lock = threading.Lock()
 
     def start_mouse_listener(self):
-        """Avvia il listener per gli eventi del mouse"""
         self.mouse_listener = mouse.Listener(
             on_move=self.on_move,
             on_click=self.on_click,
@@ -158,18 +161,15 @@ class MouseServer:
         self.mouse_listener.start()
 
     def on_move(self, x, y):
-        """Gestisce il movimento del mouse"""
         dx = x - self.last_x
         dy = y - self.last_y
         self.last_x, self.last_y = x, y
         
-        # Applica deadzone per ridurre il jitter
         if abs(dx) > DEADZONE_THRESHOLD or abs(dy) > DEADZONE_THRESHOLD:
             with self.lock:
                 self.send_queue.append(('m', dx, dy, 0, 0))
 
     def on_click(self, x, y, button, pressed):
-        """Gestisce i click del mouse"""
         btn_code = {
             mouse.Button.left: 'left',
             mouse.Button.right: 'right',
@@ -183,7 +183,6 @@ class MouseServer:
                                       self.buttons['right'], self.buttons['middle']))
 
     def on_scroll(self, x, y, dx, dy):
-        """Gestisce lo scrolling"""
         with self.lock:
             self.scroll_dx += dx * SCROLL_SCALE
             self.scroll_dy += dy * SCROLL_SCALE
@@ -193,15 +192,11 @@ class MouseServer:
                 self.scroll_dy = 0
 
     def send_data(self):
-        """Invia i dati al client"""
         while self.running:
             with self.lock:
                 if self.send_queue and self.client_sock:
                     try:
                         data = self.send_queue.popleft()
-                        # Struttura dei dati:
-                        # - Tipo: 1 byte (m=movimento, b=pulsanti, s=scrolling)
-                        # - Dati: 4 float (16 byte)
                         if data[0] == 'm':
                             packed = struct.pack('cffff', b'm', data[1], data[2], 0.0, 0.0)
                         elif data[0] == 'b':
@@ -220,7 +215,6 @@ class MouseServer:
             time.sleep(SEND_INTERVAL)
 
     def start(self):
-        """Avvia il server"""
         self.running = True
         self.start_mouse_listener()
         
@@ -229,39 +223,33 @@ class MouseServer:
             return
 
         try:
-            # Binding affidabile con gestione indirizzo
             bt_address = get_bluetooth_address()
-            print(f"Indirizzo Bluetooth rilevato: {bt_address or 'Sistema predefinito'}")
+            print(f"Indirizzo Bluetooth: {bt_address or 'Sistema predefinito'}")
             
             if platform.system() == 'Darwin':
                 server_sock.bind(('0.0.0.0', PORT))
-            elif bt_address:
-                server_sock.bind((bt_address, PORT))
             else:
-                server_sock.bind(('', PORT))
+                server_sock.bind((bt_address, PORT) if bt_address else ('', PORT))
                 
             server_sock.listen(1)
-            print(f"Server in ascolto su porta {PORT}...")
+            print(f"Server in ascolto su porta {PORT}")
             print(f"Nome dispositivo: {socket.gethostname()}")
-            print("In attesa di connessioni...")
             
             self.client_sock, client_addr = server_sock.accept()
             print(f"Connesso a {client_addr}")
             
-            # Avvia thread per l'invio dati
             send_thread = threading.Thread(target=self.send_data, daemon=True)
             send_thread.start()
             
-            # Mantieni il server attivo
             while self.running:
                 time.sleep(1)
                 
         except OSError as e:
             print(f"Errore di binding: {e}")
-            print("Prova queste soluzioni:")
-            print("1. Verifica che il Bluetooth sia attivo")
+            print("Soluzioni possibili:")
+            print("1. Verifica che il Bluetooth sia attivo: sudo systemctl start bluetooth")
             print("2. Prova una porta diversa (modifica PORT nello script)")
-            print("3. Riavvia il servizio Bluetooth")
+            print("3. Riavvia il servizio: sudo systemctl restart bluetooth")
         except Exception as e:
             print(f"Errore server: {e}")
         finally:
@@ -272,7 +260,6 @@ class MouseServer:
             self.stop()
 
     def stop(self):
-        """Ferma il server"""
         self.running = False
         if self.mouse_listener:
             self.mouse_listener.stop()
@@ -285,25 +272,23 @@ class MouseClient:
         self.target_addr = target_addr
         self.sock = None
         self.running = False
-        self.last_buttons = [0, 0, 0]  # [left, right, middle]
+        self.last_buttons = [0, 0, 0]
 
     def process_data(self, data):
-        """Elabora i dati ricevuti dal server"""
-        if len(data) < 17:  # 1 byte tipo + 4 float (16 byte)
+        if len(data) < 17:
             return
             
         data_type = data[0:1]
         floats = struct.unpack('ffff', data[1:17])
         
-        if data_type == b'm':  # Movimento
+        if data_type == b'm':
             dx, dy, _, _ = floats
             pyautogui.moveRel(dx, dy, _pause=False)
             
-        elif data_type == b'b':  # Pulsanti
+        elif data_type == b'b':
             _, _, left, right = floats
-            buttons = [int(round(left)), int(round(right)), 0]  # Middle non gestito qui
+            buttons = [int(round(left)), int(round(right)), 0]
             
-            # Gestisci cambiamenti stato pulsanti
             for i, (last, current) in enumerate(zip(self.last_buttons, buttons)):
                 if current != last:
                     button = ['left', 'right', 'middle'][i]
@@ -314,12 +299,11 @@ class MouseClient:
             
             self.last_buttons = buttons
             
-        elif data_type == b's':  # Scrolling
+        elif data_type == b's':
             dx, dy, _, _ = floats
             pyautogui.scroll(int(dy * 40))
 
     def start(self):
-        """Avvia il client"""
         self.running = True
         self.sock = get_bluetooth_socket()
         if not self.sock:
@@ -327,15 +311,12 @@ class MouseClient:
 
         try:
             if platform.system() == 'Darwin':
-                # Connessione TCP su macOS
                 self.sock.connect((self.target_addr, PORT))
             else:
-                # Connessione Bluetooth standard
                 self.sock.connect((self.target_addr, PORT))
                 
             print(f"Connesso a {self.target_addr}")
             
-            # Loop principale di ricezione dati
             buffer = b''
             while self.running:
                 try:
@@ -345,7 +326,6 @@ class MouseClient:
                         
                     buffer += data
                     
-                    # Elabora tutti i pacchetti completi
                     while len(buffer) >= 17:
                         self.process_data(buffer[:17])
                         buffer = buffer[17:]
@@ -359,7 +339,7 @@ class MouseClient:
         except Exception as e:
             print(f"Errore connessione: {e}")
             print("Assicurati di:")
-            print("1. Aver effettuato il pairing Bluetooth tra i dispositivi")
+            print("1. Aver effettuato il pairing Bluetooth")
             print("2. Aver avviato prima il server")
             print("3. Aver inserito l'indirizzo corretto")
         finally:
@@ -370,17 +350,15 @@ class MouseClient:
 # Interfaccia Utente
 # --------------------------------------------------
 def main_menu():
-    """Mostra il menu principale"""
     print("\n=== Mouse Bluetooth Condiviso ===")
-    print("1. Avvia come SERVER (questo computer ha il mouse fisico)")
-    print("2. Avvia come CLIENT (questo computer riceve il movimento)")
+    print("1. Avvia come SERVER (mouse fisico)")
+    print("2. Avvia come CLIENT (riceve movimento)")
     print("3. Esci")
     
     choice = input("Scelta [1/2/3]: ")
     return choice
 
 def run_server():
-    """Avvia il server"""
     print("\nModalità SERVER attivata")
     print("Assicurati che il Bluetooth sia attivo e visibile")
     server = MouseServer()
@@ -391,15 +369,15 @@ def run_server():
         print("Server fermato")
 
 def run_client():
-    """Avvia il client"""
     print("\nModalità CLIENT attivata")
     print("Ricerca dispositivi Bluetooth...")
     
     devices = discover_devices()
     if not devices:
-        print("Nessun dispositivo trovato. Assicurati che:")
-        print("- Il server sia attivo e visibile")
-        print("- I dispositivi siano accoppiati")
+        print("Nessun dispositivo trovato. Verifica:")
+        print("- Server attivo e visibile")
+        print("- Dispositivi accoppiati")
+        print("- Bluetooth attivato")
         return
         
     print("\nDispositivi trovati:")
@@ -418,11 +396,7 @@ def run_client():
     except ValueError:
         print("Input non valido")
 
-# --------------------------------------------------
-# Configurazione iniziale
-# --------------------------------------------------
 def check_dependencies():
-    """Verifica le dipendenze necessarie"""
     required = ['pyautogui', 'pynput']
     missing = []
     
@@ -441,28 +415,23 @@ def check_dependencies():
 # Entry Point
 # --------------------------------------------------
 if __name__ == "__main__":
-    # Verifica dipendenze
     missing_deps = check_dependencies()
     if missing_deps:
         print("Dipendenza mancante:", ", ".join(missing_deps))
         print("Installa con: pip install", " ".join(missing_deps))
         sys.exit(1)
     
-    # Avviso per macOS
     if platform.system() == 'Darwin':
-        print("Attenzione: Su macOS la connessione avverrà via rete")
-        print("Assicurati che entrambi i computer siano sulla stessa rete")
+        print("Nota: Su macOS la connessione avverrà via rete")
     
-    # Verifica permessi Linux
     if platform.system() == 'Linux':
         print("Verifica permessi Bluetooth...")
         try:
-            subprocess.run(['hciconfig'], check=True, stdout=subprocess.DEVNULL)
+            subprocess.run(['bluetoothctl', '--version'], check=True, stdout=subprocess.DEVNULL)
         except:
             print("Potrebbero essere necessari permessi elevati")
             print("Prova: sudo setcap 'cap_net_raw,cap_net_admin+eip' $(readlink -f $(which python3))")
     
-    # Loop principale
     while True:
         choice = main_menu()
         if choice == '1':

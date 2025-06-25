@@ -2,9 +2,34 @@
 
 # Istruzioni per l'Uso
 
-## Installazione dipendenze (su entrambi i computer)
+Istruzioni di utilizzo aggiornate:
+Prima esecuzione:
+
+bash
+# Installa le dipendenze
+pip install pyautogui pynput
+
+# Su macOS
+pip install pyobjc
+
+# Su Linux (permessi)
 ```bash
-pip install pyautogui pynput pyobjc  # macOS richiede pyobjc
+sudo apt install libbluetooth-dev
+sudo setcap 'cap_net_raw,cap_net_admin+eip' $(readlink -f $(which python3))
+```
+Per Arch Linux (in sostituzione di apt):
+```bash
+# Installa i pacchetti necessari
+sudo pacman -S bluez bluez-utils python-pybluez
+
+# Abilita e avvia il servizio Bluetooth
+sudo systemctl enable --now bluetooth.service
+
+# Verifica lo stato del servizio
+sudo systemctl status bluetooth
+
+# Configura i permessi per Python
+sudo setcap 'cap_net_raw,cap_net_admin+eip' $(readlink -f $(which python3))
 ```
 
 ## Sul computer con il mouse fisico
@@ -127,3 +152,84 @@ sudo ufw disable
 # Windows
 netsh advfirewall set allprofiles state off
 ```
+
+
+L'errore `module "socket" has no attribute 'AF_BLUETOOTH'` indica che Python sul tuo sistema Arch non è stato compilato con il supporto per i socket Bluetooth. Ecco come risolvere:
+
+
+
+### Modifiche chiave per Arch Linux:
+
+1. **Supporto migliorato per PyBluez**:
+   - Aggiunto fallback a `bluetooth.BluetoothSocket` quando `socket.AF_BLUETOOTH` non è disponibile
+   - Gestione uniforme dei socket indipendentemente dall'implementazione
+
+2. **Ottenimento indirizzo Bluetooth per Arch**:
+   - Implementato metodo specifico usando `bluetoothctl list`
+   - Formattazione corretta dell'indirizzo MAC
+
+3. **Scoperta dispositivi ottimizzata**:
+   - Utilizzo diretto di PyBluez per la scansione dispositivi
+   - Migliore gestione degli errori
+
+### Passaggi di installazione per Arch Linux:
+
+```bash
+# Installa le dipendenze necessarie
+sudo pacman -S bluez bluez-utils python-pip
+
+# Installa i pacchetti Python
+pip install pyautogui pynput pybluez
+
+# Configura i permessi Bluetooth
+sudo setcap 'cap_net_raw,cap_net_admin+eip' $(readlink -f $(which python3))
+
+# Abilita e avvia il servizio Bluetooth
+sudo systemctl enable --now bluetooth.service
+
+# Verifica lo stato
+bluetoothctl --version
+hciconfig
+```
+
+### Se persiste l'errore:
+
+1. **Installa bluez-libs**:
+   ```bash
+   sudo pacman -S bluez-libs
+   ```
+
+2. **Ricompila PyBluez**:
+   ```bash
+   pip uninstall -y pybluez
+   pip install git+https://github.com/pybluez/pybluez.git
+   ```
+
+3. **Verifica l'installazione**:
+   ```python
+   python -c "import bluetooth; print(bluetooth.__version__)"
+   ```
+
+### Note importanti:
+
+1. Su Arch Linux, assicurati di aver abilitato il controller Bluetooth:
+   ```bash
+   sudo rfkill unblock bluetooth
+   sudo hciconfig hci0 up
+   ```
+
+2. Se usi un ambiente virtuale, assicurati di avere i permessi necessari:
+   ```bash
+   sudo setcap 'cap_net_raw,cap_net_admin+eip' /percorso/venv/bin/python3
+   ```
+
+3. Per debugging avanzato:
+   ```bash
+   # Monitora i servizi Bluetooth
+   journalctl -u bluetooth -f
+
+   # Lista dispositivi
+   bluetoothctl devices
+   ```
+
+Questo codice risolve il problema specifico di Arch Linux con i socket Bluetooth e fornisce un'implementazione robusta per tutte le piattaforme principali.

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🧠 Head Mouse Controller</title>
     <style>
+        /* Stili CSS per l'interfaccia grafica */
         * {
             margin: 0;
             padding: 0;
@@ -40,286 +41,332 @@
         .container {
             max-width: 1200px;
             margin: 20px auto;
-            padding: 20px;
-            background-color: #161b22;
-            border: 1px solid #30363d;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            padding: 0 20px;
             display: flex;
             flex-wrap: wrap;
             gap: 20px;
         }
 
-        .section {
-            flex: 1;
-            min-width: 300px;
-            background-color: #0d1117;
-            padding: 20px;
+        .panel {
+            background: #161b22;
             border: 1px solid #30363d;
-            border-radius: 6px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
-        h2 {
+        .video-panel {
+            flex: 2;
+            min-width: 400px;
+        }
+
+        .controls-panel {
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .panel h2 {
             color: #58a6ff;
+            font-size: 1.5em;
             margin-bottom: 15px;
-            font-size: 1.8em;
             border-bottom: 1px solid #30363d;
             padding-bottom: 10px;
         }
 
-        .status-item {
-            margin-bottom: 10px;
-            font-size: 1.1em;
+        .video-feed img {
+            width: 100%;
+            height: auto;
+            border-radius: 4px;
+            background-color: #0d1117;
+            display: block;
         }
 
-        .status-item strong {
-            color: #8bc34a; /* Green for active/true */
+        .control-group {
+            margin-bottom: 15px;
         }
 
-        .status-item.paused strong {
-            color: #ff9800; /* Orange for paused */
-        }
-
-        .status-item.uncalibrated strong {
-            color: #ff5722; /* Red for uncalibrated */
-        }
-
-        .status-item span {
+        .control-group label {
+            display: block;
+            margin-bottom: 5px;
             color: #c9d1d9;
+            font-weight: bold;
         }
 
-        .button-group {
+        .control-group .button-group,
+        .control-group .slider-group {
             display: flex;
-            flex-wrap: wrap;
             gap: 10px;
-            margin-top: 20px;
+            align-items: center;
+            flex-wrap: wrap;
         }
 
-        .button {
+        button {
             background-color: #238636;
-            color: #ffffff;
+            color: white;
             border: none;
             padding: 10px 15px;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 1em;
-            transition: background-color 0.2s ease, transform 0.1s ease;
-            flex-grow: 1;
-            text-align: center;
+            font-size: 0.9em;
+            transition: background-color 0.2s, transform 0.1s;
         }
 
-        .button:hover {
+        button:hover {
             background-color: #2ea043;
             transform: translateY(-1px);
         }
 
-        .button:active {
+        button:active {
             transform: translateY(0);
         }
 
-        .button.secondary {
+        button.secondary {
             background-color: #30363d;
         }
 
-        .button.secondary:hover {
+        button.secondary:hover {
             background-color: #444c56;
         }
 
-        .button.danger {
-            background-color: #da3633;
-        }
-
-        .button.danger:hover {
-            background-color: #f85149;
-        }
-
-        .button.info {
-            background-color: #2188ff;
-        }
-
-        .button.info:hover {
-            background-color: #388bfd;
-        }
-
-        .video-feed {
-            width: 100%;
-            border-radius: 6px;
-            border: 1px solid #30363d;
-            background-color: #000;
-            display: block;
-            margin-top: 20px;
-        }
-
-        .status-bar {
-            background-color: #1e222d;
-            padding: 10px;
-            border-radius: 6px;
-            margin-top: 20px;
-            font-size: 0.9em;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .status-bar span {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .status-bar span#videoStatus {
-            font-weight: bold;
-        }
-
-        .calibration-progress-bar {
-            width: 100%;
-            height: 10px;
-            background-color: #30363d;
+        input[type="range"] {
+            flex-grow: 1;
+            width: auto;
+            -webkit-appearance: none;
+            height: 8px;
+            background: #30363d;
             border-radius: 5px;
-            overflow: hidden;
-            margin-top: 10px;
+            outline: none;
         }
 
-        .calibration-progress {
-            height: 100%;
-            background-color: #58a6ff;
-            width: 0%;
-            transition: width 0.2s ease-in-out;
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #58a6ff;
+            cursor: pointer;
+            border: 2px solid #c9d1d9;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #58a6ff;
+            cursor: pointer;
+            border: 2px solid #c9d1d9;
+        }
+
+        .status-info p {
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+
+        .status-info span {
+            font-weight: bold;
+            color: #79c0ff;
+        }
+
+        .status-info .tag {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+
+        .status-info .tag.paused {
+            background-color: #dbab09; /* Yellow */
+            color: #1c1c1c;
+        }
+
+        .status-info .tag.active {
+            background-color: #2ea043; /* Green */
+            color: white;
+        }
+
+        .status-info .tag.calibrating {
+            background-color: #8957e5; /* Purple */
+            color: white;
+        }
+
+        .status-info .tag.calibrated {
+            background-color: #2ea043; /* Green */
+            color: white;
+        }
+
+        .status-info .tag.pointer-mode {
+            background-color: #58a6ff; /* Blue */
+            color: white;
+        }
+
+        .status-info .tag.scroll-mode {
+            background-color: #f7a057; /* Orange */
+            color: #1c1c1c;
+        }
+        #videoStatus {
+            margin-top: 10px;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
-    <div class="header">
+    <header class="header">
         <h1>🧠 Head Mouse Controller</h1>
-    </div>
+    </header>
 
     <div class="container">
-        <div class="section">
-            <h2>Live Feed</h2>
-            <img id="videoStream" class="video-feed" src="{{ url_for('video_feed') }}" alt="Live Webcam Feed">
-            <div class="status-bar">
-                <span id="videoStatus">🔄 Loading Stream...</span>
-                <span>Mode: <strong id="currentMode">Loading...</strong></span>
-                <span>Tracking: <strong id="trackingStatus">Loading...</strong></span>
+        <div class="panel video-panel">
+            <h2>Video Feed & Status</h2>
+            <div class="video-feed">
+                <img id="videoStream" src="/video_feed" alt="Webcam Feed">
+            </div>
+            <p id="videoStatus"></p>
+            <div class="status-info">
+                <p>Stato Attuale: <span id="statusPaused"></span></p>
+                <p>Modalità: <span id="statusMode"></span></p>
+                <p>Calibrazione: <span id="statusCalibration"></span> (<span id="statusCalibrationProgress">0%</span>)</p>
+                <p>Sensibilità Puntatore: <span id="statusSensitivity">6.0</span></p>
+                <p>Sensibilità Scrolling: <span id="statusScrollSensitivity">3.0</span></p>
+                <p>Rilevamento Faccia: <span id="statusFaceDetection"></span></p>
             </div>
         </div>
 
-        <div class="section">
-            <h2>Controls</h2>
-            <div class="button-group">
-                <button class="button info" id="togglePause">Toggle Pause</button>
-                <button class="button secondary" id="resetCalibration">Reset Calibration</button>
-                <button class="button secondary" id="resetMousePosition">Reset Mouse Position</button>
-            </div>
-            
-            <h3>Sensitivity</h3>
-            <div class="button-group">
-                <button class="button secondary" onclick="adjustSensitivity('down')">Sensitivity -</button>
-                <button class="button secondary" onclick="adjustSensitivity('up')">Sensitivity +</button>
+        <div class="panel controls-panel">
+            <h2>Controlli</h2>
+
+            <div class="control-group">
+                <label>Stato del Sistema</label>
+                <div class="button-group">
+                    <button id="togglePauseBtn">Pausa / Riprendi</button>
+                    <button id="resetCalibrationBtn" class="secondary">Reset Calibrazione</button>
+                </div>
             </div>
 
-            <h3>Debug</h3>
-            <div class="button-group">
-                <button class="button secondary" id="forceModeSwitch">Force Mode Switch</button>
+            <div class="control-group">
+                <label>Controllo Mouse</label>
+                <div class="button-group">
+                    <button id="resetMousePosBtn" class="secondary">Reset Posizione Mouse</button>
+                    <button id="setPointerModeBtn" class="secondary">Modalità Puntatore</button>
+                    <button id="setScrollModeBtn" class="secondary">Modalità Scroll</button>
+                </div>
             </div>
-        </div>
 
-        <div class="section">
-            <h2>Status</h2>
-            <div class="status-item">Mode: <span id="statusMode">Loading...</span></div>
-            <div class="status-item">Paused: <span id="statusPaused">Loading...</span></div>
-            <div class="status-item">Calibrated: <span id="statusCalibrated">Loading...</span></div>
-            <div class="status-item">Calibration Progress: <span id="statusCalibrationProgress">0%</span></div>
-            <div class="calibration-progress-bar">
-                <div id="calibrationProgressBar" class="calibration-progress"></div>
+            <div class="control-group">
+                <label>Sensibilità Puntatore</label>
+                <div class="slider-group">
+                    <button class="adjust-sensitivity secondary" data-type="pointer" data-amount="-0.2">-</button>
+                    <input type="range" id="pointerSensitivitySlider" min="0.5" max="12.0" step="0.1" value="6.0">
+                    <button class="adjust-sensitivity secondary" data-type="pointer" data-amount="0.2">+</button>
+                </div>
             </div>
-            <div class="status-item">Pointer Sensitivity: <span id="statusSensitivity">Loading...</span></div>
-            <div class="status-item">Scroll Sensitivity: <span id="statusScrollSensitivity">Loading...</span></div>
+
+            <div class="control-group">
+                <label>Sensibilità Scrolling</label>
+                <div class="slider-group">
+                    <button class="adjust-sensitivity secondary" data-type="scroll" data-amount="-0.5">-</button>
+                    <input type="range" id="scrollSensitivitySlider" min="1.0" max="20.0" step="0.5" value="3.0">
+                    <button class="adjust-sensitivity secondary" data-type="scroll" data-amount="0.5">+</button>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        document.getElementById('togglePause').addEventListener('click', function() {
-            fetch('/toggle_pause')
-                .then(response => response.json())
-                .then(data => {
-                    updateStatus(data); // Pass data directly
-                });
-        });
-
-        document.getElementById('resetCalibration').addEventListener('click', function() {
-            if (confirm('Are you sure you want to reset calibration? You will need to recalibrate.')) {
-                fetch('/reset_calibration')
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            alert('Calibration reset successfully!');
-                            updateStatus(data); // Pass data directly
-                        }
-                    });
+        // Funzione per inviare richieste al backend Flask
+        async function sendCommand(endpoint, method = 'GET') {
+            try {
+                const response = await fetch(endpoint, { method: method });
+                const data = await response.json();
+                console.log(`Command '${endpoint}' response:`, data);
+                updateStatus(); // Aggiorna lo stato dopo ogni comando
+                return data;
+            } catch (error) {
+                console.error(`Error sending command to ${endpoint}:`, error);
             }
-        });
-
-        document.getElementById('resetMousePosition').addEventListener('click', function() {
-            fetch('/reset_mouse_position')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Mouse cursor reset to center!');
-                        // Mouse position reset doesn't change status, but good to refresh just in case
-                        updateStatus(data); // Pass data directly
-                    }
-                });
-        });
-
-        document.getElementById('forceModeSwitch').addEventListener('click', function() {
-            fetch('/force_mode_switch')
-                .then(response => response.json())
-                .then(data => {
-                    alert(`Mode switched: ${data.old_mode} → ${data.new_mode}`);
-                    updateStatus(data); // Pass data directly
-                });
-        });
-
-        function adjustSensitivity(direction) {
-            fetch(`/adjust_sensitivity/${direction}`)
-                .then(response => response.json())
-                .then(data => {
-                    updateStatus(data); // Pass data directly
-                });
         }
 
-        // Function to update all status fields
-        function updateStatus(statusData = null) {
-            let fetchPromise;
-            if (statusData) {
-                fetchPromise = Promise.resolve(statusData); // Use provided data
-            } else {
-                fetchPromise = fetch('/status').then(response => response.json());
-            }
+        // Event Listeners per i bottoni
+        document.getElementById('togglePauseBtn').addEventListener('click', () => {
+            sendCommand('/toggle_pause');
+        });
 
-            fetchPromise.then(data => {
-                document.getElementById('statusMode').textContent = data.mode.toUpperCase();
-                document.getElementById('currentMode').textContent = data.mode.toUpperCase();
+        document.getElementById('resetCalibrationBtn').addEventListener('click', () => {
+            sendCommand('/reset_calibration');
+        });
 
-                const pausedElement = document.getElementById('statusPaused');
-                const trackingStatusElement = document.getElementById('trackingStatus');
-                pausedElement.textContent = data.paused ? 'YES' : 'NO';
-                trackingStatusElement.textContent = data.paused ? 'Paused' : 'Active';
-                pausedElement.classList.toggle('paused', data.paused);
-                trackingStatusElement.classList.toggle('paused', data.paused);
+        document.getElementById('resetMousePosBtn').addEventListener('click', () => {
+            sendCommand('/reset_mouse_position');
+        });
 
-                const calibratedElement = document.getElementById('statusCalibrated');
-                calibratedElement.textContent = data.calibrated ? 'YES' : 'NO';
-                calibratedElement.classList.toggle('uncalibrated', !data.calibrated);
-                
-                const calibrationProgress = data.calibration_progress;
-                document.getElementById('statusCalibrationProgress').textContent = `${calibrationProgress}%`;
-                document.getElementById('calibrationProgressBar').style.width = `${calibrationProgress}%`;
+        document.getElementById('setPointerModeBtn').addEventListener('click', () => {
+            sendCommand('/set_mode/pointer');
+        });
 
+        document.getElementById('setScrollModeBtn').addEventListener('click', () => {
+            sendCommand('/set_mode/scroll');
+        });
+
+        // Event Listeners per i bottoni +/- della sensibilità
+        document.querySelectorAll('.adjust-sensitivity').forEach(button => {
+            button.addEventListener('click', (event) => {
+                const type = event.target.dataset.type;
+                const amount = parseFloat(event.target.dataset.amount);
+                sendCommand(`/adjust_sensitivity/${type}/${amount}`);
+            });
+        });
+
+        // Event Listeners per gli slider della sensibilità
+        // Nota: i slider non inviano comandi direttamente all'input
+        // I bottoni +/- sono i metodi raccomandati per regolare la sensibilità
+        // Se si vuole usare il slider per settare un valore assoluto,
+        // servirebbe un endpoint API dedicato nel backend.
+
+        // Funzione per aggiornare lo stato mostrato nella GUI
+        async function updateStatus() {
+            try {
+                const response = await fetch('/status');
+                const data = await response.json();
+
+                // Aggiorna lo stato di pausa
+                const pausedSpan = document.getElementById('statusPaused');
+                pausedSpan.textContent = data.paused ? 'PAUSATO' : 'ATTIVO';
+                pausedSpan.className = 'tag ' + (data.paused ? 'paused' : 'active');
+
+                // Aggiorna la modalità
+                const modeSpan = document.getElementById('statusMode');
+                modeSpan.textContent = data.current_mode.toUpperCase();
+                modeSpan.className = 'tag ' + (data.current_mode === 'pointer' ? 'pointer-mode' : 'scroll-mode');
+
+                // Aggiorna lo stato di calibrazione
+                const calibrationSpan = document.getElementById('statusCalibration');
+                const calibrationProgressSpan = document.getElementById('statusCalibrationProgress');
+                if (data.calibration_done) {
+                    calibrationSpan.textContent = 'CALIBRATO';
+                    calibrationSpan.className = 'tag calibrated';
+                    calibrationProgressSpan.textContent = '100%';
+                } else {
+                    calibrationSpan.textContent = 'IN CALIBRAZIONE';
+                    calibrationSpan.className = 'tag calibrating';
+                    calibrationProgressSpan.textContent = `${data.calibration_progress || 0}%`;
+                }
+
+                // Aggiorna stato rilevamento faccia
+                const faceDetectionSpan = document.getElementById('statusFaceDetection');
+                faceDetectionSpan.textContent = data.face_detected ? 'RILEVATA' : 'NON RILEVATA';
+                faceDetectionSpan.style.color = data.face_detected ? 'lightgreen' : 'red';
+
+
+                // Aggiorna sensibilità
                 document.getElementById('statusSensitivity').textContent = data.sensitivity.toFixed(1);
+                document.getElementById('pointerSensitivitySlider').value = data.sensitivity.toFixed(1); // Update slider position
+                
                 document.getElementById('statusScrollSensitivity').textContent = data.scroll_sensitivity.toFixed(1);
+                document.getElementById('scrollSensitivitySlider').value = data.scroll_sensitivity.toFixed(1); // Update slider position
 
                 // Update video stream status
                 const videoStream = document.getElementById('videoStream');
@@ -337,11 +384,11 @@
                      videoStatus.textContent = '🔄 Loading Stream...';
                      videoStatus.style.color = '#c9d1d9';
                 }
-            }).catch(error => {
+            } catch (error) { // This catch block handles errors from fetch or parsing JSON
                 console.error('Error fetching status:', error);
-                document.getElementById('videoStatus').textContent = '❌ Error Loading Status';
+                document.getElementById('videoStatus').textContent = '❌ Errore Caricamento Stato';
                 document.getElementById('videoStatus').style.color = 'red';
-            });
+            }
         }
 
         // Fetch status initially and every few seconds
