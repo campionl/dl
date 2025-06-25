@@ -13,8 +13,10 @@ pip install pyautogui pynput
 pip install pyobjc
 
 # Su Linux (permessi)
+```bash
 sudo apt install libbluetooth-dev
 sudo setcap 'cap_net_raw,cap_net_admin+eip' $(readlink -f $(which python3))
+```
 
 ## Sul computer con il mouse fisico
 1. Seleziona opzione 1 (SERVER)
