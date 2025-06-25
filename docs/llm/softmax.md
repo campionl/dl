@@ -45,15 +45,15 @@ Supponiamo i punteggi di attenzione per la parola **"insegue"**:
 - Attenzione verso "il": `0.3`  
 
 **Softmax su questi valori:**  
-1. \(e^{2.1} ≈ 8.17\)  
-2. \(e^{1.8} ≈ 6.05\)  
-3. \(e^{0.3} ≈ 1.35\)  
-4. **Somma** = \(8.17 + 6.05 + 1.35 = 15.57\)  
+1. $(e^{2.1} ≈ 8.17)$  
+2. $(e^{1.8} ≈ 6.05)$  
+3. $(e^{0.3} ≈ 1.35)$ 
+4. $Somma = (8.17 + 6.05 + 1.35 = 15.57)$  
 
 **Probabilità (pesi):**  
-- "gatto": \(8.17 / 15.57 ≈ 0.52 → 52%\)  
-- "topo": \(6.05 / 15.57 ≈ 0.39 → 39%\)  
-- "il": \(1.35 / 15.57 ≈ 0.09 → 9%\)  
+- "gatto": $(8.17 / 15.57 ≈ 0.52)$ → 52%
+- "topo": $(6.05 / 15.57 ≈ 0.39)$ → 39% 
+- "il": $(1.35 / 15.57 ≈ 0.09)$ → 9%  
 
 ### **Cosa Significa Questo?**  
 Quando l'LLM elabora la parola **"insegue"**:  
