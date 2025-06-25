@@ -1,25 +1,27 @@
-
 # LLM: Large Language Models  
 
 ## Cosa sono gli LLM: fondamenti e meccanismi
 
-I **modelli linguistici di grandi dimensioni (LLM)** sono il cuore di molte applicazioni moderne di intelligenza artificiale, dai chatbot AI agli assistenti vocali, fino ai sistemi di analisi testuale per la medicina e il diritto.
+I **modelli linguistici di grandi dimensioni (LLM)** sono il cuore di molte applicazioni moderne di intelligenza artificiale, dai **chatbot AI** agli **assistenti vocali**, fino ai **sistemi di analisi testuale** per la medicina e il diritto.
 Sono **sistemi di intelligenza artificiale** basati su **reti neurali** che processano e generano linguaggio umano. A differenza dei software tradizionali, **non seguono regole predefinite**, ma apprendono probabilisticamente da dati testuali.  
 In pratica, eseguono un numero elevatissimo di calcoli al secondo per trovare la risposta statisticamente più probabile alla domanda che gli viene posta.  
 
 ### Come gli LLM elaborano il testo: dal linguaggio ai numeri
 
-Per comprendere come gli LLM elaborano il testo, immaginiamo di seguire il percorso di una frase dalla sua forma originale fino all'output finale. È un processo affascinante che trasforma qualcosa di apparentemente puramente linguistico in calcoli matematici complessi.
+Per comprendere come gli LLM elaborano il testo, immaginiamo di seguire il percorso di una frase dalla sua forma originale fino all'output finale. Durante questo processo, qualcosa di apparentemente puramente linguistico viene trasformato in calcoli matematici complessi.
 
-I modelli di intelligenza artificiale come gli LLM sono **reti neurali** che lavorano con **vettori numerici** (detti *vettori di embedding*). Quindi prima di tutto devono **"tradurre" il testo** (sequenze di caratteri o parole) in una **forma numerica**. Questo processo si chiama ***preprocessing*** e il passo principale è la ***tokenizzazione***.
+I modelli di intelligenza artificiale come gli LLM sono **reti neurali** che lavorano con **vettori numerici** (detti *vettori di embedding*). Prima di tutto, quindi, devono **"tradurre" il testo** (sequenze di caratteri o parole) in una **forma numerica**. Questo processo si chiama ***preprocessing*** e il passo principale è la ***tokenizzazione***.
 
-### La Tokenizzazione: Dal Testo ai Numeri
+#### La Tokenizzazione: dal testo ai numeri
 
-Il primo passo fondamentale è la tokenizzazione. Quando scriviamo "Il gatto corre veloce", l'LLM non può lavorare direttamente con queste parole. Deve prima convertirle in token, che sono unità più piccole di testo.
+Il primo passo fondamentale è la **tokenizzazione**. 
+Quando scriviamo "Il gatto corre veloce", l'LLM non può lavorare direttamente con queste parole. Deve prima convertirla in ***token***, che sono unità più piccole di testo, tramite un processo detto ***tokenizzazione***.
 
-La ***tokenizzazione*** è il processo che **divide** il testo in "pezzi" chiamati **token**.  
+> **Token**  
+> **Unità minime** utili al modello per **comprendere** e **calcolare**
 
-> **Token**: **Unità minime** utili al modello per **comprendere** e **calcolare**
+> **Tokenizzazione**  
+> Processo che **divide** il testo in "pezzi" chiamati **token**
 
 Un **token** può essere:
 - una parola intera (`"ciao"`)
@@ -27,10 +29,9 @@ Un **token** può essere:
 - un simbolo (`"."`, `"?"`)
 - uno spazio (`" "`)
 
-Ogni token viene poi associato a un numero univoco attraverso un vocabolario predefinuto. Per esempio, "Il" potrebbe diventare 1247, "gatto" 3891, "corre" 5623, e così via. Questo processo è come creare un dizionario dove ogni voce ha un numero identificativo unico.
+Ogni token viene poi associato a un **numero univoco** attraverso un vocabolario predefinito. Per esempio, "Il" potrebbe diventare 1247, "gatto" 3891, "corre" 5623, e così via. Questo processo è come creare un dizionario dove ogni voce ha un numero identificativo unico.
 
-**Esempio pratico:**
-
+**Esempio:**
 **Input**
 Testo: `"Ciao, come stai?"`
 
@@ -53,46 +54,40 @@ oppure
 | "stai" | 2074 |
 | "?"    | 30   |
 
-### L'Embedding: Dare Significato ai Numeri
+#### L'Embedding: dare significato ai numeri
 
-Ora arriva la parte davvero interessante. Questi numeri vengono trasformati in quello che chiamiamo "embedding" o rappresentazioni vettoriali. Pensate a ogni parola come a un punto in uno spazio multidimensionale, tipicamente con centinaia o migliaia di dimensioni.
+Questi numeri vengono successivamente trasformati in quello che chiamiamo ***embedding*** o rappresentazioni vettoriali. Pensate a ogni parola come a un punto in uno **spazio multidimensionale**, tipicamente con centinaia o migliaia di dimensioni.
 
-#### L'Idea Fondamentale: Parole → Punti nello Spazio
-Immagina di dover disegnare una **mappa di tutte le parole** dove:
-- Parole con **significati simili** sono **vicine**  
-- Parole **diverse** sono **lontane**  
-- **Esempio**:  
-  - `gatto` e `cane` (animali domestici) → vicini  
-  - `gatto` e `computer` → lontanissimi  
+Tutte le parole si potrebbero rappresentare su una **mappa**, dove le parole con **significati simili** sarebbero **vicine** e le parole **diverse** sarebbero **lontane**  
+Ad esempio "gatto" e "cane" (animali domestici) sarebbero vicini, "gatto" e "computer" lontanissimi  
 
-#### Struttura di un Embedding: Coordinate Nascoste
-Un embedding è un vettore di numeri (es. 300 dimensioni). **Ecco un esempio semplificato a 3 dimensioni**:
+##### Struttura di un Embedding: coordinate nascoste
+Un embedding è un **vettore di numeri** (es. 300 dimensioni). 
+Segue un esempio semplificato a 3 dimensioni:
 ```python
 "gatto" = [0.8, -0.2, 0.4]  
 "cane"  = [0.7, -0.3, 0.3]  
 "torta" = [-0.5, 0.6, 0.1]  
 ```
-- **Ogni numero** rappresenta una **caratteristica astratta** appresa dal modello  
-- **Interpretazione ipotetica delle dimensioni**:
-  - Dimensione 1: `🐶 Animalità` (positivo per animali)  
-  - Dimensione 2: `🍖 Carnivoro` (positivo per carnivori)  
-  - Dimensione 3: `🏠 Domesticità` (positivo per animali domestici)  
+**Ogni numero** rappresenta una **caratteristica astratta** appresa dal modello  
+**Interpretazione ipotetica delle dimensioni**:
+- Dimensione 1: `Animalità` (positivo per animali)  
+- Dimensione 2: `Carnivoro` (positivo per carnivori)  
+- Dimensione 3: `Domesticità` (positivo per animali domestici)  
 
-##### Come si Calcola la Somiglianza?
-Con il **prodotto scalare** (o cosine similarity nella pratica):
+La somiglianza si calcola con il **prodotto scalare** (o *cosine similarity* nella pratica):
 ```python
 Somiglianza(gatto, cane) = (0.8*0.7) + (-0.2*-0.3) + (0.4*0.3) = 0.74  
 Somiglianza(gatto, torta) = (0.8*-0.5) + (-0.2*0.6) + (0.4*0.1) = -0.48  
 ```
-- **Valore positivo alto (0.74)**: parole correlate  
-- **Valore negativo (-0.48)**: parole semanticamente opposte  
+- **Valore positivo alto** (0.74): parole correlate  
+- **Valore negativo** (-0.48): parole semanticamente opposte  
 
-##### Analogie Semantiche: Matematica con le Parole
-Gli embedding permettono operazioni come:
+Gli embedding permettono anche operazioni come:
 ```
 "re" - "uomo" + "donna" ≈ "regina"
 ```
-**Esempio numerico**:
+Numericamente:
 ```python
 re = [1.0, 0.0, 0.5]  
 uomo = [0.9, 0.1, 0.3]  
@@ -100,30 +95,31 @@ donna = [0.8, -0.1, 0.4]
 risultato = [0.9, -0.2, 0.6] ≈ regina = [0.95, -0.2, 0.6]
 ```
 
-##### Perché 300-500 Dimensioni?
-- **Poche dimensioni** (es. 3): Non catturano complessità  
-- **Troppe dimensioni** (es. 1000): Rischio di overfitting  
-- **Range ottimale** (300-500): Bilancio tra:
-  - Sinonimi (`felino` ≈ `gatto`)  
-  - Relazioni (`Roma` - `Italia` ≈ `Parigi` - `Francia`)  
-  - Contesti (`cellulare` vicino a `batteria`, `schermo`)  
+##### Le dimensioni
+La scelta del numero di dimensioni deve considerare:
+- **Poche dimensioni** (es. 3): non catturano complessità  
+- **Troppe dimensioni** (es. 1000): rischio di overfitting  
+- **Range ottimale** (300-500): bilancio tra:
+	- Sinonimi (felino ≈ gatto)  
+	- Relazioni ("Roma" - "Italia" ≈ "Parigi" - "Francia")  
+	- Contesti ("cellulare" vicino a "batteria", "schermo")  
 
-##### Come si Apprendono gli Embedding?
+##### Creazione degli embedding
 1. **Inizializzazione casuale**: `gatto` = [0.1, -0.4, 0.9]  
 2. **Addestramento su miliardi di frasi**:  
    - Regola gli embedding per far sì che parole in contesti simili abbiano vettori simili  
    - Usa **backpropagation**:  
-     - Predice parole mancanti (es. dopo *"il gatto ___"* dovrebbe predire *"miagola"*)  
+     - Predice parole mancanti (es. dopo *"il gatto..."* dovrebbe predire *"miagola"*)  
      - Aggiusta gli embedding per minimizzare l'errore  
 
-##### Embedding in Azione: Esempio di Attenzione
-1. **Input**: `"Il gatto beve il latte"`  
+Esempio:
+1. **Input**: "Il gatto beve il latte"  
 2. **Embedding**:  
-   - `"gatto"` = [0.8, -0.2, 0.4]  
-   - `"latte"` = [0.1, 0.6, -0.3]  
-3. **Meccanismo di attenzione**:  
-   - Calcola somiglianza tra `"beve"` e `"latte"` → alta correlazione  
-   - Assegna maggiore peso a `"latte"` quando elabora `"beve"`  
+   - "gatto" = `[0.8, -0.2, 0.4]`  
+   - "latte" = `[0.1, 0.6, -0.3]`  
+1. **Meccanismo di attenzione** (vedi sotto):  
+   - Calcola somiglianza tra "beve" e "latte" → alta correlazione  
+   - Assegna maggiore peso a "latte" quando elabora "beve"  
 
 **Visualizzazione**:  
 ```mermaid
@@ -135,73 +131,66 @@ graph LR
 ```
 
 
+### L'Architettura Transformer: il cuore del calcolo
 
+Il testo tokenizzato ed "embedded" viene poi processato attraverso l'**architettura Transformer**, che è il cuore di quasi tutti gli LLM moderni. Questa architettura utilizza un meccanismo chiamato ***attention*** (attenzione) che permette al modello di considerare simultaneamente tutte le parole in una frase e le loro relazioni reciproche.
 
+Immaginate di leggere la frase "La chiave della porta è sul tavolo della cucina". Quando elaborate la parola "chiave", il vostro cervello automaticamente la collega a "porta" per comprendere di che tipo di chiave si tratta. Il meccanismo di *attention* fa qualcosa di simile, ma matematicamente: **calcola quanto ogni parola dovrebbe "prestare attenzione" a ogni altra parola nella sequenza**.
 
+#### La Funzione Softmax: trasformare punteggi in probabilità
 
+Un elemento cruciale del meccanismo di *attention* è la **funzione softmax**, che **trasforma i punteggi di attenzione in probabilità**.
 
-
-
-
-
-#### L'Architettura Transformer: Il Cuore del Calcolo
-
-Il testo tokenizzato ed "embedded" viene poi processato attraverso l'architettura Transformer, che è il cuore di quasi tutti gli LLM moderni. Questa architettura utilizza un meccanismo chiamato "attention" (attenzione) che permette al modello di considerare simultaneamente tutte le parole in una frase e le loro relazioni reciproche.
-
-Immaginate di leggere la frase "La chiave della porta è sul tavolo della cucina". Quando elaborate la parola "chiave", il vostro cervello automaticamente la collega a "porta" per comprendere di che tipo di chiave si tratta. Il meccanismo di attention fa qualcosa di simile, ma matematicamente: calcola quanto ogni parola dovrebbe "prestare attenzione" a ogni altra parola nella sequenza.
-
-##### La Funzione Softmax: Trasformare Punteggi in Probabilità
-
-Un elemento cruciale del meccanismo di attention è la **softmax**, che trasforma i punteggi di attenzione in probabilità. Te lo spiego con un esempio concreto:
-
-**A Cosa Serve la Softmax?**  
 Immagina di dover prendere una decisione basata su **diverse opzioni con "forze" diverse**. La softmax:  
 1. **Prende numeri qualsiasi** (positivi, negativi, grandi, piccoli).  
 2. **Li trasforma in probabilità** (percentuali tra 0% e 100%).  
 3. **Assicura che la somma faccia sempre 100%**.  
 
-**Esempio Nell'LLM:**  
-Torniamo all'esempio della frase **"Il gatto insegue il topo"**.  
+Nel campo degli LLM, usando ancora come esempio "Il gatto insegue il topo".  
 Supponiamo i punteggi di attenzione per la parola **"insegue"**:  
 - Attenzione verso "gatto": `2.1`  
 - Attenzione verso "topo": `1.8`  
 - Attenzione verso "il": `0.3`  
 
-**Softmax su questi valori:**  
+Softmax calcola la funzione $e^x$ su questi valori e ne calcola la somma:  
 1. $e^{2.1} ≈ 8.17$  
 2. $e^{1.8} ≈ 6.05$  
 3. $e^{0.3} ≈ 1.35$ 
 4. $Somma = 8.17 + 6.05 + 1.35 = 15.57$  
 
-**Probabilità (pesi):**  
+Successivamente calcola la probabilità (pesi):  
 - "gatto": $8.17 / 15.57 ≈ 0.52$ → 52%
 - "topo": $6.05 / 15.57 ≈ 0.39$ → 39% 
 - "il": $1.35 / 15.57 ≈ 0.09$ → 9%  
 
-Quando l'LLM elabora la parola **"insegue"**:  
-- Il 52% del suo "contesto" viene da **"gatto"**.  
-- Il 39% da **"topo"**.  
-- Solo il 9% da **"il"** (che è irrilevante).  
+Quando l'LLM elabora la parola **"insegue"** il 52% del suo "contesto" viene da **"gatto"**, il 39% da **"topo"** e solo il 9% da **"il"** (che è irrilevante).  
 
-#### Le Operazioni Matematiche: Moltiplicazioni di Matrici
+### Le Operazioni Matematiche: moltiplicazioni di matrici
 
-Tutto questo avviene attraverso operazioni di algebra lineare, principalmente moltiplicazioni tra matrici e vettori. Ogni layer del Transformer applica trasformazioni matematiche ai vettori delle parole, modificando gradualmente la loro rappresentazione per catturare significati sempre più complessi e contestuali.
+Tutto questo avviene attraverso **operazioni di algebra lineare**, principalmente moltiplicazioni tra matrici e vettori. Ogni layer del Transformer applica trasformazioni matematiche ai vettori delle parole, modificando gradualmente la loro rappresentazione per catturare significati sempre più complessi e contestuali.
 
-È importante capire che il modello non "comprende" il testo nel senso umano del termine. Piuttosto, ha imparato pattern statistici incredibilmente sofisticati che gli permettono di manipolare questi vettori numerici in modi che producono output sensati dal punto di vista linguistico.
+> È importante capire che il modello **non "comprende" il testo nel senso umano del termine**. Piuttosto, ha imparato **pattern statistici** incredibilmente sofisticati che gli permettono di **manipolare questi vettori numerici** in modi che producono **output sensati dal punto di vista linguistico**.
 
 #### Come Emergono le Capacità Matematiche
 
-Gli LLM possono eseguire calcoli perché durante il training hanno visto moltissimi esempi di problemi matematici e le loro soluzioni. Hanno imparato i pattern che collegano certe sequenze di numeri e simboli a determinati risultati.
+Gli LLM possono eseguire calcoli perché durante il training hanno visto **moltissimi esempi di problemi matematici** e le loro soluzioni. Hanno imparato i pattern che collegano certe sequenze di numeri e simboli a determinati risultati.
+Quando vedono "2 + 3 =", hanno imparato **statisticamente** che questa sequenza è tipicamente seguita da "5". 
 
-Quando vedono "2 + 3 =", hanno imparato statisticamente che questa sequenza è tipicamente seguita da "5". Per operazioni più complesse, utilizzano strategie simili a quelle umane: scomposizione del problema, applicazione di regole apprese, e processamento sequenziale.
+Per **operazioni più complesse**, utilizzano **strategie simili a quelle umane**: scomposizione del problema, applicazione di regole apprese, e processamento sequenziale.
 
-Tuttavia, è cruciale comprendere che questo non è calcolo nel senso tradizionale. È riconoscimento di pattern su scala massiva. Ecco perché gli LLM possono commettere errori in calcoli apparentemente semplici: non stanno realmente "calcolando", stanno predicendo quale dovrebbe essere la risposta più probabile basandosi sui pattern visti durante il training.
+Tuttavia, è cruciale comprendere che questo **non è calcolo** nel senso tradizionale. È riconoscimento di pattern su scala massiva. Ecco perché **gli LLM possono commettere errori in calcoli apparentemente semplici**: non stanno realmente "calcolando", stanno predicendo quale dovrebbe essere la risposta più probabile basandosi sui pattern visti durante il training.
 
-#### L'Output Finale: Dal Vettore al Testo
+### L'Output Finale: dal vettore al testo
 
-Nell'ultimo step, il modello produce un vettore di probabilità che indica quanto è probabile che ogni token del vocabolario sia la prossima parola nella sequenza. Questo vettore viene poi convertito di nuovo in testo leggibile attraverso un processo di decodifica.
+Nell'ultimo step, il modello produce un **vettore di probabilità** che indica **quanto è probabile che ogni token del vocabolario sia la prossima parola nella sequenza**. Questo vettore viene poi **convertito di nuovo in testo leggibile** attraverso un processo di **decodifica**.
 
-È un processo circolare affascinante: partiamo dal testo, lo convertiamo in numeri, lo processiamo matematicamente, e ritorniamo al testo. Ma in questo percorso, il modello ha catturato e manipolato relazioni semantiche complesse che gli permettono di generare risposte coerenti e contextualmente appropriate.
+È un processo circolare affascinante:
+1. Partiamo dal testo  
+2. Lo convertiamo in numeri  
+3. Lo processiamo matematicamente  
+4. Ritorniamo al testo  
+ 
+In questo percorso, il modello ha catturato e manipolato relazioni semantiche complesse che gli permettono di generare risposte coerenti e contestualmente appropriate.
 
 ### Meccanismi di funzionamento avanzati  
 - **Autocompletamento evoluto**: gli LLM predicono sequenze di token (parole o sottounità) calcolando distribuzioni di probabilità. Ad esempio, alla domanda *"Come si prepara la carbonara?"*:
@@ -209,7 +198,7 @@ Nell'ultimo step, il modello produce un vettore di probabilità che indica quant
 	2. Valutano alternative come "panna" (probabilità bassa, es. 3%)
 	3. Combinano migliaia di tali predizioni in cascata
 
-- **Scalabilità estrema.** Alcuni modelli presi come esempio:
+- **Miliardi di parametri**:
 
 | Modello     | Parametri | Anno | Dati di addestramento         | Note                                       |
 | ----------- | --------- | ---- | ----------------------------- | ------------------------------------------ |
@@ -239,7 +228,7 @@ Nell'ultimo step, il modello produce un vettore di probabilità che indica quant
    **Capacità inaspettate**: pur addestrato solo a predire parole, sviluppò abilità di:  
      - Traduzione (senza essere esplicitamente addestrato)  
      - Risoluzione di problemi matematici semplici  
-     - Generazione di codice Python  
+     - Generazione di codice  
 
 ### Il Problema delle "Capacità emergenti" nell'IA: un riassunto veloce
 
