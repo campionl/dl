@@ -1,42 +1,31 @@
-graph TD
-    A[Input Utente: “Quanto fa 3 + 5?”] --> B[Pre-elaborazione]
-    subgraph “Flusso di Elaborazione”
-    B --> C[Tokenizzazione]
-    C --> D[Embedding]
-    D --> E[Trasformatori: 3 + 5]
-    E --> F[Generazione Output]
+```mermaid
+    flowchart TD
+    A[Input Testo] --> B[Pre-elaborazione]
+    B --> C[Embedding]
+    C --> D[Trasformatori]
+    D --> E[Generazione Output]
+    E --> F[Output Testo]
+
+    subgraph "Dettaglio Fasi"
+    B -->|Tokenizzazione| B1[Split in token]
+    B -->|Normalizzazione| B2[Minuscole, pulizia]
+    
+    C -->|Vettori numerici| C1[Ogni token è un punto nello spazio multidimensionale]
+    
+    D -->|Self-Attention| D1[Analisi relazioni tra token]
+    D -->|Feedforward| D2[Modifica vettori]
+    D -->|N strati| D3[Elaborazione profonda]
+    
+    E -->|Decoding| E1[Probabilità sui token]
+    E -->|Sampling| E2[Selezione output]
     end
-    F --> G[Output: “8”]
 
-    %% Dettaglio Tokenizzazione
-    C --> C1[“Quanto” → ID: 2456]
-    C --> C2[“fa” → ID: 102]
-    C --> C3[“3” → ID: 128]
-    C --> C4[“+” → ID: 42]
-    C --> C5[“5” → ID: 129]
-    C --> C6[“?” → ID: 27]
+    subgraph "Esempio Matematico"
+    G["3 + 5"] -->|Pattern appreso| H["8"]
+    style G fill:#f9f,stroke:#333
+    style H fill:#bbf,stroke:#333
+    end
 
-    %% Dettaglio Embedding
-    D --> D1[Vettore 256D per “3”]
-    D --> D2[Vettore 256D per “+”]
-    D --> D3[Vettore 256D per “5”]
-    style D1 fill:#f9f,stroke:#333
-    style D2 fill:#f9f,stroke:#333
-    style D3 fill:#f9f,stroke:#333
-
-    %% Meccanismo Trasformatori
-    E --> E1[Self-Attention:<br/>Collega “3”, “+” e “5”]
-    E --> E2[Feedforward:<br/>Attiva pattern matematici]
-    E --> E3[Calcolo contestuale:<br/>Simula “3+5”]
-    style E1 fill:#ffe,stroke:#333
-
-    %% Generazione Output
-    F --> F1[Probabilità token:<br/>“8”: 85%<br/>“7”: 10%<br/>“10”: 5%]
-    F --> F2[Decodifica: “8” → ID: 130]
-    style F1 fill:#e6f7ff,stroke:#333
-
-    %% Spiegazione Matematica
-    H[“Come funziona il calcolo?”] --> I[Pattern Recognition]
-    H --> J[Correlazione statistica]
-    H --> K[Assenza di calcolo reale]
-    style H fill:#f96,stroke:#333,stroke-width:2px
+    style A fill:#f96,stroke:#333
+    style F fill:#6f9,stroke:#333
+```
