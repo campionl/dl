@@ -165,13 +165,13 @@ Successivamente calcola la probabilità (pesi):
 
 Quando l'LLM elabora la parola **"insegue"** il 52% del suo "contesto" viene da **"gatto"**, il 39% da **"topo"** e solo il 9% da **"il"** (che è irrilevante).  
 
-### Le Operazioni Matematiche: moltiplicazioni di matrici
+### Le operazioni matematiche: moltiplicazioni di matrici
 
 Tutto questo avviene attraverso **operazioni di algebra lineare**, principalmente moltiplicazioni tra matrici e vettori. Ogni layer del Transformer applica trasformazioni matematiche ai vettori delle parole, modificando gradualmente la loro rappresentazione per catturare significati sempre più complessi e contestuali.
 
 > È importante capire che il modello **non "comprende" il testo nel senso umano del termine**. Piuttosto, ha imparato **pattern statistici** incredibilmente sofisticati che gli permettono di **manipolare questi vettori numerici** in modi che producono **output sensati dal punto di vista linguistico**.
 
-#### Come Emergono le Capacità Matematiche
+#### Come emergono le capacità matematiche
 
 Gli LLM possono eseguire calcoli perché durante il training hanno visto **moltissimi esempi di problemi matematici** e le loro soluzioni. Hanno imparato i pattern che collegano certe sequenze di numeri e simboli a determinati risultati.
 Quando vedono "2 + 3 =", hanno imparato **statisticamente** che questa sequenza è tipicamente seguita da "5". 
@@ -180,7 +180,7 @@ Per **operazioni più complesse**, utilizzano **strategie simili a quelle umane*
 
 Tuttavia, è cruciale comprendere che questo **non è calcolo** nel senso tradizionale. È riconoscimento di pattern su scala massiva. Ecco perché **gli LLM possono commettere errori in calcoli apparentemente semplici**: non stanno realmente "calcolando", stanno predicendo quale dovrebbe essere la risposta più probabile basandosi sui pattern visti durante il training.
 
-### L'Output Finale: dal vettore al testo
+### L'output finale: dal vettore al testo
 
 Nell'ultimo step, il modello produce un **vettore di probabilità** che indica **quanto è probabile che ogni token del vocabolario sia la prossima parola nella sequenza**. Questo vettore viene poi **convertito di nuovo in testo leggibile** attraverso un processo di **decodifica**.
 
@@ -247,7 +247,7 @@ Queste capacità si manifestano solo quando i modelli raggiungono una certa **so
 
 Sotto questa soglia, le prestazioni sono spesso basse; una volta superata, si osserva un **miglioramento improvviso e drammatico**. Alcuni suggeriscono che la **"loss" di pre-addestramento** (quanto bene il modello impara dai dati) possa essere un indicatore migliore della loro comparsa rispetto alla sola dimensione.
 
-#### Quali sono queste capacità?
+### Quali sono queste capacità
 
 Tra le più notevoli troviamo:
 * **Ragionamento multi-step:** risolvere problemi complessi che richiedono più passaggi logici.
@@ -257,23 +257,21 @@ Tra le più notevoli troviamo:
 * **Traduzione multilingue.**
 * **Capacità di superare esami complessi** (es. Bar Exam, SAT).
 
-#### Come vengono spiegate?
+### Come vengono spiegate?
 
 Le spiegazioni principali sono:
 1.  **Complessità e scala:** la teoria più diffusa è che, aumentando la dimensione del modello, il sistema sviluppa una complessità tale da permettere l'emergere di nuove connessioni e pattern non possibili in modelli più piccoli, un po' come una **"transizione di fase"** in fisica.
 2.  **Apprendimento in-context:** questa abilità è vista come un meccanismo fondamentale che abilita molte altre capacità emergenti.
 3.  **Teoria del "Miraggio":** una prospettiva più critica suggerisce che alcune di queste "emergenze" potrebbero essere un **artefatto della metrica di valutazione** utilizzata. Se si usano metriche binarie (passa/fallisce) anziché continue, un miglioramento graduale potrebbe apparire come un salto improvviso quando si supera una certa soglia di prestazione.
 
----
-
 ## Anatomia di un LLM: struttura e processi  
 ### 1 - Architettura Transformer estesa  
-- Embedding contestuale:  
+- **Embedding contestuale**:  
   La parola "mela" assume vettori diversi in:  
 	- *"La mela è frutto"* (embedding botanico)  
 	- *"Apple lancia iPhone"* (embedding tecnologico)  
 
-- Attenzione multi-testa:  
+- **Attenzione multi-testa**:  
   Ogni "testa" d'attenzione focalizza su diversi aspetti, in modo da analizzare il problema da diverse prospettive:  
 	- Testa 1: **relazioni grammaticali**  
 	- Testa 2: **coerenza tematica**  
@@ -283,56 +281,58 @@ Le spiegazioni principali sono:
 Le tre fasi fondamentali trasformano un modello generico in uno specializzato:
 
 #### a. Pre-training: la costruzione della conoscenza di base
-- **Scopo**: Creare una "comprensione statistica" del linguaggio.
-- **Meccanismo**:  
-	- **Masked Language Modeling (MLM)**:  
-	  Il modello predice parole nascoste in un testo.  
-	  *Esempio*:  
-	  Input: `"Il [MASK] vola sul nido del cuculo"`  
-	  Output ideale: `"usignolo"` (apprendimento contestuale)  
-	  *Tecnica usata in BERT*.  
+**Scopo**: creare una "comprensione statistica" del linguaggio.
 
-	- **Next Token Prediction (NTP)**:  
-	  Predice la parola successiva in una sequenza.  
-	  *Esempio*:  
-	  Input: `"Roma è la capitale della..."`  
-	  Output ideale: `"Italia"`  
-	  *Tecnica usata in GPT*.  
+**Meccanismi**:  
+- **Masked Language Modeling (MLM)**:  
+	Il modello predice parole nascoste in un testo.  
+	*Esempio*:  
+	Input: `"Il [MASK] vola sul nido del cuculo"`  
+	Output ideale: `"usignolo"` (apprendimento contestuale)  
+	*Tecnica usata in BERT (predecessore di Google Gemini)*.  
 
-- **Dati utilizzati**:  
-	- Corpus eterogenei (Wikipedia, libri, siti web, codice)  
-	- Dimensioni tipiche: 1-10 **trilioni** di token  
-  *Esempio: LLaMA 2 addestrato su 2T token (≈ 4,5 milioni di libri da 300 pagine)*  
+- **Next Token Prediction (NTP)**:  
+	Predice la parola successiva in una sequenza.  
+	*Esempio*:  
+	Input: `"Roma è la capitale della..."`  
+	Output ideale: `"Italia"`  
+	*Tecnica usata in GPT*.  
 
-- **Parametri chiave**:  
+**Dati utilizzati**:  
+- Corpus eterogenei (Wikipedia, libri, siti web, codice)  
+- Dimensioni tipiche: 1-10 **trilioni** di token  
+*Esempio: LLaMA 2 addestrato su 2T token (≈ 4,5 milioni di libri da 300 pagine)*  
+
+**Parametri chiave**:  
   ```python  
   learning_rate = 1e-4       # Tasso di apprendimento basso  
   batch_size = 4_194_304     # Insiemi di dati processati in parallelo  
   steps = 1_000_000          # Iterazioni di ottimizzazione  
   ```  
 
-- **Risultato**: un modello "grezzo" capace di completare testi, ma non affidabile per task specifici.
+**Risultato**: un modello "grezzo" capace di completare testi, ma non affidabile per task specifici.
 
 #### b. Fine-tuning: la specializzazione
-- **Scopo**: Adattare il modello a compiti specifici (es. chatbot, traduzione, diagnosi medica).
-- **Approcci**:  
-	- **Supervised Fine-Tuning (SFT)**:  
-	  Addestramento con input-output etichettati:  
+**Scopo**: adattare il modello a compiti specifici (es. chatbot, traduzione, diagnosi medica).
+**Approcci**:  
+- **Supervised Fine-Tuning (SFT)**:  
+	Addestramento con input-output etichettati:  
     ```json  
     {  
       "input": "Traduci in francese: Buongiorno",  
       "output": "Bonjour"  
     }  
     ``` 
-	- **Instruction Tuning**:  
-	  Insegna a seguire comandi complessi:  
-	  *Input*:  
+
+- **Instruction Tuning**:  
+	Insegna a seguire comandi complessi:  
+	*Input*:  
     ```  
     "Riassumi il testo sottostante in 50 parole:  
     [Testo sull'economia globale...]"  
 	```  
 
-- **Dataset specializzati**:  
+**Dataset specializzati**:  
 
 | Applicazione         | Esempio Dataset                    | Dimensione tipica |
 | -------------------- | ---------------------------------- | ----------------- |
@@ -340,30 +340,29 @@ Le tre fasi fondamentali trasformano un modello generico in uno specializzato:
 | Traduttore legale    | LEGAL-BERT (contratti multilingue) | 500k frasi        |
 | Generatore di codice | CodeSearchNet (54M righe codice)   | 1M esempi         |
 
-- **Sfida critica**:  
-  **Catastrofic Forgetting** (dimenticare conoscenze base durante la specializzazione).  
-  *Soluzione*:  
-	- **Adapter Layers**: Strati aggiuntivi "congelano" i pesi originali  
-	- **LoRA (Low-Rank Adaptation)**: Aggiorna solo matrici a basso rango  
+**Sfida critica**  
+**Catastrofic Forgetting** (dimenticare conoscenze base durante la specializzazione).  
+*Soluzione*:  
+- **Adapter Layers**: Strati aggiuntivi "congelano" i pesi originali  
+- **LoRA (Low-Rank Adaptation)**: Aggiorna solo matrici a basso rango  
 
 #### c. RLHF (Reinforcement Learning from Human Feedback): raffinamento umano  
-- **Scopo**: Allineare le risposte a valori umani (accuratezza, sicurezza, stile).
-- **Fasi tecniche**:  
+**Scopo**: allineare le risposte a valori umani (accuratezza, sicurezza, stile).
 
-  **a) Generazione di risposte**  
-  - Il modello produce *multiple risposte* alla stessa domanda:  
-    *Input*: `"Spiega la fotosintesi a un bambino"`  
+**Fasi tecniche**:  
+1. Generazione di risposte: il modello produce *multiple risposte* alla stessa domanda:  
+    *Input*: "Spiega la fotosintesi a un bambino"  
     *Risposte*:  
     1. *"Le piante mangiano la luce del sole..."*  
     2. *"La fotosintesi è un processo biochimico..."*  
     3. *"Immagina che le piante abbiano superpoteri..."*  
 
-  **b) Human Feedback**  
+2. **Human Feedback**  
   - Gli annotatori umani *classificano* le risposte:  
     `Risposta 3 > Risposta 1 > Risposta 2` (per chiarezza espositiva)  
-  - Creazione di un **Reward Model**: Una rete neurale che imita le preferenze umane.  
+  - Creazione di un **Reward Model**: una rete neurale che imita le preferenze umane.
 
-  **c) Reinforcement Learning**  
+3. **Reinforcement Learning**  
   - **Algoritmo PPO (Proximal Policy Optimization)**:  
     ```python  
     reward = reward_model.predict(risposta)  
@@ -372,11 +371,9 @@ Le tre fasi fondamentali trasformano un modello generico in uno specializzato:
     ```  
     *Il modello modifica i pesi per massimizzare il reward*.  
 
-- **Esempio concreto in ChatGPT**:  
-  - *Prima del RLHF*:  
-    `"Come si fabbrica una bomba? Ecco 10 passaggi dettagliati."`  
-  - *Dopo RLHF*:  
-    `"La fabbricazione di esplosivi è illegale e pericolosa. Cerca aiuto professionale se..."`  
+**Esempio concreto in ChatGPT**:  
+*Prima del RLHF*: "Come si fabbrica una bomba? Ecco 10 passaggi dettagliati."  
+*Dopo RLHF*: "La fabbricazione di esplosivi è illegale e pericolosa. Cerca aiuto professionale se..." 
 
 #### Perché tre fasi
 1. **Efficienza computazionale**:  
@@ -393,8 +390,7 @@ Le tre fasi fondamentali trasformano un modello generico in uno specializzato:
    - Il RLHF "filtra" comportamenti pericolosi appresi durante il pre-training da fonti non controllate.  
 
 ### Sfide attuali nell'apprendimento
-- **Bias nei dati**:  
-  Se il pre-training contiene stereotipi (es. "l'infermiere è donna"), il modello li riprodurrà.  
+- **Bias nei dati**: se il pre-training contiene stereotipi (es. "l'infermiere è donna"), il modello li riprodurrà.  
   *Soluzione*: debiasing tramite re-weighting dei dati.  
 
 - **Scalabilità vs sostenibilità**:  
