@@ -2,7 +2,7 @@
 
 ---
 
-## 2. Ottimizzatori e loro impatto
+## Ottimizzatori e loro impatto
 
 Gli ottimizzatori sono algoritmi che aggiornano i pesi del modello durante il training per minimizzare la funzione di perdita.
 
@@ -26,7 +26,7 @@ Gli ottimizzatori sono algoritmi che aggiornano i pesi del modello durante il tr
 
 ---
 
-## 3. Early stopping e Callback
+## Early Stopping e Callback
 
 I callback sono funzioni speciali che si eseguono durante il training per monitorare, modificare o interrompere il processo.
 
@@ -40,4 +40,4 @@ from keras.callbacks import EarlyStopping
 
 early_stop = EarlyStopping(monitor='val_loss', patience=3)
 model.fit(X_train, y_train, epochs=50, validation_split=0.2, callbacks=[early_stop])
-
+```
