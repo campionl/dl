@@ -17,6 +17,20 @@ pip install pyobjc
 sudo apt install libbluetooth-dev
 sudo setcap 'cap_net_raw,cap_net_admin+eip' $(readlink -f $(which python3))
 ```
+Per Arch Linux (in sostituzione di apt):
+```bash
+# Installa i pacchetti necessari
+sudo pacman -S bluez bluez-utils python-pybluez
+
+# Abilita e avvia il servizio Bluetooth
+sudo systemctl enable --now bluetooth.service
+
+# Verifica lo stato del servizio
+sudo systemctl status bluetooth
+
+# Configura i permessi per Python
+sudo setcap 'cap_net_raw,cap_net_admin+eip' $(readlink -f $(which python3))
+```
 
 ## Sul computer con il mouse fisico
 1. Seleziona opzione 1 (SERVER)
