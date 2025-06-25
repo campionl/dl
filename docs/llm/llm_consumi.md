@@ -1,16 +1,16 @@
-# 🌍 Rapporto sul Consumo delle AI rispetto ad Altre Industrie
+# Rapporto sul Consumo delle AI rispetto ad Altre Industrie
 
-## 🔧 1. Consumo Energetico dell’AI (LLM e Data Center)
+## 1. Consumo Energetico dell’AI (LLM e Data Center)
 
 - Allenare un modello come **GPT-3** ha richiesto circa **1.287 MWh** (pari a un mese di energia per 1.000 case USA).
 - Il problema principale è l’**inference**: l’uso continuo da parte di milioni di utenti.
 - Stime 2024: l’intera AI generativa consuma **1-2% dell’elettricità mondiale**, in rapido aumento.
 
-> ⚡ GPT-4 può consumare ~**500 MWh al giorno** solo per rispondere agli utenti.
+> GPT-4 può consumare ~**500 MWh al giorno** solo per rispondere agli utenti.
 
 ---
 
-## 📊 2. Confronto con Altre Industrie (Energia e Acqua)
+## 2. Confronto con Altre Industrie (Energia e Acqua)
 
 | Settore                      | Energia Totale Annua Stimata | Acqua Annua Stimata             | Note                               |
 |-----------------------------|------------------------------|----------------------------------|------------------------------------|
@@ -23,7 +23,7 @@
 
 ---
 
-## 💧 3. Consumo Idrico dell’AI
+## 3. Consumo Idrico dell’AI
 
 - I server AI usano **sistemi di raffreddamento a liquido/aria**.
 - Ogni richiesta a GPT-4 può usare **fino a 0.5 litri di acqua indiretta**.
@@ -32,7 +32,7 @@
 
 ---
 
-## 📈 4. Trend di Crescita
+## 4. Trend di Crescita
 
 - Secondo **IEA** e **MIT**, entro il 2030:
   > Il consumo energetico dell’AI potrebbe superare quello dell’intera Germania attuale (~500 TWh).
@@ -41,7 +41,7 @@
 
 ---
 
-## ⚙️ 5. Efficienza Tecnologica
+## 5. Efficienza Tecnologica
 
 - Le nuove GPU sono **più efficienti**, ma:
   > La **domanda cresce più rapidamente** dell’efficienza hardware.
@@ -52,7 +52,7 @@
 
 ---
 
-## 🧠 Conclusione
+## Conclusione
 
 - L’AI non è **ancora** tra i peggiori settori inquinanti, ma la direzione è chiara:
   > Se non viene gestita, supererà molte industrie tradizionali in consumo.
@@ -63,7 +63,7 @@
 
 ---
 
-## 📚 Fonti principali:
+## Fonti principali:
 - International Energy Agency (IEA)
 - MIT Technology Review
 - Google Environmental Reports
