@@ -17,23 +17,23 @@ Questo documento approfondisce le tecniche di ottimizzazione e le innovazioni ha
   Questo riduce drasticamente il volume di dati da elaborare e la memoria necessaria, abbassando i consumi energetici senza un calo sostanziale delle prestazioni, soprattutto in fase di inferenza.  
   Tecniche moderne, come la quantizzazione post-addestramento (PTQ) o quantizzazione quantistica-aware training (QAT), migliorano la precisione mantenendo alta efficienza.
 
-  ![Quantizzazione dei modelli](https://miro.medium.com/max/1400/1*YcNeV9oiOQ-Tjq7e-7b2qw.png)  
-  *Fonte: Medium - Quantization of Neural Networks*
+  ![Quantizzazione dei modelli](https://cdn.prod.website-files.com/680a070c3b99253410dd3df5/680a070c3b99253410dd46d9_67ed557668ef26d8645abad1_6737388c606474b3fdf8d5dd_6737384f8442eff592e5e2f9_Guide_fig4.png)  
+  *Fonte: Ultralytics*
 
 - **Distillazione**  
   Con la distillazione si addestra un modello più piccolo (“studente”) a imitare il comportamento di uno più grande e complesso (“insegnante”).  
   Il modello distillato richiede meno parametri e risorse computazionali, rendendo più sostenibile l’uso su larga scala, specie per applicazioni commerciali o su dispositivi con risorse limitate.
 
-  ![Distillazione di un modello](https://miro.medium.com/max/875/1*pn03Dj7ax_l0kGQ2Czxo2w.png)  
-  *Fonte: Medium - Knowledge Distillation*
+  ![Distillazione di un modello](https://img.ai4business.it/wp-content/uploads/2025/03/20120334/immagine-che-contiene-testo-diagramma-mappa-il.jpg.webp)  
+  *Fonte: Ai4Business*
 
 - **Pruning (Potatura)**  
   Consiste nell’eliminare pesi, neuroni o intere connessioni non essenziali o con impatto trascurabile sulle prestazioni.  
   Può essere strutturato (rimuovendo intere unità) o non strutturato (rimuovendo singoli pesi).  
   Il pruning permette di alleggerire il modello e ridurre la complessità computazionale, diminuendo il consumo di energia durante addestramento e inferenza.
 
-  ![Pruning in una rete neurale](https://miro.medium.com/max/1400/1*TVuKNX3c9TqlO8OdZ22Hew.png)  
-  *Fonte: Medium - Neural Network Pruning*
+  ![Pruning in una rete neurale](https://cdn.prod.website-files.com/680a070c3b99253410dd3df5/680a070c3b99253410dd46da_67ed557668ef26d8645abad4_6737388d606474b3fdf8d602_67373828717bb6efa6851dfb_Guide_fig3.png)  
+  *Fonte: Ultralytics*
 
 - **Sparse Training e Sparse Inference**  
   L’idea è sfruttare la sparseness, cioè la predominanza di valori zero nelle matrici di pesi, per evitare calcoli inutili.  
@@ -42,8 +42,8 @@ Questo documento approfondisce le tecniche di ottimizzazione e le innovazioni ha
 - **Mixed Precision Training**  
   Combina calcoli a bassa precisione (16-bit floating point) con quelli a precisione più alta (32-bit) durante l’addestramento, riducendo consumo e memoria senza compromettere la qualità finale del modello.
 
-  ![Mixed Precision Training](https://www.deepsparse.io/hubfs/Mixed%20Precision%20Training.png)  
-  *Fonte: DeepSparse*
+  ![Mixed Precision Training](https://developer-blogs.nvidia.com/wp-content/uploads/2019/01/pasted-image-0-21.png)  
+  *Fonte: Nvidia Developer*
 
 - **AutoML e Neural Architecture Search (NAS)**  
   Automatizzano la ricerca di architetture più efficienti, ottimizzando la struttura del modello per un bilanciamento ottimale tra prestazioni e risorse richieste.  
