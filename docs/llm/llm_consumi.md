@@ -45,7 +45,21 @@ Il grafico mostra la crescita dell’energia consumata dai data center e l’inc
 
 ---
 
-## 3. Impatto Idrico dell’Intelligenza Artificiale
+## 3. Confronto con il Settore dei Trasporti
+
+Il settore dei trasporti è uno dei maggiori consumatori di energia a livello globale, in particolare per il trasporto su strada, aereo e marittimo.
+
+- Il consumo energetico globale dei trasporti si aggira intorno ai **3.000 TWh** all’anno, quindi è di gran lunga superiore a quello attuale dell’AI.
+- Tuttavia, la rapida crescita dell’AI potrebbe avvicinarsi a questi numeri in un futuro non troppo lontano.
+- È importante considerare anche le emissioni di CO₂, dove il settore trasporti è tra i principali responsabili globali.
+
+![Consumo Energetico Settore Trasporti vs AI](https://static.digitalworlditalia.it/wp-content/uploads/2024/06/1719312517-dataev1.jpg)
+
+*Fonte: DigitalWorldItalia*
+
+---
+
+## 4. Impatto Idrico dell’Intelligenza Artificiale
 
 - I data center utilizzano enormi quantità di acqua per il raffreddamento dei server, particolarmente nei sistemi che impiegano raffreddamento a liquido o a immersione.
 - Ogni singola richiesta a un modello come GPT-4 può implicare l’uso indiretto di circa 0,5 litri d’acqua per il raffreddamento necessario.
@@ -60,7 +74,7 @@ Confronto tra consumo idrico dell’AI e di industrie come agricoltura e produzi
 
 ---
 
-## 4. Tendenze di Crescita e Proiezioni
+## 5. Tendenze di Crescita e Proiezioni
 
 - Secondo analisi condotte dall’International Energy Agency (IEA) e dal Massachusetts Institute of Technology (MIT), se la crescita del settore AI non sarà frenata, entro il 2030 il consumo energetico globale dell’AI potrebbe superare quello dell’intera Germania, che oggi si attesta intorno ai 500 TWh/anno.
 - Le grandi aziende tecnologiche stanno costruendo nuovi data center su scala globale, con infrastrutture sempre più potenti e complesse.
@@ -74,7 +88,7 @@ Proiezioni del fabbisogno energetico dei data center, con incidenza delle fonti 
 
 ---
 
-## 5. Tecnologie e Strategie per Mitigare l’Impatto
+## 6. Tecnologie e Strategie per Mitigare l’Impatto
 
 - Quantizzazione e distillazione: metodi che riducono la dimensione dei modelli e di conseguenza il consumo computazionale.
 - Modelli più piccoli e ottimizzati: ad esempio LLaMA 3 8B offre un buon compromesso tra performance e consumo.
@@ -90,7 +104,7 @@ Confronto del consumo energetico per singola richiesta tra AI e altri servizi di
 
 ---
 
-## 6. Conclusioni
+## 7. Conclusioni
 
 L’intelligenza artificiale è oggi una tecnologia che sta entrando in una fase di impatto ambientale significativo, destinata a crescere rapidamente se non si adottano misure adeguate.
 
