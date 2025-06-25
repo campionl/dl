@@ -74,6 +74,8 @@ Per problemi semplici (tipo 2 + 2) è affidabile.
 Per problemi più complessi, può sbagliare — proprio perché **non capisce la matematica come un umano o un software matematico, ma la simula statisticamente.**
 
 ---
+
+```mermaid  
 flowchart TD
     A[FASE DI APPRENDIMENTO (Training)] --> B[Input]
     A --> C[Elaborazione]
@@ -110,6 +112,6 @@ flowchart TD
     %% Esempio Matematico
     I["Esempio: Matematica"] --> I1["Training: Ha visto '2+2=4' in molti testi"]
     I --> I2["Inference: Simula la risposta (non calcola)"]
+```
 
-
-
+---
