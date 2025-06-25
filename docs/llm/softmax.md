@@ -17,7 +17,7 @@ Supponiamo che 4 cavalli abbiano questi "punteggi di velocità" (calcolati dall'
 
 **Passaggio 1: Calcolare l'Esponenziale (e^x)**  
 Per rendere tutto positivo, calcoliamo \(e^{\text{punteggio}}\):  
-- A: \(e^{3.0} ≈ 20.08\)  
+- A: $(e^{3.0} ≈ 20.08\)$
 - B: \(e^{1.0} ≈ 2.72\)  
 - C: \(e^{0.5} ≈ 1.65\)  
 - D: \(e^{-1.0} ≈ 0.37\)  
