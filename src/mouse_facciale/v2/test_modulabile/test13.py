@@ -79,7 +79,7 @@ class BaseAction:
         raise NotImplementedError
 
 
-class CalibrationAction: # Renamed from Calibration_action
+class CalibrationAction:
     """Classe per gestire la calibrazione del centro del viso (punto neutro del naso)"""
     def __init__(self, max_samples=30):
         self.center_samples = []
@@ -114,7 +114,7 @@ class CalibrationAction: # Renamed from Calibration_action
         print(f"Nuovo centro impostato manualmente/auto: {self.center_position}")
 
 
-class NoseJoystickEvent(BaseEvent): # Renamed from NoseJoystick_event
+class NoseJoystickEvent(BaseEvent):
     """Classe per rilevare il movimento del naso come un joystick"""
     def __init__(self, deadzone_radius=15.0, max_acceleration_distance=100.0):
         self.deadzone_radius = deadzone_radius
@@ -160,7 +160,7 @@ class NoseJoystickEvent(BaseEvent): # Renamed from NoseJoystick_event
         
         return direction, acceleration_factor, effective_distance
     
-    def is_cursor_on_edge(self, cursor_position, screen_w, screen_h, edge_threshold=40): # Increased edge_threshold
+    def is_cursor_on_edge(self, cursor_position, screen_w, screen_h, edge_threshold=40):
         """Verifica se il cursore è sul bordo dello schermo per l'auto-ricalibrazione"""
         x, y = cursor_position
         return (x <= edge_threshold or x >= screen_w - edge_threshold or 
@@ -193,7 +193,7 @@ class NoseJoystickEvent(BaseEvent): # Renamed from NoseJoystick_event
         return self.is_outside_deadzone(tracking_point, center_position)
 
 
-class OpenMouthEvent(BaseEvent): # Renamed from OpenMouth_event
+class OpenMouthEvent(BaseEvent):
     """Classe per rilevare l'apertura della bocca"""
     def __init__(self, upper_lip_index=13, lower_lip_index=14, threshold=0.15, duration=0.5):
         self.UPPER_LIP = upper_lip_index
@@ -270,7 +270,7 @@ class OpenMouthEvent(BaseEvent): # Renamed from OpenMouth_event
         return self.detect_open_mouth(landmarks)
 
 
-class ToggleModeAction(BaseAction): # Renamed from SwitchMode_action
+class ToggleModeAction(BaseAction):
     """Classe per cambiare modalità tra puntatore e scroll"""
     def __init__(self):
         self.last_switch_time = 0
@@ -292,7 +292,7 @@ class ToggleModeAction(BaseAction): # Renamed from SwitchMode_action
         return self.switch_mode(current_mode)
 
 
-class MouseCursorAction(BaseAction): # Renamed from MouseCursor_action
+class MouseCursorAction(BaseAction):
     """Classe per tradurre il movimento del naso in movimento del cursore del mouse"""
     def __init__(self, screen_w, screen_h):
         self.screen_w = screen_w
@@ -300,7 +300,7 @@ class MouseCursorAction(BaseAction): # Renamed from MouseCursor_action
         self.current_mouse_pos = np.array([screen_w // 2, screen_h // 2], dtype=float)
         self.position_history = deque(maxlen=5)
         self.mouse_lock = threading.Lock()
-        self.base_sensitivity = 6.0 # SENSIBILITÀ BASE AUMENTATA (da 4.0 a 6.0)
+        self.base_sensitivity = 6.0
         
         self.mouse_controller = mouse.Controller()
         self.mouse_controller.position = (self.current_mouse_pos[0], self.current_mouse_pos[1])
@@ -381,13 +381,13 @@ class MouseCursorAction(BaseAction): # Renamed from MouseCursor_action
         self.update_position(direction, acceleration_factor, effective_distance)
 
 
-class ScrollAction(BaseAction): # Renamed from Scroll_action
+class ScrollAction(BaseAction):
     """Classe per eseguire lo scrolling della pagina"""
     def __init__(self, scroll_cooldown=0.03):
         self.scroll_cooldown = scroll_cooldown
         self.last_scroll_time = 0
         self.scroll_lock = threading.Lock()
-        self.scroll_sensitivity = 3.0 # SENSIBILITÀ SCROLL AUMENTATA (da 2.0 a 3.0)
+        self.scroll_sensitivity = 3.0
         self.scroll_history = deque(maxlen=3)
         self.mouse_controller = mouse.Controller()
     
@@ -422,7 +422,7 @@ class ScrollAction(BaseAction): # Renamed from Scroll_action
         return self.perform_scroll(direction, effective_distance)
 
 
-class LeftEyeEvent(BaseEvent): # Renamed from LeftEye_event
+class LeftEyeEvent(BaseEvent):
     """Classe per rilevare la chiusura dell'occhio sinistro (blink)"""
     def __init__(self, top_index=159, bottom_index=145, blink_duration=0.3):
         self.LEFT_EYE_TOP = top_index
@@ -479,7 +479,7 @@ class LeftEyeEvent(BaseEvent): # Renamed from LeftEye_event
         return self.detect_blink(landmarks)
 
 
-class LeftClickAction(BaseAction): # Renamed from LeftClick_action
+class LeftClickAction(BaseAction):
     """Classe per eseguire un click sinistro del mouse"""
     def __init__(self, click_cooldown=0.5):
         self.click_cooldown = click_cooldown
@@ -508,7 +508,7 @@ class LeftClickAction(BaseAction): # Renamed from LeftClick_action
         return self.perform_click(mouse_position)
 
 
-class RightEyeEvent(BaseEvent): # Renamed from RightEye_event
+class RightEyeEvent(BaseEvent):
     """Classe per rilevare la chiusura dell'occhio destro (blink)"""
     def __init__(self, top_index=386, bottom_index=374, blink_duration=0.3):
         self.RIGHT_EYE_TOP = top_index
@@ -565,7 +565,7 @@ class RightEyeEvent(BaseEvent): # Renamed from RightEye_event
         return self.detect_blink(landmarks)
 
 
-class RightClickAction(BaseAction): # Renamed from RightClick_action
+class RightClickAction(BaseAction):
     """Classe per eseguire un click destro del mouse"""
     def __init__(self, click_cooldown=0.5):
         self.click_cooldown = click_cooldown
@@ -596,7 +596,7 @@ class RightClickAction(BaseAction): # Renamed from RightClick_action
 
 class HeadMouseController:
     """Classe principale che gestisce il mouse facciale"""
-    def __init__(self, show_window=False, user_config=None): # show_window default to False for web
+    def __init__(self, show_window=False, user_config=None):
         self.mp_face_mesh = mp.solutions.face_mesh
         self.face_mesh = self.mp_face_mesh.FaceMesh(
             max_num_faces=1,
@@ -605,22 +605,22 @@ class HeadMouseController:
             min_tracking_confidence=0.8
         )
 
-        self.screen_w, self.screen_h = pyautogui.size() # Get screen size using pyautogui
+        self.screen_w, self.screen_h = pyautogui.size()
 
         self.NOSE_TIP = 4
         self.UPPER_LIP = 13
         self.LOWER_LIP = 14
         
-        self.calibration = CalibrationAction() # Renamed
-        self.nose_joystick = NoseJoystickEvent(max_acceleration_distance=100.0) # Renamed
-        self.mouse_cursor = MouseCursorAction(self.screen_w, self.screen_h) # Renamed
-        self.scroll_action = ScrollAction() # Renamed
-        self.open_mouth_event = OpenMouthEvent(self.UPPER_LIP, self.LOWER_LIP) # Renamed
-        self.toggle_mode_action = ToggleModeAction() # Renamed
-        self.left_eye_event = LeftEyeEvent() # Renamed
-        self.right_eye_event = RightEyeEvent() # Renamed
-        self.left_click_action = LeftClickAction() # Renamed
-        self.right_click_action = RightClickAction() # Renamed
+        self.calibration = CalibrationAction()
+        self.nose_joystick = NoseJoystickEvent(max_acceleration_distance=100.0)
+        self.mouse_cursor = MouseCursorAction(self.screen_w, self.screen_h)
+        self.scroll_action = ScrollAction()
+        self.open_mouth_event = OpenMouthEvent(self.UPPER_LIP, self.LOWER_LIP)
+        self.toggle_mode_action = ToggleModeAction()
+        self.left_eye_event = LeftEyeEvent()
+        self.right_eye_event = RightEyeEvent()
+        self.left_click_action = LeftClickAction()
+        self.right_click_action = RightClickAction()
         
         self.user_config = user_config if user_config else {}
         self.scroll_direction_source = self.user_config.get('scroll_direction', 'nose up/down')
@@ -633,8 +633,8 @@ class HeadMouseController:
         self.current_mode = 'pointer'
         self.last_mouse_pos_before_scroll = None
 
-        self.status_lock = threading.Lock() # Lock for status updates
-        self.current_status = self.get_current_status() # Initial status
+        self.status_lock = threading.Lock()
+        self.current_status = self.get_current_status()
 
         # Webcam setup (moved here for thread management)
         self.cap = None
@@ -681,13 +681,13 @@ class HeadMouseController:
                                           lambda tp, lm, mp: (lm,), lambda tp, lm, mp: (mp,))
         
         if self.user_config.get('mode_switch') == 'right eye':
-            self.add_event_action_mapping(self.right_eye_event, self.toggle_mode_action, # Renamed action instance
+            self.add_event_action_mapping(self.right_eye_event, self.toggle_mode_action,
                                           lambda tp, lm, mp: (lm,), lambda tp, lm, mp: (self.current_mode,))
         elif self.user_config.get('mode_switch') == 'left eye':
-            self.add_event_action_mapping(self.left_eye_event, self.toggle_mode_action, # Renamed action instance
+            self.add_event_action_mapping(self.left_eye_event, self.toggle_mode_action,
                                           lambda tp, lm, mp: (lm,), lambda tp, lm, mp: (self.current_mode,))
         elif self.user_config.get('mode_switch') == 'mouth open':
-            self.add_event_action_mapping(self.open_mouth_event, self.toggle_mode_action, # Renamed action instance
+            self.add_event_action_mapping(self.open_mouth_event, self.toggle_mode_action,
                                           lambda tp, lm, mp: (lm,), lambda tp, lm, mp: (self.current_mode,))
 
     def start_webcam(self):
@@ -705,10 +705,11 @@ class HeadMouseController:
         self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
         self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
         self.cap.set(cv2.CAP_PROP_FPS, 30)
+        self.cap.set(cv2.CAP_PROP_BUFFERSIZE, 1) # <--- NUOVA IMPOSTAZIONE PER RIDURRE LA LATENZA
 
         self.running = True
         self.processing_thread = threading.Thread(target=self._process_video_feed)
-        self.processing_thread.daemon = True # Allow main program to exit even if thread is running
+        self.processing_thread.daemon = True
         self.processing_thread.start()
         print("Webcam thread started.")
         return True
@@ -718,7 +719,7 @@ class HeadMouseController:
         if self.running:
             self.running = False
             if self.processing_thread and self.processing_thread.is_alive():
-                self.processing_thread.join(timeout=5) # Wait for thread to finish
+                self.processing_thread.join(timeout=5)
                 print("Webcam thread stopped.")
             if self.cap:
                 self.cap.release()
@@ -735,7 +736,7 @@ class HeadMouseController:
                 break
 
             frame = cv2.flip(frame, 1)
-            self.video_frame = frame.copy() # Store for web streaming
+            self.video_frame = frame.copy()
             rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             results = self.face_mesh.process(rgb_frame)
 
@@ -750,16 +751,15 @@ class HeadMouseController:
                     self.process_nose_movement(tracking_point)
                     self.process_events(tracking_point, landmarks_np)
                 
-                # Update status for web interface
                 self.update_web_status(tracking_point, landmarks_np)
             else:
                 self.update_web_status(None, None, face_detected=False)
 
-            time.sleep(0.01) # Small delay to prevent 100% CPU usage
+            time.sleep(0.01)
         print("_process_video_feed loop ended.")
         if self.cap:
             self.cap.release()
-        self.cap = None # Ensure cap is None after release
+        self.cap = None
 
     # --- Methods for Web Interaction ---
     def toggle_pause(self):
@@ -825,10 +825,10 @@ class HeadMouseController:
             status = {
                 'paused': self.paused,
                 'current_mode': self.current_mode,
-                'sensitivity': float(f"{self.mouse_cursor.base_sensitivity:.1f}"), # Format to 1 decimal place
-                'scroll_sensitivity': float(f"{self.scroll_action.scroll_sensitivity:.1f}"), # Format to 1 decimal place
+                'sensitivity': float(f"{self.mouse_cursor.base_sensitivity:.1f}"),
+                'scroll_sensitivity': float(f"{self.scroll_action.scroll_sensitivity:.1f}"),
                 'calibration_done': self.calibration.center_calculated,
-                'face_detected': True # Default, updated by _process_video_feed
+                'face_detected': True
             }
             self.current_status = status
             return status
@@ -843,11 +843,9 @@ class HeadMouseController:
             self.current_status['calibration_done'] = self.calibration.center_calculated
             self.current_status['face_detected'] = face_detected
             
-            # Add visual data for web interface (nose position, deadzone, etc.)
             if tracking_point is not None and landmarks_np is not None:
                 h, w = self.video_frame.shape[:2] if self.video_frame is not None else (480, 640)
                 
-                # Convert normalized landmarks to pixel coordinates
                 nose_x, nose_y = tracking_point[0], tracking_point[1]
 
                 self.current_status['nose_pos'] = {'x': int(nose_x), 'y': int(nose_y)}
@@ -855,12 +853,10 @@ class HeadMouseController:
                 self.current_status['deadzone_radius'] = self.nose_joystick.deadzone_radius
                 self.current_status['max_acceleration_distance'] = self.nose_joystick.max_acceleration_distance
                 
-                # Example: eye and mouth openness for debugging/visualization in web
                 self.current_status['left_eye_closed'] = self.left_eye_event.is_eye_closed()
                 self.current_status['right_eye_closed'] = self.right_eye_event.is_eye_closed()
                 self.current_status['mouth_open'] = self.open_mouth_event.is_mouth_open()
 
-                # Add landmark data for drawing on canvas
                 self.current_status['landmarks'] = [{'x': int(lm[0]), 'y': int(lm[1])} for lm in landmarks_np]
             else:
                 self.current_status['nose_pos'] = None
@@ -873,7 +869,6 @@ class HeadMouseController:
             
         if not self.calibration.center_calculated:
             self.calibration.add_sample(tracking_point)
-            # Update calibration progress in status
             with self.status_lock:
                 self.current_status['calibration_progress'] = int((len(self.calibration.center_samples) / self.calibration.max_center_samples) * 100)
             return
@@ -907,13 +902,13 @@ class HeadMouseController:
             event_args = mapping['event_args_mapper'](tracking_point, landmarks, current_mouse_pos)
             
             if event_instance.check_event(*event_args):
-                if isinstance(action_instance, ToggleModeAction): # Renamed
+                if isinstance(action_instance, ToggleModeAction):
                     old_mode = self.current_mode
                     new_mode = action_instance.execute(self.current_mode)
                     if new_mode != old_mode:
-                        self.set_mode(new_mode) # Use the set_mode method to handle mode changes
+                        self.set_mode(new_mode)
                 elif self.current_mode == 'pointer':
-                    if isinstance(action_instance, (LeftClickAction, RightClickAction)): # Renamed
+                    if isinstance(action_instance, (LeftClickAction, RightClickAction)):
                         action_args = mapping['action_args_mapper'](tracking_point, landmarks, current_mouse_pos)
                         action_instance.execute(*action_args)
         
@@ -926,7 +921,7 @@ class HeadMouseController:
                     tracking_point, self.calibration.center_position
                 )
                 if direction is not None:
-                    scroll_direction_vector = np.array([0, direction[1]]) 
+                    scroll_direction_vector = np.array([0, direction[1]])
             elif self.scroll_direction_source == 'mouth up/down':
                 vertical_offset = self.open_mouth_event.get_vertical_offset(landmarks)
                 
@@ -941,10 +936,9 @@ class HeadMouseController:
 
             elif self.scroll_direction_source == 'eyes up/down (average)':
                 print("Scrolling con occhi non ancora implementato completamente.")
-                pass 
+                pass
             
             if scroll_direction_vector is not None and effective_distance_for_scroll > 0:
                 self.scroll_action.execute(scroll_direction_vector, effective_distance_for_scroll)
 
-# Call disable_system_mouse_acceleration once at the start of the program
 disable_system_mouse_acceleration()
