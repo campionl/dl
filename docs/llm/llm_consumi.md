@@ -96,9 +96,9 @@ Proiezioni del fabbisogno energetico dei data center, con incidenza delle fonti 
 - Energia rinnovabile: crescente impiego di fonti pulite per alimentare i data center, anche se la dipendenza energetica rimane elevata.
 - Nonostante i miglioramenti tecnologici, la domanda globale di capacità computazionale continua a crescere più velocemente dei guadagni in efficienza.
 
-![Consumo Energetico per Query AI vs Altri Servizi](https://kanoppi.co/wp-content/uploads/2025/06/AI-Energy-Comparison.png)
+![Consumo Energetico per Query AI vs Altri Servizi](https://news.engin.umich.edu/wp-content/uploads/2023/04/EfficientML-feature.jpg)
 
-*Fonte: [Kanoppi](https://kanoppi.co/search-engines-vs-ai-energy-consumption-compared/)*
+*Fonte: [Kanoppi](https://news.engin.umich.edu/2023/04/optimization-could-cut-the-carbon-footprint-of-ai-training-by-up-to-75/)*
 
 Confronto del consumo energetico per singola richiesta tra AI e altri servizi digitali.
 
