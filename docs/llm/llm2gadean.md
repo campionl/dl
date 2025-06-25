@@ -121,7 +121,7 @@ Usa queste "attenzioni" per capire il contesto:
 Esempio: Nella frase "La banca del fiume è scoscesa", capisce che "banca" è legata a "fiume" (non alla banca dei soldi!).
 
 Tecnicamente (ma senza troppi dettagli noiosi):
-Il modello calcola dei "punteggi di attenzione" tra le parole (tipo un termometro dell’importanza 🌡️).
+Il modello calcola dei "punteggi di attenzione" tra le parole.
 
 Poi mescola le informazioni delle parole "importanti" per capire il significato.
 
