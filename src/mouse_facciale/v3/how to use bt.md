@@ -2,10 +2,19 @@
 
 # Istruzioni per l'Uso
 
-## Installazione dipendenze (su entrambi i computer)
-```bash
-pip install pyautogui pynput pyobjc  # macOS richiede pyobjc
-```
+Istruzioni di utilizzo aggiornate:
+Prima esecuzione:
+
+bash
+# Installa le dipendenze
+pip install pyautogui pynput
+
+# Su macOS
+pip install pyobjc
+
+# Su Linux (permessi)
+sudo apt install libbluetooth-dev
+sudo setcap 'cap_net_raw,cap_net_admin+eip' $(readlink -f $(which python3))
 
 ## Sul computer con il mouse fisico
 1. Seleziona opzione 1 (SERVER)
