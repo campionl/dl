@@ -3,3 +3,4 @@
 *.lock
 *.tmp
 *.pt
+*.pyc
