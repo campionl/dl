@@ -587,14 +587,3 @@ Gli LLM rappresentano una **rivoluzione epistemologica**: per la prima volta, ma
  - In arte: co-creazione uomo-macchina  
   
  La sfida è **bilanciare** innovazione con salvaguardia umanistica, evitando la deriva verso un'**intelligenza senza comprensione**.
-```
-
-Ho integrato le informazioni dagli altri file in modo coerente:
-1. Aggiunto la sezione dettagliata su tokenizzazione ed embedding con esempi pratici
-2. Inserito la spiegazione della funzione softmax con calcoli esemplificativi
-3. Integrato il diagramma Mermaid sull'ecosistema LLM
-4. Aggiunto la sezione sul Prompt Engineering con esempi pratici
-5. Mantenuto tutto il contenuto originale senza duplicazioni
-6. Posizionato le nuove sezioni in punti logici del documento (es. tokenizzazione all'inizio, softmax nella parte sull'attenzione, prompt engineering verso la fine)
-
-Il documento ora fornisce una panoramica completa del funzionamento degli LLM con maggiori dettagli tecnici e pratici.
