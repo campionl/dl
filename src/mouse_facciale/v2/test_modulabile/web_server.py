@@ -1,153 +1,143 @@
-# web_server.py
 from flask import Flask, render_template, Response, jsonify
 import cv2
 import numpy as np
 import threading
 import time
-# ***CHANGED: Import from test13.py and include all necessary classes***
-from test13 import HeadMouseController, LeftEye_event, RightEye_event, OpenMouth_event, LeftClick_action, RightClick_action, ScrollAction, ToggleModeAction
+
+# Importa le classi dal tuo file test13.py (nuova versione)
+from test13 import HeadMouseController, LeftEyeEvent, RightEyeEvent, OpenMouthEvent, LeftClickAction, RightClickAction, ScrollAction, ToggleModeAction
 
 app = Flask(__name__)
 
+# Questa classe estende HeadMouseController per aggiungere funzionalità specifiche per il web.
+# Le funzioni _web servono per incapsulare le chiamate e gli aggiornamenti di stato per il frontend.
 class WebHeadMouseController(HeadMouseController):
     def __init__(self):
-        # Pass a dummy user_config for initialization as the web interface doesn't set it initially
-        # If you want to configure gestures via the web, you'd need to load/save them here.
-        # For now, it will use the default gesture mappings defined in test13.py's HeadMouseController
-        # and then override in setup_event_mappings if needed, or simply assume fixed ones for web.
-        # Let's keep it simple and make WebHeadMouseController rely on default mappings for now.
+        # Inizializza il HeadMouseController con show_window=False
+        # Le configurazioni dei gesti possono essere passate o definite qui
         super().__init__(show_window=False, user_config={
-            'left_click': 'left eye', # Default for web, can be changed via user config if implemented
+            'left_click': 'left eye', 
             'right_click': 'right eye',
             'mode_switch': 'mouth open',
-            'scroll_direction': 'nose up/down' # Default scroll direction
-        })  # Always False for web
-        
-        # ***It's crucial to call setup_event_mappings from within this class's __init__
-        # to ensure it uses the correct instances of events and actions.***
-        self.setup_event_mappings() # This will use the user_config passed to super()
+            'scroll_direction': 'nose up/down'
+        })
+        self.update_status_lock = threading.Lock() # Lock per prevenire race conditions nell'aggiornamento dello stato web
+        self.start_webcam() # Avvia la webcam e il thread di elaborazione all'avvio del server
 
-        # Web-specific attributes are now already handled by the HeadMouseController's current_status
-        # No need to duplicate them here. Call update_web_status from superclass.
-        self.update_web_status() # Initial update of the status dictionary
+    def toggle_pause_web(self):
+        result = self.toggle_pause() # Chiama il metodo nella classe base
+        self.update_web_status()
+        return result
 
-    # No need to override process_frame specifically for status update,
-    # as update_web_status is called inside HeadMouseController.process_frame.
-    # We still need a minimal setup_event_mappings to ensure actions are correctly bound
-    # for the web-controlled instance.
+    def adjust_sensitivity_web(self, control_type, amount):
+        if control_type == 'pointer':
+            result = self.adjust_pointer_sensitivity(amount)
+        elif control_type == 'scroll':
+            result = self.adjust_scroll_sensitivity(amount)
+        else:
+            return {'success': False, 'message': 'Invalid control type'}
+        self.update_web_status()
+        return result
 
-    def setup_event_mappings(self):
-        """
-        Setup event mappings for the web server's controller instance.
-        This must mirror the mappings in test13.py to ensure consistency.
-        It should ideally use the user_config from the super().__init__ call.
-        """
-        # Call the superclass method which uses self.user_config
-        super().setup_event_action_mappings()
+    def reset_calibration_web(self):
+        result = self.reset_calibration()
+        self.update_web_status()
+        return result
 
+    def reset_mouse_position_web(self):
+        result = self.reset_mouse_position()
+        self.update_web_status()
+        return result
 
-# Initialize the controller for the web server
+    def set_mode_web(self, mode):
+        result = self.set_mode(mode)
+        self.update_web_status()
+        return result
+
+    def get_web_status(self):
+        # Restituisce l'ultimo stato noto, aggiornato dal thread di elaborazione
+        with self.status_lock: # Usa il lock per accedere in sicurezza allo stato
+            return self.current_status.copy()
+
+# Inizializza il controller globale per il server web
 controller = WebHeadMouseController()
-# The initial status update is now handled within WebHeadMouseController's __init__
-# controller.update_web_status() # Redundant now
 
-# --- Flask Routes ---
+# --- Rotte Flask ---
 @app.route('/')
 def index():
+    """Renderizza la pagina HTML principale."""
     return render_template('index.html')
-
-def generate_frames():
-    cap = cv2.VideoCapture(0)
-    if not cap.isOpened():
-        print("Error: Could not open webcam.")
-        # Instead of just returning, yield an empty frame or an error image
-        # so the browser doesn't hang.
-        while True: # Keep yielding an error frame
-            # Create a black image with "No Webcam" text
-            error_frame = np.zeros((480, 640, 3), dtype=np.uint8)
-            cv2.putText(error_frame, "NO WEBCAM / WEBCAM IN USE", (80, 240), 
-                        cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2, cv2.LINE_AA)
-            ret, buffer = cv2.imencode('.jpg', error_frame)
-            frame_bytes = buffer.tobytes()
-            yield (b'--frame\r\n'
-                   b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
-            time.sleep(1) # Don't flood with error frames
-        # return # This return is unreachable but left for original context clarity
-
-    while True:
-        ret, frame = cap.read()
-        if not ret:
-            print("Warning: Could not read frame from webcam.")
-            break # Breaks the loop if frame read fails
-
-        frame = cv2.flip(frame, 1) # Mirror the frame horizontally
-
-        processed_frame = controller.process_frame(frame) # Process frame using the controller's new method
-
-        ret, buffer = cv2.imencode('.jpg', processed_frame)
-        frame_bytes = buffer.tobytes()
-        yield (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
-    cap.release()
 
 @app.route('/video_feed')
 def video_feed():
+    """Genera il flusso video MJPEG per il browser."""
+    def generate_frames():
+        while True:
+            # Assicurati che il frame video sia disponibile e non None
+            if controller.video_frame is not None:
+                ret, buffer = cv2.imencode('.jpg', controller.video_frame)
+                frame = buffer.tobytes()
+                yield (b'--frame\r\n'
+                       b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+            time.sleep(0.03) # Regola per il frame rate desiderato
+
     return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 @app.route('/status')
 def get_status():
-    # The controller's current_status is always up-to-date
-    return jsonify(controller.current_status)
+    """Restituisce lo stato corrente del controller come JSON."""
+    return jsonify(controller.get_web_status())
 
 @app.route('/toggle_pause')
 def toggle_pause():
-    status = controller.toggle_pause_web() # Calls the web-specific wrapper
+    """Togglia lo stato di pausa."""
+    status = controller.toggle_pause_web()
     return jsonify(status)
 
-@app.route('/adjust_sensitivity/<direction>')
-def adjust_sensitivity(direction):
-    """Adjust sensitivity up or down"""
-    amount = 0.2 if direction == 'up' else -0.2
-    # The controller's adjust_sensitivity_web now handles the mode-specific adjustment
-    status = controller.adjust_sensitivity_web(amount)
+@app.route('/adjust_sensitivity/<control_type>/<float:amount>')
+def adjust_sensitivity(control_type, amount):
+    """Regola la sensibilità del puntatore o dello scroll."""
+    status = controller.adjust_sensitivity_web(control_type, amount)
     return jsonify(status)
 
 @app.route('/reset_calibration')
 def reset_calibration():
-    """Reset calibration"""
-    # reset_calibration_web returns the updated status directly
-    status = controller.reset_calibration_web() 
-    return jsonify(status) 
+    """Resetta la calibrazione."""
+    status = controller.reset_calibration_web()
+    return jsonify(status)
 
-@app.route('/reset_mouse_position') # New route for resetting mouse position
+@app.route('/reset_mouse_position')
 def reset_mouse_position():
+    """Resetta la posizione del cursore del mouse."""
     success_status = controller.reset_mouse_position_web()
     return jsonify(success_status)
 
-@app.route('/force_mode_switch')
-def force_mode_switch():
-    """Force mode switch for testing"""
-    old_mode = controller.current_mode
-    controller.set_mode('scroll' if old_mode == 'pointer' else 'pointer') # Use set_mode method
-    controller.update_web_status() # Update status after force switch
-    return jsonify({'old_mode': old_mode, 'new_mode': controller.current_mode, **controller.current_status})
+@app.route('/set_mode/<mode>')
+def set_mode(mode):
+    """Forza il cambio di modalità."""
+    status = controller.set_mode_web(mode)
+    return jsonify(status)
 
 
 if __name__ == '__main__':
     try:
-        print("🚀 Starting Head Mouse Web Server (Local PyAutoGUI Control)...") # Clarify local control
-        print("🌐 Webcam initialized")
-        print("⚙️ Controller ready")
-        print("🔗 Access at: http://localhost:5000")
-        print("\n💡 Controls available via web interface:")
-        print("   - Toggle Pause")
-        print("   - Adjust Sensitivity")
-        print("   - Reset Calibration")
-        print("   - Reset Mouse Position (NEW!)") # Added new control
-        print("   - View Status")
+        print("🚀 Avvio del Head Mouse Web Server (Controllo PyAutoGUI Locale)...")
+        print("🌐 Inizializzazione della webcam e del controller...")
+        # La webcam viene avviata nell'__init__ di WebHeadMouseController
+        print("⚙️ Controller pronto")
+        print("🔗 Accedi all'interfaccia web su: http://localhost:5000")
+        print("\n💡 Controlli disponibili tramite interfaccia web:")
+        print("   - Pausa/Riprendi")
+        print("   - Regola Sensibilità (Puntatore/Scroll)")
+        print("   - Resetta Calibrazione")
+        print("   - Resetta Posizione Mouse")
+        print("   - Cambio Modalità")
+        print("   - Visualizza Stato")
         
+        # Avvia l'applicazione Flask in modalità threaded per non bloccare l'elaborazione video
         app.run(host='0.0.0.0', port=5000, debug=False, threaded=True)
     except KeyboardInterrupt:
-        print("\n🛑 Shutting down server...")
+        print("\n🛑 Interruzione da tastiera. Chiusura del server...")
     finally:
-        print("Controller closed")
+        controller.stop_webcam() # Assicurati di fermare la webcam quando il server si spegne
+        print("Server Flask e webcam chiusi.")
