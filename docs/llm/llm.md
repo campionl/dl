@@ -380,37 +380,21 @@ Le tre fasi fondamentali trasformano un modello generico in uno specializzato:
    - Il pre-training richiede **migliaia di GPU** (costo: $2-20 milioni)  
    - Fine-tuning/RLHF usano **< 10% delle risorse**  
 
-2. **Modularità**:  
-   - Un modello pre-addestrato (es. LLaMA) può essere specializzato per:  
-     - Medicina (BioMedLM)  
-     - Legge (LawGPT)  
-     - Customer service (Chat-bot aziendali)  
+2. **Modularità**: un modello pre-addestrato (es. LLaMA) può essere specializzato per:  
+	- Medicina (BioMedLM)  
+	- Legge (LawGPT)  
+	- Customer service (Chat-bot aziendali)  
 
-3. **Controllo etico**:  
-   - Il RLHF "filtra" comportamenti pericolosi appresi durante il pre-training da fonti non controllate.  
-
-### Sfide attuali nell'apprendimento
-- **Bias nei dati**: se il pre-training contiene stereotipi (es. "l'infermiere è donna"), il modello li riprodurrà.  
-  *Soluzione*: debiasing tramite re-weighting dei dati.  
-
-- **Scalabilità vs sostenibilità**:  
-  Addestrare GPT-4: **50 GWh** (energia per 5.000 case/anno)  
-  *Nuove strategie*:  
-	- **Mixture of Experts (MoE)**: architettura in cui un LLM è composto da "esperti" specializzati (sottoreti neurali), solo un sottoinsieme di questi viene attivato per ogni input, riducendo costi computazionali.  
-	- **Quantizzazione 4-bit**: tecnica per ridurre la precisione numerica dei parametri del modello, diminuendo l'uso di memoria senza perdita significativa di prestazioni.  
-
-- **Knowledge Cutoff**:  
-  Gli LLM non apprendono in tempo reale.  
-  *Soluzioni emergenti*:  
-	- **RAG (Retrieval-Augmented Generation)**: collega il modello a database esterni  
-	- **Apprendimento continuo**: micro-aggiornamenti settimanali  
+3. **Controllo etico**: il RLHF "filtra" comportamenti pericolosi appresi durante il pre-training da fonti non controllate.  
 
 ### Esempio concreto: creazione di un LLM per finanza
 1. **Pre-training** utilizzando come dati 10TB di report aziendali e notizie di borsa (2000-2023)
-2. **Fine-tuning**:  task-specifico:  
+
+2. **Fine-tuning**:  task-specifico  
 ```json
 {"input": "Analizza il bilancio Q3 2023 di Tesla:", "output": "Ricavi: $23.35B (+9% YoY)..."}
 ```
+
 3. **RLHF**:  
    - Analisti finanziari correggono errori su proiezioni di mercato  
    - Reward Model impara a privilegiare fonti come Bloomberg/Reuters  
@@ -426,8 +410,7 @@ Questo processo trasforma un "pappagallo statistico" in uno **strumento professi
 - **Temperature sampling**:  
 	- Bassa (0.2): Risposte conservative *"La capitale è Parigi"*  
 	- Alta (1.0): Risposte creative *"Parigi, città dell'amore, capitale della Francia..."*  
-- **Top-p sampling**:  
-  Seleziona solo da parole cumulativamente probabili al 90%, scartando outlier.  
+- **Top-p sampling**: seleziona solo da parole cumulativamente probabili al 90%, scartando outlier.  
 
 ## LLM Reasoning: capacità logiche e limiti  
 ### Meccanismi di ragionamento  
@@ -444,21 +427,19 @@ Questo processo trasforma un "pappagallo statistico" in uno **strumento professi
 - **Ragionamento analogico**:  
   *"Se Venezia è la 'Serenissima', come chiamare Milano?"* → *"Città meneghina"* (per analogia storico-culturale)  
 
-### Confronto tra Modelli  
+## Confronto tra Modelli  
 
-| Confronto tra Modelli       | GPT-4             | MiMo-7B       | Claude 3     |
-| --------------------------- | :---------------: | :-----------: | :----------: |
-| Ragionamento esplicito      | Solo su richiesta | Sempre attivo | Parziale     |
-| Precisione matematica       | 68%               | 72%           | 75%          |
-| Gestione ambiguità          | Media             | Alta          | Alta         |
+| Confronto tra Modelli  |       GPT-4       |    MiMo-7B    | Claude 3 |
+| ---------------------- | :---------------: | :-----------: | :------: |
+| Ragionamento esplicito | Solo su richiesta | Sempre attivo | Parziale |
+| Precisione matematica  |        68%        |      72%      |   75%    |
+| Gestione ambiguità     |       Media       |     Alta      |   Alta   |
 
-### Limiti fondamentali  
-- **Pensiero controfattuale**:  
-  Fatica con **scenari ipotetici**: *"Se la gravità cessasse, cosa accadrebbe?"* tende a risposte fisicamente inesatte.  
+## Limiti fondamentali  
+- **Pensiero controfattuale**: fatica con **scenari ipotetici**: *"Se la gravità cessasse, cosa accadrebbe?"* tende a risposte fisicamente inesatte.  
 
-- **Assenza di modello mentale**:  
-  Non capisce che gli umani hanno credenze false. Esempio:  
-  *"Anna crede che il latte sia nel frigo. Marco lo sposta. Dove cercherà Anna?"* → Risposta errata 40% dei casi.  
+- **Assenza di modello mentale**: non capisce che gli umani hanno credenze false.  
+  Esempio: *"Anna crede che il latte sia nel frigo. Marco lo sposta. Dove cercherà Anna?"* → Risposta errata 40% dei casi.  
 
 ## Prompt Engineering: l'arte del dialogo efficace
 
@@ -493,8 +474,7 @@ Risolvi questo problema matematico spiegando ogni passaggio:
 Ragiona passo dopo passo:
 ```
 
-## Contesto tecnologico e interdisciplinare  
-### Posizionamento nell'ecosistema
+## Posizionamento nell'ecosistema
 
 Gli LLM si collocano nell'evoluzione dell'intelligenza artificiale come segue:
 
@@ -518,6 +498,7 @@ graph TD
 ### Differenze chiave con i sistemi classici  
 - **Approccio simbolico tradizionale**:  
   Regola fissa: `SE domanda CONTIENE "Divina Commedia" ALLORA rispondi "Dante"`  
+
 - **Approccio LLM**:  
   Genera risposta basata su:  
 	- Frequenza co-occorrenza nei testi  
@@ -543,38 +524,37 @@ graph TD
 - **Allucinazioni strutturali**:  
   Inventa citazioni plausibili: *"Come scriveva Kant nella 'Critica del Gusto'..."* (opera inesistente)
 
-- **Bias sistemici**:  
-  Addestramento su dati occidentali causa errori su prompt relativi a culture minoritarie:  
+- **Bias sistemici**: se il pre-training contiene stereotipi (es. "l'infermiere è donna"), il modello li riprodurrà, l'addestramento su dati occidentali causa errori su prompt relativi a culture minoritarie:  
   *"Ricetta tradizionale somala?"* → Risposte incomplete nel 70% dei test  
+  *Soluzione*: debiasing tramite re-weighting dei dati.  
+
+- **Knowledge Cutoff**:  
+  Gli LLM non apprendono in tempo reale.  
+  *Soluzioni emergenti*:  
+	- **RAG (Retrieval-Augmented Generation)**: collega il modello a database esterni  
+	- **Apprendimento continuo**: micro-aggiornamenti settimanali 
 
 - **Impronta ecologica**:  
-  Addestramento GPT-3: 1,287 MWh (≈ consumo annuale di 120 famiglie USA)  
+  Addestramento GPT-3: 1,287 MWh (≈ consumo annuale di 120 famiglie USA) 
 
----
+- **Proprietà intellettuale**: chi possiede il diritto d'autore di un testo generato da LLM su input umano?  
+
+- **Sostituzione lavorativa**: stime: 40% dei compiti scrittura creativa automatizzabili entro 2030.  
+
+- **Controllo democratico**: proposte di "*AI Constitutional Council*" per supervisione algoritmica.  
+
+--- AGGIUNGERE PARTE SUI CONSUMI E PARAGONI CON ALTRE ATTIVITÀ UMANE ---
 
 ## Futuro e sfide: direzioni di ricerca  
 ### Evoluzioni imminenti  
-- **Modelli neuro-simbolici**:  
-   Combinano ragionamento statistico (LLM) con logica formale (es. Prolog).  
-   Esempio di applicazione: verifica automatica di teoremi matematici.  
+- **Modelli neuro-simbolici**: combinano ragionamento statistico (LLM) con logica formale (es. Prolog).  
+  *Esempio di applicazione*: verifica automatica di teoremi matematici.  
 
-- **Personalizzazione sicura**:  
-   LLM che adattano risposte allo stile utente senza memorizzare dati sensibili.  
+- **Personalizzazione sicura**: LLM che adattano risposte allo stile utente senza memorizzare dati sensibili.  
 
-- **Efficienza estrema**:  
-   Modelli "*sparse*" come *Mixtral* (8 esperti attivati selettivamente in base alla richiesta):  
+- **Efficienza estrema**: modelli "*sparse*" come *Mixtral* (8 esperti attivati selettivamente in base alla richiesta):  
    - 30% meno energia  
    - 6x più veloci
-
-### Questioni etiche fondamentali  
-- **Proprietà intellettuale**:  
-  Chi possiede il diritto d'autore di un testo generato da LLM su input umano?  
-
-- **Sostituzione lavorativa**:  
-  Stime: 40% dei compiti scrittura creativa automatizzabili entro 2030.  
-
-- **Controllo democratico**:  
-  Proposte di "AI Constitutional Council" per supervisione algoritmica.  
 
 ## Valutare un LLM
 
@@ -583,46 +563,54 @@ Per valutare la bontà di un **modello di linguaggio di grandi dimensioni (LLM)*
 ### Principali parametri per valutare un LLM
 
 #### Accuracy
-Percentuale di risposte corrette rispetto al totale. È una metrica globale utile per classificazione o risposte chiuse (es. Vero/Falso), soprattutto se le classi sono bilanciate.
+**Percentuale di risposte corrette rispetto al totale**. È una metrica globale utile per classificazione o risposte chiuse (es. Vero/Falso), soprattutto se le classi sono bilanciate.
 Usato in problemi di classificazione e Q&A.
 #### Precision
-Indica quante tra le risposte positive fornite dal modello erano effettivamente corrette. È utile quando i falsi positivi sono penalizzanti.
+Indica **quante tra le risposte positive fornite dal modello erano effettivamente corrette**. È utile quando i falsi positivi sono penalizzanti.
 Usato in problemi di classificazione.
 #### Recall
-Indica la capacità del modello di trovare tutte le risposte corrette tra quelle possibili. È essenziale quando è più grave non trovare una risposta corretta (es. sicurezza, diagnosi).
+Indica la capacità del modello di trovare **tutte le risposte corrette tra quelle possibili**. È essenziale quando è più grave non trovare una risposta corretta (es. sicurezza, diagnosi).
 Usato in problemi di classificazione.
 #### F1-score
-Media armonica di precision e recall, usata per bilanciare entrambi quando sono importanti e le classi sono sbilanciate.
+**Media armonica di *precision* e *recall***, usata per bilanciare entrambi quando sono importanti e le classi sono sbilanciate.
 Usato in problemi di classificazione e Q&A.
 #### BLEU
-Metrica automatica che misura la sovrapposizione di n-grammi tra il testo generato e un testo di riferimento umano. Usata principalmente per valutare traduzioni automatiche.
+Metrica automatica che misura la sovrapposizione di n-grammi tra il testo generato e un testo di riferimento umano.
 Usato in problemi di traduzione e generazione di testo.
 #### ROUGE
 Metrica simile a BLEU ma più focalizzata sul “recupero” del contenuto, utile in compiti di riassunto e generazione testuale.
 Usato in problemi di generazione di testo.
 #### METEOR / COMET / BERTScore
-Varianti più avanzate per valutare somiglianza semantica tra testi generati e umani, tenendo conto anche della grammatica e del significato.
+Varianti più avanzate per valutare **somiglianza semantica tra testi generati e umani**, tenendo conto anche della grammatica e del significato.
 Usato in problemi di traduzione e generazione di testo.
 #### Pass@k
-Nella generazione di codice, misura se almeno una delle prime *k* soluzioni proposte è corretta (es. compila e passa i test).
+Nella generazione di codice, misura **se almeno una delle prime *k* soluzioni proposte è corretta** (es. compila e passa i test).
 Usato in problemi di generazione di codice.
 #### Test unitari / Execution accuracy
-Tecniche per verificare se il codice generato funziona correttamente una volta eseguito.
+Tecniche per **verificare se il codice generato funziona correttamente una volta eseguito**.
 Usato in problemi di generazione di codice.
 #### Exact Match
-Verifica se la risposta generata corrisponde esattamente alla risposta attesa (usata in Q&A, logica, matematica).
+Verifica se **la risposta generata corrisponde esattamente alla risposta attesa** (usata in Q&A, logica, matematica).
 Usato in problemi matematici e di Q&A.
 #### Step accuracy / Chain-of-Thought (CoT)
-Tecnica usata nei compiti di ragionamento per verificare se i singoli passaggi logici sono corretti, non solo il risultato finale.
+Tecnica usata nei compiti di ragionamento per verificare se i **singoli passaggi logici sono corretti**, non solo il risultato finale.
 Usato in problemi matematici.
 #### TruthfulQA / Bias tests
-Misure di sicurezza che valutano se il modello tende a generare risposte false, offensive o distorte.
+Misure di sicurezza che valutano **se il modello tende a generare risposte false, offensive o distorte**.
 #### Valutazione umana
-Giudizi da parte di persone reali su aspetti qualitativi come coerenza, pertinenza, tono, stile o logica del discorso.
+**Giudizi da parte di persone reali** su aspetti qualitativi come coerenza, pertinenza, tono, stile o logica del discorso.
 Usato in problemi di generazione di testo.
 #### LLM-as-a-judge
-Tecnica in cui un altro LLM valuta la qualità delle risposte generate. È utile per automatizzare valutazioni complesse (es. MT-Bench, Chatbot Arena, G-Eval).
+Tecnica in cui **un altro LLM valuta la qualità delle risposte generate**. È utile per automatizzare valutazioni complesse (es. MT-Bench, Chatbot Arena, G-Eval).
 Usato in problemi di generazione di testo.
+
+## Scenario futuro
+ Entro il 2030, gli LLM diverranno "collaboratori pervasivi":
+ - In medicina: diagnostica assistita  
+ - In educazione: tutor personalizzati  
+ - In arte: co-creazione uomo-macchina  
+  
+ La sfida è **bilanciare** innovazione con salvaguardia umanistica, evitando la deriva verso un'**intelligenza senza comprensione**.
 
 ## Conclusione: tra potenziale e precauzione  
 
@@ -632,10 +620,3 @@ Gli LLM rappresentano una **rivoluzione epistemologica**: per la prima volta, ma
 - **Sono specchi culturali**: amplificano pregiudizi presenti nei dati di addestramento.  
 - **Richiedono governance**: il quadro UE sull'AI (AI Act) classifica gli LLM come "ad alto rischio" per disinformazione.  
 
-### Scenario futuro
- Entro il 2030, gli LLM diverranno "collaboratori pervasivi":
- - In medicina: diagnostica assistita  
- - In educazione: tutor personalizzati  
- - In arte: co-creazione uomo-macchina  
-  
- La sfida è **bilanciare** innovazione con salvaguardia umanistica, evitando la deriva verso un'**intelligenza senza comprensione**.
