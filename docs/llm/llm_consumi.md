@@ -6,7 +6,7 @@
 - Il problema principale è l’**inference**: l’uso continuo da parte di milioni di utenti.
 - Stime 2024: l’intera AI generativa consuma **1-2% dell’elettricità mondiale**, in rapido aumento.
 
-> ⚡ GPT-4 può consumare ~**500 MWh al giorno** solo per rispondere agli utenti.
+> GPT-4 può consumare ~**500 MWh al giorno** solo per rispondere agli utenti.
 
 ---
 
