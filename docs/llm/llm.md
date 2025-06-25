@@ -230,19 +230,17 @@ In questo percorso, il modello ha catturato e manipolato relazioni semantiche co
      - Risoluzione di problemi matematici semplici  
      - Generazione di codice  
 
-### Il Problema delle "Capacità emergenti" nell'IA: un riassunto veloce
+## Il problema delle "capacità emergenti"
 
-Il fenomeno delle **capacità emergenti** si riferisce a nuove abilità che i sistemi di intelligenza artificiale, in particolare i **Grandi Modelli Linguistici (LLM)**, manifestano **improvvisamente** e **senza essere stati programmati** per farlo.
+Il fenomeno delle **capacità emergenti** si riferisce a nuove abilità che i sistemi di intelligenza artificiale, in particolare gli **LLM**, manifestano **improvvisamente** e **senza essere stati programmati** per farlo.
 
-#### Quando e perché sono comparse?
+### Quando e perché sono comparse?
 
-Questo fenomeno ha iniziato a diventare evidente attorno al **2020**, con l'avvento di modelli come **GPT-3**, ed è stato formalmente studiato nel 2022 dal team di Wei et al. con il paper "Emergent Abilities of Large Language Models".
+Questo fenomeno ha iniziato a diventare evidente attorno al **2020**, con l'avvento di modelli come **GPT-3**, ed è stato formalmente studiato nel 2022 dal team di Wei et al. con il paper "*Emergent Abilities of Large Language Models*".
 
-**Non sono state volute né previste**. Sono emerse come una sorpresa, un po' come un "salto" qualitativo nelle capacità del modello, piuttosto che un miglioramento graduale. I ricercatori si sono trovati di fronte a comportamenti inaspettati.
+**Non sono state volute né previste**. Sono emerse come una **sorpresa**, un po' come un "salto" qualitativo nelle capacità del modello, piuttosto che un miglioramento graduale. I ricercatori si sono trovati di fronte a comportamenti inaspettati.
 
-#### Quanto deve essere grande una rete?
-
-Non c'è una dimensione esatta, ma queste capacità si manifestano solo quando i modelli raggiungono una **certa soglia di scala** in termini di:
+Queste capacità si manifestano solo quando i modelli raggiungono una certa **soglia di scala** in termini di:
 * **Numero di parametri** (spesso decine o centinaia di miliardi).
 * **Quantità e qualità dei dati di addestramento**.
 * **Potenza computazionale** impiegata.
