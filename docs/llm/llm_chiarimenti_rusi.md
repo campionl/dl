@@ -74,22 +74,3 @@ Per problemi semplici (tipo 2 + 2) è affidabile.
 Per problemi più complessi, può sbagliare — proprio perché **non capisce la matematica come un umano o un software matematico, ma la simula statisticamente.**
 
 ---
-
-```mermaid  
-graph TD
-    A1[📘 FASE 1: TRAINING] --> A2[📥 INPUT<br>• Testi in linguaggio naturale<br>• Tokenizzazione<br>• Embedding numerico]
-    A2 --> A3[⚙️ ELABORAZIONE<br>• Transformer con self-attention<br>• Previsione del token successivo<br>• Calcolo errore]
-    A3 --> A4[🔁 BACKPROPAGATION<br>• Aggiornamento pesi<br>• Ottimizzazione (es: Adam)]
-    A4 --> A5[✅ OUTPUT<br>• Probabilità dei token<br>• Nessun testo generato, solo apprendimento]
-
-    B1[💬 FASE 2: INFERENZA] --> B2[📥 INPUT<br>• Prompt utente<br>• Tokenizzazione<br>• Embedding]
-    B2 --> B3[⚙️ ELABORAZIONE<br>• Transformer con pesi già appresi<br>• Previsione token successivo]
-    B3 --> B4[🔁 LOOP<br>• Aggiunta token generato al contesto<br>• Nuova previsione]
-    B4 --> B5[📤 OUTPUT<br>• Token generati → Testo leggibile<br>• Risposta del modello]
-
-    style A1 fill:#c2f0c2,stroke:#333,stroke-width:2
-    style B1 fill:#cce5ff,stroke:#333,stroke-width:2
-
-```
-
----
