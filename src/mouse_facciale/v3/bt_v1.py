@@ -4,6 +4,7 @@ import threading
 import time
 import struct
 import platform
+import subprocess
 from collections import deque
 import pyautogui
 from pynput import mouse
@@ -16,8 +17,67 @@ DEADZONE_THRESHOLD = 1.5
 SCROLL_SCALE = 0.1
 
 # --------------------------------------------------
-# Parte Bluetooth Cross-Platform
+# Funzioni Bluetooth Cross-Platform
 # --------------------------------------------------
+def get_bluetooth_address():
+    """Ottieni l'indirizzo Bluetooth locale in modo affidabile"""
+    system = platform.system()
+    try:
+        if system == 'Linux':
+            # Prova a leggere da sysfs
+            try:
+                with open('/sys/class/bluetooth/hci0/address', 'r') as f:
+                    return f.read().strip()
+            except:
+                # Fallback: usa hciconfig
+                result = subprocess.run(
+                    ['hciconfig', 'hci0'], 
+                    capture_output=True, 
+                    text=True
+                )
+                lines = result.stdout.split('\n')
+                for line in lines:
+                    if 'BD Address' in line:
+                        parts = line.split()
+                        return parts[2].strip()
+                return None
+                
+        elif system == 'Windows':
+            # PowerShell per ottenere l'indirizzo Bluetooth
+            ps_command = (
+                "Get-WmiObject -Class Win32_NetworkAdapter | "
+                "Where-Object { $_.PNPDeviceID -like '*BLUETOOTH*' } | "
+                "Select-Object -ExpandProperty MacAddress"
+            )
+            result = subprocess.run(
+                ['powershell', '-Command', ps_command],
+                capture_output=True,
+                text=True
+            )
+            addresses = result.stdout.strip().split('\n')
+            return addresses[0].replace(':', '-') if addresses else None
+            
+        elif system == 'Darwin':
+            # macOS: system_profiler
+            result = subprocess.run(
+                ['system_profiler', 'SPBluetoothDataType', '-json'],
+                capture_output=True,
+                text=True
+            )
+            if result.returncode == 0:
+                import json
+                data = json.loads(result.stdout)
+                controllers = data.get('SPBluetoothDataType', [])
+                for controller in controllers:
+                    address = controller.get('device_address', '')
+                    if address:
+                        return address
+            return None
+            
+    except Exception as e:
+        print(f"Errore ottenimento indirizzo Bluetooth: {e}")
+        return None
+
 def get_bluetooth_socket():
     """Crea un socket Bluetooth appropriato per il sistema operativo"""
     system = platform.system()
@@ -29,7 +89,6 @@ def get_bluetooth_socket():
             sock = socket.socket(socket.AF_BLUETOOTH, socket.SOCK_STREAM, socket.BTPROTO_RFCOMM)
             return sock
         elif system == 'Darwin':  # macOS
-            # macOS richiede un approccio diverso
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             return sock
         else:
@@ -56,20 +115,18 @@ def discover_devices():
             
         elif system == 'Darwin':
             # Utilizziamo il comando system_profiler su macOS
-            import subprocess
-            output = subprocess.check_output([
-                "system_profiler", 
-                "SPBluetoothDataType", 
-                "-detailLevel", 
-                "basic"
-            ], text=True)
-            
-            lines = output.split('\n')
-            for i, line in enumerate(lines):
-                if "Bluetooth" in line and ":" in line and not "Apple" in line:
-                    name = line.split(':')[0].strip()
-                    addr = lines[i+1].split(':')[1].strip() if i+1 < len(lines) else "Unknown"
-                    devices.append((addr, name))
+            result = subprocess.run(
+                ["system_profiler", "SPBluetoothDataType", "-json"],
+                capture_output=True,
+                text=True
+            )
+            if result.returncode == 0:
+                import json
+                data = json.loads(result.stdout)
+                devices_data = data.get('SPBluetoothDataType', [{}])[0].get('devices', [])
+                for device in devices_data:
+                    if 'device_address' in device and 'device_name' in device:
+                        devices.append((device['device_address'], device['device_name']))
                     
     except Exception as e:
         print(f"Errore scoperta dispositivi: {e}")
@@ -172,14 +229,21 @@ class MouseServer:
             return
 
         try:
+            # Binding affidabile con gestione indirizzo
+            bt_address = get_bluetooth_address()
+            print(f"Indirizzo Bluetooth rilevato: {bt_address or 'Sistema predefinito'}")
+            
             if platform.system() == 'Darwin':
-                server_sock.bind(('', PORT))
+                server_sock.bind(('0.0.0.0', PORT))
+            elif bt_address:
+                server_sock.bind((bt_address, PORT))
             else:
                 server_sock.bind(('', PORT))
                 
             server_sock.listen(1)
             print(f"Server in ascolto su porta {PORT}...")
-            print("Nome dispositivo:", socket.gethostname())
+            print(f"Nome dispositivo: {socket.gethostname()}")
+            print("In attesa di connessioni...")
             
             self.client_sock, client_addr = server_sock.accept()
             print(f"Connesso a {client_addr}")
@@ -192,12 +256,20 @@ class MouseServer:
             while self.running:
                 time.sleep(1)
                 
+        except OSError as e:
+            print(f"Errore di binding: {e}")
+            print("Prova queste soluzioni:")
+            print("1. Verifica che il Bluetooth sia attivo")
+            print("2. Prova una porta diversa (modifica PORT nello script)")
+            print("3. Riavvia il servizio Bluetooth")
         except Exception as e:
             print(f"Errore server: {e}")
         finally:
-            server_sock.close()
+            if server_sock:
+                server_sock.close()
             if self.client_sock:
                 self.client_sock.close()
+            self.stop()
 
     def stop(self):
         """Ferma il server"""
@@ -286,6 +358,10 @@ class MouseClient:
                     
         except Exception as e:
             print(f"Errore connessione: {e}")
+            print("Assicurati di:")
+            print("1. Aver effettuato il pairing Bluetooth tra i dispositivi")
+            print("2. Aver avviato prima il server")
+            print("3. Aver inserito l'indirizzo corretto")
         finally:
             if self.sock:
                 self.sock.close()
@@ -342,12 +418,51 @@ def run_client():
     except ValueError:
         print("Input non valido")
 
+# --------------------------------------------------
+# Configurazione iniziale
+# --------------------------------------------------
+def check_dependencies():
+    """Verifica le dipendenze necessarie"""
+    required = ['pyautogui', 'pynput']
+    missing = []
+    
+    if platform.system() == 'Darwin':
+        required.append('pyobjc')
+    
+    for package in required:
+        try:
+            __import__(package)
+        except ImportError:
+            missing.append(package)
+    
+    return missing
+
+# --------------------------------------------------
+# Entry Point
+# --------------------------------------------------
 if __name__ == "__main__":
+    # Verifica dipendenze
+    missing_deps = check_dependencies()
+    if missing_deps:
+        print("Dipendenza mancante:", ", ".join(missing_deps))
+        print("Installa con: pip install", " ".join(missing_deps))
+        sys.exit(1)
+    
     # Avviso per macOS
     if platform.system() == 'Darwin':
         print("Attenzione: Su macOS la connessione avverrà via rete")
         print("Assicurati che entrambi i computer siano sulla stessa rete")
-
+    
+    # Verifica permessi Linux
+    if platform.system() == 'Linux':
+        print("Verifica permessi Bluetooth...")
+        try:
+            subprocess.run(['hciconfig'], check=True, stdout=subprocess.DEVNULL)
+        except:
+            print("Potrebbero essere necessari permessi elevati")
+            print("Prova: sudo setcap 'cap_net_raw,cap_net_admin+eip' $(readlink -f $(which python3))")
+    
+    # Loop principale
     while True:
         choice = main_menu()
         if choice == '1':
