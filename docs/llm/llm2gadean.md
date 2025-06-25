@@ -95,7 +95,7 @@ Se ha letto tante fake news, potrebbe ripeterle senza sapere che sono false.
 
 In breve: È come un enorme autocompletamento (quando scrivi su WhatsApp e il telefono suggerisce le parole), ma super-potente!
 
-**Meccanismo attenzione**
+### Meccanismo attenzione
 
 Immagina questo gioco:
 Sei in una stanza con 3 amici che parlano tutti insieme:
