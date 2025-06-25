@@ -33,7 +33,7 @@ Somma totale = $(20.08 + 2.72 + 1.65 + 0.37 = 24.82)$
 
 **Risultato:**  
 - Il cavallo A ha l'81% di probabilità di vincere.  
-- La somma è 100% (81+11+7+1).  
+- La somma è 100% $(81+11+7+1)$.  
 
 ---
 
