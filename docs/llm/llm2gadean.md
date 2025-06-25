@@ -121,14 +121,14 @@ Usa queste "attenzioni" per capire il contesto:
 Esempio: Nella frase "La banca del fiume è scoscesa", capisce che "banca" è legata a "fiume" (non alla banca dei soldi!).
 
 Tecnicamente (ma senza troppi dettagli noiosi):
-Il modello calcola dei "punteggi di attenzione" tra le parole (tipo un termometro dell’importanza 🌡️).
+Il modello calcola dei "punteggi di attenzione" tra le parole.
 
 Poi mescola le informazioni delle parole "importanti" per capire il significato.
 
 Perché è geniale?
-Prima i modelli leggevano le parole una alla volta in ordine (come un treno 🚂).
+Prima i modelli leggevano le parole una alla volta in ordine.
 
-Con l’attenzione, invece, vede tutto insieme (come un puzzle 🧩) e trova i pezzi collegati, anche se lontani!
+Con l’attenzione, invece, vede tutto insieme e trova i pezzi collegati, anche se lontani!
 
 Esempio reale:
 Se scrivi "Lo scorso weekend ho mangiato una pizza al tartufo buonissima", il modello capisce che:
