@@ -43,6 +43,8 @@ Le reti neurali sono modelli computazionali ispirati al funzionamento del cervel
 I **Large Language Models (LLM)** sono sistemi di IA basati su reti neurali, addestrati su grandi volumi di testo per comprendere e generare linguaggio in modo fluido. Applicati in chatbot, traduzioni e scrittura automatizzata, esempi noti sono GPT, Gemini e Claude.
 
 - [Sugli LLM](./docs/llm/llm.md)
+- [Consumi](./docs/llm/llm_consumi.md)
+- [Ricerca semantica e vector storing](./docs/llm/llm_ricerca_semantica_vector_storing.md)
 - [Glossario LLM](./docs/llm/llm_glossary.md)
 - [Xiaomi MiMo-7B](./docs/llm/MiMo-7B.md)
 - [Ollama e Ollama Lab](./docs/llm/ollama_ollamalab.md)
