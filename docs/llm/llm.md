@@ -54,6 +54,15 @@ oppure
 | "stai" | 2074 |
 | "?"    | 30   |
 
+> **Dimensioni dizionario dei tokenizer**  
+> Ogni LLM utilizza un proprio tokenizer, che hanno dimensioni caratteristiche:
+> - **GPT-4:** $128.256$ token unici
+> - **DeepSeek:** $128.256$ token unici
+> - **BERT:** $30.522$ token unici
+> - **GPT-3:** $50.257$ token unici
+> - **Gemini 1.5:** $256.000$ token unici
+> - **Claude 3:** $256.000$ token unici
+
 #### L'Embedding: dare significato ai numeri
 
 Questi numeri vengono successivamente trasformati in quello che chiamiamo ***embedding*** o rappresentazioni vettoriali. Pensate a ogni parola come a un punto in uno **spazio multidimensionale**, tipicamente con centinaia o migliaia di dimensioni.
