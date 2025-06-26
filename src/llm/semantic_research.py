@@ -50,9 +50,10 @@ def cerca_frasi_simili(input_utente: str, n_risultati: int = 3) -> List[dict]:
     """Cerca frasi simili usando ChromaDB"""
     # Preprocessa l'input
     input_lemmatizzato = preprocessa_testo(input_utente)
+    print("Lemmatizzato:", input_lemmatizzato)
     
     # Calcola l'embedding per la query
-    query_embedding = model.encode([input_utente, input_lemmatizzato]).mean(axis=0).tolist()
+    query_embedding = model.encode([input_utente, input_utente]).mean(axis=0).tolist()
     
     # Esegui la query
     results = collection.query(
