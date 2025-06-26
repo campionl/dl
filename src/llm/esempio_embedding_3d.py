@@ -4,7 +4,7 @@ from sklearn.decomposition import PCA
 from mpl_toolkits.mplot3d import Axes3D
 
 # Parole da visualizzare
-words = ["re", "uomo", "donna", "regina"]
+words = ["re", "uomo", "donna", "regina", "ragazzo", "ragazza", "persona"]
 
 # Carica il modello e crea gli embedding
 model = SentenceTransformer("paraphrase-MiniLM-L6-v2")
@@ -19,7 +19,15 @@ fig = plt.figure(figsize=(10, 8))
 ax = fig.add_subplot(111, projection='3d')
 
 # Colori per genere (maschile: blu, femminile: rosso)
-colors = {'uomo': 'blue', 're': 'blue', 'donna': 'red', 'regina': 'red'}
+colors = {
+    'uomo': 'blue',
+    're': 'blue', 
+    'donna': 'red', 
+    'regina': 'red', 
+    'ragazzo': 'blue',
+    'ragazza': 'red',
+    'persona': 'green'
+}
 
 # Plot con proiezioni
 for word, (x, y, z) in zip(words, emb3d):
