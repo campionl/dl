@@ -1,7 +1,7 @@
 import chromadb
 from chromadb.utils import embedding_functions
 
-frase = input("Inserisci la frase che desideri chiedere: ")
+frase = input("Inserisci la frase che desideri chiedere al DB: ")
 
 # 1. Inizializza il client Chroma
 client = chromadb.Client()
@@ -29,4 +29,4 @@ results = collection.query(
     n_results=1  # Numero di risultati
 )
 
-print(results['documents'][0][0])
+print(results['documents'][0][0]) # Con 'documents' chiedi solo le frasi corrispondenti, gli [0] servono per togliere le quadre del risultato
