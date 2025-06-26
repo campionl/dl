@@ -96,7 +96,7 @@ class UniversalQASystem:
             {'name': 'DBpedia', 'priority': 3, 'enabled': True}
         ]
         
-        print("🚀 Sistema Q&A Universale inizializzato!")
+        print("Sistema Q&A Universale inizializzato!")
         
     def _get_cache_key(self, query: str) -> str:
         """Genera chiave cache per la query"""
@@ -496,11 +496,11 @@ def main():
             print(f"Risultati totali trovati: {result['total_results_found']}")
             
             if result['best_result']['url']:
-                print(f"🔗 Link: {result['best_result']['url']}")
+                print(f"Link: {result['best_result']['url']}")
             
             # Mostra fonti alternative
             if result['alternative_results']:
-                print(f"\n🔍 FONTI ALTERNATIVE:")
+                print(f"\nFONTI ALTERNATIVE:")
                 for i, alt in enumerate(result['alternative_results'], 1):
                     print(f"   {i}. {alt['title']} ({alt['source']}) - {alt['confidence']:.3f}")
             
