@@ -1,12 +1,19 @@
-import numpy as np
-from sklearn.metrics.pairwise import cosine_similarity
+import chromadb
 from sentence_transformers import SentenceTransformer
 import spacy
+from typing import List
 
-# Carica il modello per l'embedding delle frasi
+# Configurazione ChromaDB
+chroma_client = chromadb.PersistentClient(path=".chromadb")  # Directory per salvare i dati
+
+# Crea/ottieni la collection
+collection = chroma_client.get_or_create_collection(
+    name="semantic_search",
+    metadata={"hnsw:space": "cosine"}  # Configurazione per similarità del coseno
+)
+
+# Carica i modelli
 model = SentenceTransformer('paraphrase-multilingual-mpnet-base-v2')
-
-# Carica il modello linguistico spaCy per la lemmatizzazione
 nlp = spacy.load("it_core_news_lg")
 
 # Definizione delle frasi predefinite
@@ -21,30 +28,51 @@ frasi_predefinite = [
     "La pizza margherita è la mia preferita"
 ]
 
-# Calcola gli embedding per le frasi predefinite
-embeddings_frasi = model.encode(frasi_predefinite)
+def inizializza_database():
+    """Aggiunge le frasi predefinite al database"""
+    embeddings = model.encode(frasi_predefinite).tolist()
+    ids = [str(i) for i in range(len(frasi_predefinite))]
+    metadati = [{"source": "predefinito"} for _ in frasi_predefinite]
+    
+    collection.add(
+        embeddings=embeddings,
+        documents=frasi_predefinite,
+        metadatas=metadati,
+        ids=ids
+    )
 
-def preprocessa_testo(testo):
+def preprocessa_testo(testo: str) -> str:
     """Esegue la lemmatizzazione del testo"""
     doc = nlp(testo.lower())
     return " ".join([token.lemma_ for token in doc])
 
-def trova_frase_piu_simile(input_utente):
-    # Preprocessa l'input con lemmatizzazione
+def cerca_frasi_simili(input_utente: str, n_risultati: int = 3) -> List[dict]:
+    """Cerca frasi simili usando ChromaDB"""
+    # Preprocessa l'input
     input_lemmatizzato = preprocessa_testo(input_utente)
     
-    # Calcola l'embedding per l'input dell'utente (usando sia originale che lemmatizzato)
-    embedding_input = model.encode([input_utente, input_lemmatizzato]).mean(axis=0).reshape(1, -1)
+    # Calcola l'embedding per la query
+    query_embedding = model.encode([input_utente, input_lemmatizzato]).mean(axis=0).tolist()
     
-    # Calcola la similarità del coseno
-    similarita = cosine_similarity(embedding_input, embeddings_frasi)
+    # Esegui la query
+    results = collection.query(
+        query_embeddings=[query_embedding],
+        n_results=n_risultati,
+        include=["documents", "distances"]
+    )
     
-    # Trova la frase più simile
-    indice_max = np.argmax(similarita)
-    return frasi_predefinite[indice_max], similarita[0][indice_max]
+    # Formatta i risultati (converti distanze in similarità)
+    return [
+        {"documento": doc, "similarita": 1 - dist}
+        for doc, dist in zip(results["documents"][0], results["distances"][0])
+    ]
+
+# Inizializza il database (solo alla prima esecuzione)
+if collection.count() == 0:
+    inizializza_database()
 
 # Interazione con l'utente
-print("Benvenuto nel sistema di ricerca semantica avanzata!")
+print("Benvenuto nel sistema di ricerca semantica con ChromaDB!")
 print("Frasi disponibili nel database:")
 for i, frase in enumerate(frasi_predefinite, 1):
     print(f"{i}. {frase}")
@@ -60,10 +88,12 @@ while True:
         print("Per favore inserisci del testo.")
         continue
     
-    frase_simile, punteggio = trova_frase_piu_simile(input_utente)
-
-    if punteggio >= 0.3:
-        print(f"\nFrase più attinente: '{frase_simile}'")
-        print(f"Punteggio di similarità: {punteggio:.4f}")
-    else:
-        print(f"Nessuna corrispondenza significativa trovata. Punteggio: {punteggio}")
+    risultati = cerca_frasi_simili(input_utente)
+    
+    if not risultati or risultati[0]["similarita"] < 0.3:
+        print("Nessuna corrispondenza significativa trovata.")
+        continue
+    
+    print("\nRisultati più attinenti:")
+    for i, risultato in enumerate(risultati, 1):
+        print(f"{i}. {risultato['documento']} (similarità: {risultato['similarita']:.4f})")
