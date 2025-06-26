@@ -21,15 +21,15 @@ Dipende dal tipo di tokenizer usato.
 
 ## 3. Tipi di Tokenizer
 
-### 3.1 Word-level (parola intera)
+### Word-level (parola intera)
 - Divide il testo in parole complete.
 - Svantaggio: vocabolario enorme, ignora parole nuove.
 
-### 3.2 Character-level (caratteri)
+### Character-level (caratteri)
 - Divide in singoli caratteri.
 - Estremamente flessibile ma inefficiente: sequenze troppo lunghe.
 
-### 3.3 Subword-level (es. BPE, SentencePiece)
+### Subword-level (es. BPE, SentencePiece)
 - Divide le parole in parti frequenti.
 - Esempio: `"impossibile"` → `im`, `poss`, `ibile`.
 - Usato in modelli moderni (GPT usa **Byte Pair Encoding**, o BPE).
