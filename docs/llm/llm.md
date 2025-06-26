@@ -60,11 +60,11 @@ Ogni LLM utilizza un proprio tokenizer, che hanno dimensioni caratteristiche:
 | LLM             | Numero di token | Dimensione array di embedding |
 | --------------- | --------------- | ----------------------------- |
 | **GPT-4:**      | $128.256$       | $~4096–8192$*                 |
-| **DeepSeek:**   | $128.256$       | $4.096$                       |
-| **BERT:**       | $30.522$        | $768$                         |
-| **GPT-3:**      | $50.257$        | $12288$                       |
-| **Gemini 1.5:** | $256.000$       | $8192$                        | 
+| **DeepSeek:**   | $128.256$       | $4.096$                       | 
 | **Claude 3:**   | $256.000$       | Prob. $4096–8192$             |
+| **Gemini 1.5:** | $256.000$       | $8192$                        |
+| **GPT-3:**      | $50.257$        | $12288$                       |
+| **BERT:**       | $30.522$        | $768$                         |
 
 \* Stimato, in quanto OpenAI non rilascia dettagli
 
