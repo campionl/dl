@@ -7,19 +7,7 @@ I modelli di linguaggio non lavorano con parole o frasi intere, ma con questi "p
 
 ---
 
-## 2. Cosa sono i Token?
-
-Un **token** può essere:
-- una parola intera (`"ciao"` → `ciao`)
-- una parte di parola (`"gatto"` → `gat` + `to`)
-- un singolo carattere (`"?"`, `","`, `#`)
-- uno spazio (`" "`)
-
-Dipende dal tipo di tokenizer usato.
-
----
-
-## 3. Tipi di Tokenizer
+## 2. Tipi di Tokenizer
 
 ### Word-level (parola intera)
 - Divide il testo in parole complete.
@@ -36,7 +24,7 @@ Dipende dal tipo di tokenizer usato.
 
 ---
 
-## 4. Perché è importante?
+## 3. Perché è importante?
 
 - **Efficienza**: meno token → meno lavoro per il modello.
 - **Generalizzazione**: può gestire parole nuove, rare o create (tipo `"gattocane"`).
@@ -44,7 +32,7 @@ Dipende dal tipo di tokenizer usato.
 
 ---
 
-## 5. Esempio pratico
+## 4. Esempio pratico
 
 Testo: `"L'intelligenza artificiale è potente."`  
 Token (semplificati):  
@@ -56,7 +44,7 @@ Il modello lavora su questi numeri, non sul testo originale.
 
 ---
 
-## 6. Tool Famosi
+## 5. Tool Famosi
 
 - **Hugging Face Tokenizers**: per modelli BERT, GPT, T5, ecc.
 - **SentencePiece** (Google): usato in T5, mT5.
@@ -64,7 +52,7 @@ Il modello lavora su questi numeri, non sul testo originale.
 
 ---
 
-## 7. Conclusione
+## 6. Conclusione
 
 Il tokenizer è una delle **componenti chiave** nei modelli linguistici: una buona tokenizzazione migliora efficienza, capacità di apprendere, gestione del contesto e uso della memoria.
 
