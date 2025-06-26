@@ -340,17 +340,17 @@ class UniversalQASystem:
         if not question.strip():
             return {"error": "Domanda vuota"}
         
-        print(f"❓ Domanda: '{question}'")
+        print(f"Domanda: '{question}'")
         
         # Controlla cache
         cache_key = self._get_cache_key(question)
         if cache_key in self.cache:
-            print("📋 Risposta dalla cache")
+            print("Risposta dalla cache")
             return self.cache[cache_key]
         
         # Estrai termini chiave
         key_terms = self._extract_key_terms(question)
-        print(f"🔑 Termini chiave: {key_terms}")
+        print(f"Termini chiave: {key_terms}")
         
         # Cerca usando diversi approcci
         all_results = []
@@ -371,7 +371,7 @@ class UniversalQASystem:
             results = self._search_all_sources(main_term)
             all_results.extend(results)
         
-        print(f"📊 Trovati {len(all_results)} risultati totali")
+        print(f"Trovati {len(all_results)} risultati totali")
         
         if not all_results:
             return {"error": "Nessun risultato trovato"}
@@ -434,7 +434,7 @@ class UniversalQASystem:
         return response
 
 def main():
-    print("🌟 Sistema Q&A Universale - Versione Migliorata")
+    print("Sistema Q&A Universale - Versione Migliorata")
     print("=" * 60)
     print("Questo sistema può rispondere a qualsiasi tipo di domanda!")
     print("Esempi:")
@@ -461,19 +461,19 @@ def main():
     
     while True:
         print("\n" + "="*50)
-        print("❓ Fai una domanda (o 'exit' per uscire, 'test' per esempio):")
+        print("Fai una domanda (o 'exit' per uscire, 'test' per esempio):")
         user_input = input("> ").strip()
         
         if user_input.lower() == 'exit':
-            print("👋 Arrivederci!")
+            print("Arrivederci!")
             break
         
         if user_input.lower() == 'test':
             user_input = test_questions[0]
-            print(f"🧪 Testando con: {user_input}")
+            print(f"Testando con: {user_input}")
         
         if not user_input:
-            print("❌ Per favore inserisci una domanda.")
+            print("Per favore inserisci una domanda.")
             continue
         
         try:
@@ -482,18 +482,18 @@ def main():
             end_time = time.time()
             
             if "error" in result:
-                print(f"❌ {result['error']}")
+                print(f"{result['error']}")
                 continue
             
-            print(f"\n✅ RISPOSTA:")
-            print(f"💬 {result['answer']}")
+            print(f"\nRISPOSTA:")
+            print(f"{result['answer']}")
             
-            print(f"\n📊 DETTAGLI:")
-            print(f"🎯 Fonte principale: {result['best_result']['source']}")
-            print(f"📄 Titolo: {result['best_result']['title']}")
-            print(f"💯 Confidenza: {result['best_result']['confidence']:.3f}")
-            print(f"⏱️ Tempo di risposta: {end_time - start_time:.2f}s")
-            print(f"📈 Risultati totali trovati: {result['total_results_found']}")
+            print(f"\nDETTAGLI:")
+            print(f"Fonte principale: {result['best_result']['source']}")
+            print(f"Titolo: {result['best_result']['title']}")
+            print(f"Confidenza: {result['best_result']['confidence']:.3f}")
+            print(f"Tempo di risposta: {end_time - start_time:.2f}s")
+            print(f"Risultati totali trovati: {result['total_results_found']}")
             
             if result['best_result']['url']:
                 print(f"🔗 Link: {result['best_result']['url']}")
@@ -505,7 +505,7 @@ def main():
                     print(f"   {i}. {alt['title']} ({alt['source']}) - {alt['confidence']:.3f}")
             
         except Exception as e:
-            print(f"❌ Errore: {e}")
+            print(f"Errore: {e}")
             logger.error(f"Errore durante la ricerca: {e}", exc_info=True)
 
 if __name__ == "__main__":
