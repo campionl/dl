@@ -110,7 +110,7 @@ Prima di YOLO, i modelli di *object detection* si basavano su approcci complessi
 
 Il principale ideatore del sistema YOLO (*You Only Look Once*) è **Joseph Redmon**.
 
-![Joseph Redmon](./assets/joseph_redmon.jpeg)
+![Joseph Redmon](../../assets/joseph_redmon.jpeg)
 
 ## Formazione
 Joseph Redmon è un **informatico** e **matematico** statunitense, ha conseguito un **dottorato** di ricerca in *Computer Science* presso l'Università di Washington.

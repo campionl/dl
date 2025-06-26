@@ -12,7 +12,6 @@ I principali caratteri per formattazione del testo markdown sono:
 
 `*` `#` `-` `_`
 
-
 ## Intestazioni
 Le intestazioni sono molto utili per strutturare una documentazione.  
 
@@ -27,67 +26,62 @@ In base al numero di `#` il titolo è più o meno grande, fino ad un massimo di 
 La formattazione serve modificare il testo inserendo per esempio testo in grassetto o in corsivo.  
 - **Testo normale**  
   Per il testo senza formattazione non c'è bisogno di alcun simbolo  
-  
   *Esempio:*  
   `Testo normale`  
   Testo normale
+
 - **Testo in grassetto**  
   Per il grassetto bisogna inserire due asterischi all'inizio e alla fine della frase interessata
-
   *Esempio:*  
   `**grassetto**`  
   **grassetto**
+
 - **Testo corsivo**
   Per il corsivo si inserisce un asterisco all'inizio e alla fine della frase interessata
-
   *Esempio:*  
   `*corsivo*`    
   *corsivo*  
+
 - **Testo corsivo e grassetto**
   Per inserire un testo sia in corsivo e in grassetto si utilizzano tre asterischi all'inizio e alla fine della frase interessata
-
   *Esempio:*  
   `***grassetto e corsivo***`  
   ***grassetto e corsivo***  
+
 - **Testo con la barra**
   Per inserire un testo con la barra sopra si utilizzano due tilde `~` all'inizio e alla fine della frase interessata
-
   *Esempio:*  
   `~~barrato~~`  
   ~~barrato~~
 
 ## Citazioni
-Le citazioni evidenziano blocchi di testo o di codice.  
-Esistono quindi **due** tipi di citazioni.
+Le citazioni evidenziano blocchi di testo o di codice, esistono quindi **due** tipi di citazioni.
 
----
-Le **Citazioni di testo** sono usate per evidenziare un passaggio importante che non è codice.  
-+ Sono ideali per citazioni verbali, estratti da documenti, o per mettere in risalto avvisi o note.<br>
+Le **citazioni di testo** sono usate per evidenziare un passaggio importante che non è codice.  
++ Sono ideali per citazioni verbali, estratti da documenti, o per mettere in risalto avvisi o note.
 + Per scrivere una citazione usiamo `>`.<br>
 **Esempio di citazione di testo**
-> Il file Markdown.md serve da introduzione per scrivere una documentazione in modo professionale. <br>
+> Il file Markdown.md serve da introduzione per scrivere una documentazione in modo professionale.
 
----
-Le **Citazioni di codice** sono usate specificamente per mostrare frammenti di codice sorgente, comandi o sintassi che non devono essere interpretati come testo normale.<br>
 
- + Esistono due distinzioni:
-   + Il **Codice Inline** è usato per evidenziare piccoli frammenti di codice: 
-   Per creare un codice inline si racchiude il testo tra due apici inversi.
-`esempio di codice inline`
-    + Il **Blocco di codice** è usato per evidenziare diverse righe di codice.
-     Si usano tre apici inversi all'inizio e alla fine del blocco di codice.
+Le **citazioni di codice** sono usate specificamente per mostrare frammenti di codice sorgente, comandi o sintassi che non devono essere interpretati come testo normale.
+Esistono due distinzioni:
+   + Il **codice inline** è usato per evidenziare piccoli frammenti di codice, per creare un codice inline si racchiude il testo tra due apici inversi.
+     `esempio di codice inline`
+   + Il **Blocco di codice** è usato per evidenziare diverse righe di codice, si usano tre apici inversi all'inizio e alla fine del blocco di codice.
      ```python
 	     for(i in range(10)):
 				print(i)
 	 ```
-## Fare un elenco
+
+## Elenchi
 
 Per gli elenchi puntati si inserisce un trattino `-` all'inizio della riga  
 
 *Sintassi:*  
 
-`-elemento 1`  
-`-elemento 2`  
+`- elemento 1`  
+`- elemento 2`  
 
 *Esempio:*
 - elemento 1
