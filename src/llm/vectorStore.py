@@ -26,7 +26,7 @@ collection.add(
 # 4. Interroga il Vector Store
 results = collection.query(
     query_texts=[frase],
-    n_results=1  # Numero di risultati
+    n_results=2  # Numero di risultati
 )
 
 print(results['documents'][0][0])
