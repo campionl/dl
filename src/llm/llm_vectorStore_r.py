@@ -14,6 +14,76 @@ except ImportError:
 
 # 1. Definizione dei documenti (italiano e inglese)
 documenti = [
+    "La volpe costruisce tane sotterranee complesse",
+    "I canguri saltano attraverso le pianure australiane",
+    "Le zebre hanno strisce uniche come impronte digitali",
+    "I rinoceronti sono in pericolo di estinzione a causa del bracconaggio",
+    "Gli ippopotami trascorrono gran parte della giornata nell'acqua",
+    "I koala si nutrono esclusivamente di foglie di eucalipto",
+    
+    # Animali acquatici aggiuntivi
+    "Le orche cacciano in gruppi coordinati",
+    "I cavallucci marini sono l'unica specie dove il maschio partorisce",
+    "Le stelle marine possono rigenerare gli arti perduti",
+    "I coralli costruiscono immense barriere nel corso di secoli",
+    "I calamari giganti abitano negli abissi oceanici",
+    
+    # Tecnologia avanzata
+    "Il quantum computing rivoluzionerà la crittografia moderna",
+    "La blockchain garantisce transazioni sicure e trasparenti",
+    "L'internet delle cose connette dispositivi quotidiani alla rete",
+    "La realtà aumentata sovrappone informazioni digitali al mondo reale",
+    "I big data analizzano pattern nascosti in enormi dataset",
+    "La cybersecurity protegge sistemi da attacchi informatici",
+    
+    # Ambiente ed ecologia
+    "Il cambiamento climatico altera gli ecosistemi globali",
+    "Le energie rinnovabili riducono l'impatto ambientale",
+    "L'economia circolare minimizza gli sprechi di risorse",
+    "La deforestazione minaccia la biodiversità amazzonica",
+    "L'inquinamento plastico soffoca gli oceani",
+    
+    # Cultura e società
+    "Il Rinascimento italiano ha rivoluzionato l'arte europea",
+    "La cucina mediterranea è patrimonio culturale UNESCO",
+    "Il calcio rappresenta una passione nazionale in Italia",
+    "La moda italiana è rinomata in tutto il mondo",
+    "L'opera lirica nacque in Italia nel XVI secolo",
+    
+    # Salute e benessere
+    "La dieta equilibrata previene malattie croniche",
+    "L'esercizio fisico regolare migliora la longevità",
+    "La meditazione riduce lo stress e l'ansia",
+    "Il sonno adeguato è fondamentale per le funzioni cognitive",
+    
+    # Viaggi e geografia
+    "Le Cinque Terre offrono panorami costieri mozzafiato",
+    "Il Colosseo è l'anfiteatro romano più grande del mondo",
+    "Venezia è costruita su 118 isolette collegate da ponti",
+    "La Sicilia custodisce templi greci meglio conservati della Grecia",
+    "Il Trentino-Alto Adige è famoso per le sue Dolomiti",
+    
+    # Scienza e spazio
+    "La teoria della relatività di Einstein ha trasformato la fisica",
+    "Il bosone di Higgs è chiamato 'particella di Dio'",
+    "Le onde gravitazionali confermano predizioni di Einstein",
+    "La missione Rosetta ha studiato una cometa da vicino",
+    "La Stazione Spaziale Internazionale orbita a 400km di altezza",
+    
+    # Arte e letteratura
+    "Dante Alighieri scrisse la Divina Commedia in volgare",
+    "Leonardo da Vinci era un genio poliedrico del Rinascimento",
+    "Michelangelo scolpì il David da un unico blocco di marmo",
+    "La Gioconda è il ritratto più famoso di Leonardo",
+    "Il futurismo italiano celebrava velocità e tecnologia",
+    
+    # Cucina italiana
+    "La pizza napoletana è patrimonio culturale UNESCO",
+    "Il parmigiano reggiano stagiona per almeno 12 mesi",
+    "L'olio extravergine d'oliva è fondamentale nella dieta mediterranea",
+    "Il tiramisù è un dolce italiano conosciuto in tutto il mondo",
+    "Il caffè espresso è un rito quotidiano in Italia",
+    
     # Animali terrestri
     "Il gatto si arrampica sull'albero",
     "Il cane abbaia nel giardino", 
