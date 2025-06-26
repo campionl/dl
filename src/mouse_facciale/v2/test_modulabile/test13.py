@@ -604,13 +604,21 @@ class HeadMouseController:
             min_detection_confidence=0.8,
             min_tracking_confidence=0.8
         )
+        self.mp_drawing = mp.solutions.drawing_utils
+        self.mp_drawing_styles = mp.solutions.drawing_styles
 
         self.screen_w, self.screen_h = pyautogui.size()
 
+        # Landmark Indices (from MediaPipe Face Mesh documentation)
         self.NOSE_TIP = 4
         self.UPPER_LIP = 13
         self.LOWER_LIP = 14
-        
+        self.LEFT_EYE_POINTS = [33, 7, 163, 144, 145, 153, 154, 155, 133, 173, 157, 158, 159, 160, 161, 246]
+        self.RIGHT_EYE_POINTS = [362, 382, 381, 380, 374, 373, 390, 249, 263, 466, 388, 387, 386, 385, 384, 398]
+        self.MOUTH_POINTS = [
+            61, 185, 40, 39, 37, 0, 267, 269, 270, 409, 291, 375, 321, 405, 314, 17, 84, 181, 91, 146
+        ] # Outer mouth landmarks
+
         self.calibration = CalibrationAction()
         self.nose_joystick = NoseJoystickEvent(max_acceleration_distance=100.0)
         self.mouse_cursor = MouseCursorAction(self.screen_w, self.screen_h)
@@ -639,7 +647,7 @@ class HeadMouseController:
         # Webcam setup (moved here for thread management)
         self.cap = None
         self.video_frame = None
-        self.processing_thread = None
+        self.processed_frame_for_display = None # Store processed frame for web display
         self.running = False
 
     def add_event_action_mapping(self, event, action, event_args_mapper, action_args_mapper):
@@ -705,7 +713,7 @@ class HeadMouseController:
         self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
         self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
         self.cap.set(cv2.CAP_PROP_FPS, 30)
-        self.cap.set(cv2.CAP_PROP_BUFFERSIZE, 1) # <--- NUOVA IMPOSTAZIONE PER RIDURRE LA LATENZA
+        self.cap.set(cv2.CAP_PROP_BUFFERSIZE, 1) # Set buffer size to 1 for reduced latency
 
         self.running = True
         self.processing_thread = threading.Thread(target=self._process_video_feed)
@@ -727,7 +735,7 @@ class HeadMouseController:
         print("Webcam stopped.")
 
     def _process_video_feed(self):
-        """Internal method to process video frames."""
+        """Internal method to process video frames and draw on them."""
         print("Processing video feed...")
         while self.running and self.cap and self.cap.isOpened():
             ret, frame = self.cap.read()
@@ -736,11 +744,14 @@ class HeadMouseController:
                 break
 
             frame = cv2.flip(frame, 1)
-            self.video_frame = frame.copy()
+            display_frame = frame.copy() # Make a copy for drawing to avoid modifying the original
+
             rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             results = self.face_mesh.process(rgb_frame)
 
+            face_detected = False
             if results.multi_face_landmarks:
+                face_detected = True
                 face_landmarks = results.multi_face_landmarks[0]
                 h, w = frame.shape[:2]
                 landmarks_np = np.array([[lm.x * w, lm.y * h] for lm in face_landmarks.landmark], dtype=np.float64)
@@ -751,11 +762,95 @@ class HeadMouseController:
                     self.process_nose_movement(tracking_point)
                     self.process_events(tracking_point, landmarks_np)
                 
-                self.update_web_status(tracking_point, landmarks_np)
-            else:
-                self.update_web_status(None, None, face_detected=False)
+                # --- Drawing on display_frame ---
+                # 1. Draw all face mesh landmarks
+                self.mp_drawing.draw_landmarks(
+                    image=display_frame,
+                    landmark_list=face_landmarks,
+                    connections=self.mp_face_mesh.FACEMESH_TESSELATION,
+                    landmark_drawing_spec=None,
+                    connection_drawing_spec=self.mp_drawing_styles.get_default_face_mesh_tesselation_style()
+                )
+                self.mp_drawing.draw_landmarks(
+                    image=display_frame,
+                    landmark_list=face_landmarks,
+                    connections=self.mp_face_mesh.FACEMESH_CONTOURS,
+                    landmark_drawing_spec=None,
+                    connection_drawing_spec=self.mp_drawing_styles.get_default_face_mesh_contours_style()
+                )
+                self.mp_drawing.draw_landmarks(
+                    image=display_frame,
+                    landmark_list=face_landmarks,
+                    connections=self.mp_face_mesh.FACEMESH_IRISES,
+                    landmark_drawing_spec=None,
+                    connection_drawing_spec=self.mp_drawing_styles.get_default_face_mesh_iris_connections_style()
+                )
 
-            time.sleep(0.01)
+                # 2. Draw Nose Tip
+                cv2.circle(display_frame, (int(tracking_point[0]), int(tracking_point[1])), 5, (0, 255, 255), -1)
+
+                # 3. Draw Dead Zone and Acceleration Zone
+                if self.calibration.center_calculated and self.calibration.center_position is not None:
+                    center_x, center_y = int(self.calibration.center_position[0]), int(self.calibration.center_position[1])
+                    # Dead zone
+                    cv2.circle(display_frame, (center_x, center_y), int(self.nose_joystick.deadzone_radius), (0, 0, 255), 2)
+                    # Max acceleration zone
+                    cv2.circle(display_frame, (center_x, center_y), int(self.nose_joystick.max_acceleration_distance), (255, 0, 0), 2)
+                    # Line from center to nose tip if outside deadzone
+                    if self.nose_joystick.is_outside_deadzone(tracking_point, self.calibration.center_position):
+                        cv2.line(display_frame, (center_x, center_y), (int(tracking_point[0]), int(tracking_point[1])), (0, 255, 0), 2)
+                
+                # 4. Display Eye and Mouth Status
+                font = cv2.FONT_HERSHEY_SIMPLEX
+                text_scale = 0.6
+                text_thickness = 1
+                text_color_active = (0, 255, 0) # Green
+                text_color_inactive = (0, 0, 255) # Red
+
+                # Left Eye
+                if self.left_eye_event.is_eye_closed():
+                    cv2.putText(display_frame, 'O SX: CHIUSO', (10, 30), font, text_scale, text_color_active, text_thickness, cv2.LINE_AA)
+                else:
+                    cv2.putText(display_frame, 'O SX: APERTO', (10, 30), font, text_scale, text_color_inactive, text_thickness, cv2.LINE_AA)
+                
+                # Right Eye
+                if self.right_eye_event.is_eye_closed():
+                    cv2.putText(display_frame, 'O DX: CHIUSO', (10, 60), font, text_scale, text_color_active, text_thickness, cv2.LINE_AA)
+                else:
+                    cv2.putText(display_frame, 'O DX: APERTO', (10, 60), font, text_scale, text_color_inactive, text_thickness, cv2.LINE_AA)
+
+                # Mouth
+                if self.open_mouth_event.is_mouth_open():
+                    cv2.putText(display_frame, 'BOCCA: APERTA', (10, 90), font, text_scale, text_color_active, text_thickness, cv2.LINE_AA)
+                else:
+                    cv2.putText(display_frame, 'BOCCA: CHIUSA', (10, 90), font, text_scale, text_color_inactive, text_thickness, cv2.LINE_AA)
+
+                # 5. Display Controller Status (Paused, Mode, Calibration)
+                status_text_y_start = h - 90
+                
+                cv2.putText(display_frame, f'STATO: {"PAUSA" if self.paused else "ATTIVO"}', 
+                            (10, status_text_y_start), font, text_scale, (255, 255, 0), text_thickness, cv2.LINE_AA)
+                
+                cv2.putText(display_frame, f'MODALITA: {self.current_mode.upper()}', 
+                            (10, status_text_y_start + 30), font, text_scale, (0, 255, 255), text_thickness, cv2.LINE_AA)
+                
+                cal_status_text = 'CALIBRATO' if self.calibration.center_calculated else f'CALIBRAZIONE: {int((len(self.calibration.center_samples) / self.calibration.max_center_samples) * 100)}%'
+                cv2.putText(display_frame, cal_status_text, 
+                            (10, status_text_y_start + 60), font, text_scale, (255, 0, 255), text_thickness, cv2.LINE_AA)
+
+            else:
+                # If no face detected, draw a message
+                text = "Volto NON Rilevato!"
+                text_size = cv2.getTextSize(text, cv2.FONT_HERSHEY_SIMPLEX, 1, 2)[0]
+                text_x = (w - text_size[0]) // 2
+                text_y = (h + text_size[1]) // 2
+                cv2.putText(display_frame, text, (text_x, text_y), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv2.LINE_AA)
+
+            self.processed_frame_for_display = display_frame.copy() # Store the frame with drawings
+            self.update_web_status(tracking_point if face_detected else None, landmarks_np if face_detected else None, face_detected=face_detected)
+            
+            # Removed time.sleep(0.01) for better fluidity
+
         print("_process_video_feed loop ended.")
         if self.cap:
             self.cap.release()
@@ -828,7 +923,7 @@ class HeadMouseController:
                 'sensitivity': float(f"{self.mouse_cursor.base_sensitivity:.1f}"),
                 'scroll_sensitivity': float(f"{self.scroll_action.scroll_sensitivity:.1f}"),
                 'calibration_done': self.calibration.center_calculated,
-                'face_detected': True
+                'face_detected': True # This will be updated more accurately by _process_video_feed
             }
             self.current_status = status
             return status

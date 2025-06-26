@@ -180,37 +180,73 @@
         }
 
         .status-info .tag.paused {
-            background-color: #dbab09; /* Yellow */
+            background-color: #dbab09;
             color: #1c1c1c;
         }
 
         .status-info .tag.active {
-            background-color: #2ea043; /* Green */
+            background-color: #2ea043;
             color: white;
         }
 
         .status-info .tag.calibrating {
-            background-color: #8957e5; /* Purple */
+            background-color: #8957e5;
             color: white;
         }
 
         .status-info .tag.calibrated {
-            background-color: #2ea043; /* Green */
+            background-color: #2ea043;
             color: white;
         }
 
         .status-info .tag.pointer-mode {
-            background-color: #58a6ff; /* Blue */
+            background-color: #58a6ff;
             color: white;
         }
 
         .status-info .tag.scroll-mode {
-            background-color: #f7a057; /* Orange */
+            background-color: #f7a057;
             color: #1c1c1c;
         }
+
         #videoStatus {
             margin-top: 10px;
             font-weight: bold;
+        }
+
+        /* Stili per la sezione di configurazione azioni */
+        .set-gesture {
+            background-color: #30363d;
+            color: #c9d1d9;
+            padding: 8px 12px;
+            font-size: 0.8em;
+            margin: 2px;
+            flex-grow: 1;
+            min-width: 80px;
+        }
+
+        .set-gesture.active {
+            background-color: #58a6ff !important;
+            color: white !important;
+            border: 2px solid #c9d1d9 !important;
+        }
+
+        .config-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #30363d;
+        }
+
+        .current-config {
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(48, 54, 61, 0.3);
+            border-radius: 5px;
+        }
+
+        .current-config p {
+            margin: 5px 0;
+            font-size: 0.85em;
         }
     </style>
 </head>
@@ -273,6 +309,54 @@
                     <button class="adjust-sensitivity secondary" data-type="scroll" data-amount="0.5">+</button>
                 </div>
             </div>
+
+            <!-- Sezione Configurazione Azioni -->
+            <div class="control-group config-section">
+                <h2>Configurazione Azioni</h2>
+                
+                <div class="control-group">
+                    <label>Click Sinistro</label>
+                    <div class="button-group">
+                        <button class="set-gesture" data-action="left_click" data-gesture="left eye">Occhio SX</button>
+                        <button class="set-gesture" data-action="left_click" data-gesture="right eye">Occhio DX</button>
+                        <button class="set-gesture" data-action="left_click" data-gesture="mouth open">Bocca Aperta</button>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <label>Click Destro</label>
+                    <div class="button-group">
+                        <button class="set-gesture" data-action="right_click" data-gesture="left eye">Occhio SX</button>
+                        <button class="set-gesture" data-action="right_click" data-gesture="right eye">Occhio DX</button>
+                        <button class="set-gesture" data-action="right_click" data-gesture="mouth open">Bocca Aperta</button>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <label>Cambio Modalità</label>
+                    <div class="button-group">
+                        <button class="set-gesture" data-action="mode_switch" data-gesture="left eye">Occhio SX</button>
+                        <button class="set-gesture" data-action="mode_switch" data-gesture="right eye">Occhio DX</button>
+                        <button class="set-gesture" data-action="mode_switch" data-gesture="mouth open">Bocca Aperta</button>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <label>Direzione Scrolling</label>
+                    <div class="button-group">
+                        <button class="set-gesture" data-action="scroll_direction" data-gesture="nose up/down">Naso Su/Giù</button>
+                        <button class="set-gesture" data-action="scroll_direction" data-gesture="mouth up/down">Bocca Su/Giù</button>
+                    </div>
+                </div>
+                
+                <div class="status-info current-config">
+                    <p>Configurazione Attuale:</p>
+                    <p>- Click SX: <span id="currentLeftClick">left eye</span></p>
+                    <p>- Click DX: <span id="currentRightClick">right eye</span></p>
+                    <p>- Cambio Modalità: <span id="currentModeSwitch">mouth open</span></p>
+                    <p>- Scrolling: <span id="currentScrollDir">nose up/down</span></p>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -320,11 +404,18 @@
             });
         });
 
-        // Event Listeners per gli slider della sensibilità
-        // Nota: i slider non inviano comandi direttamente all'input
-        // I bottoni +/- sono i metodi raccomandati per regolare la sensibilità
-        // Se si vuole usare il slider per settare un valore assoluto,
-        // servirebbe un endpoint API dedicato nel backend.
+        // Gestione della configurazione delle azioni
+        document.querySelectorAll('.set-gesture').forEach(button => {
+            button.addEventListener('click', async (event) => {
+                const action = event.target.dataset.action;
+                const gesture = event.target.dataset.gesture;
+                
+                const response = await sendCommand(`/set_gesture_mapping/${action}/${gesture}`);
+                if (response && response.success) {
+                    updateCurrentGestures();
+                }
+            });
+        });
 
         // Funzione per aggiornare lo stato mostrato nella GUI
         async function updateStatus() {
@@ -360,13 +451,12 @@
                 faceDetectionSpan.textContent = data.face_detected ? 'RILEVATA' : 'NON RILEVATA';
                 faceDetectionSpan.style.color = data.face_detected ? 'lightgreen' : 'red';
 
-
                 // Aggiorna sensibilità
                 document.getElementById('statusSensitivity').textContent = data.sensitivity.toFixed(1);
-                document.getElementById('pointerSensitivitySlider').value = data.sensitivity.toFixed(1); // Update slider position
+                document.getElementById('pointerSensitivitySlider').value = data.sensitivity.toFixed(1);
                 
                 document.getElementById('statusScrollSensitivity').textContent = data.scroll_sensitivity.toFixed(1);
-                document.getElementById('scrollSensitivitySlider').value = data.scroll_sensitivity.toFixed(1); // Update slider position
+                document.getElementById('scrollSensitivitySlider').value = data.scroll_sensitivity.toFixed(1);
 
                 // Update video stream status
                 const videoStream = document.getElementById('videoStream');
@@ -379,20 +469,54 @@
                     videoStatus.textContent = '✅ Stream Online';
                     videoStatus.style.color = 'green';
                 };
-                // Initial check for video stream status
                 if (!videoStream.complete || videoStream.naturalWidth === 0) {
                      videoStatus.textContent = '🔄 Loading Stream...';
                      videoStatus.style.color = '#c9d1d9';
                 }
-            } catch (error) { // This catch block handles errors from fetch or parsing JSON
+            } catch (error) {
                 console.error('Error fetching status:', error);
                 document.getElementById('videoStatus').textContent = '❌ Errore Caricamento Stato';
                 document.getElementById('videoStatus').style.color = 'red';
             }
         }
 
+        // Funzione per aggiornare la visualizzazione delle configurazioni correnti
+        async function updateCurrentGestures() {
+            try {
+                const response = await fetch('/get_gesture_mappings');
+                const data = await response.json();
+                
+                document.getElementById('currentLeftClick').textContent = data.left_click;
+                document.getElementById('currentRightClick').textContent = data.right_click;
+                document.getElementById('currentModeSwitch').textContent = data.mode_switch;
+                document.getElementById('currentScrollDir').textContent = data.scroll_direction;
+                
+                // Aggiorna anche gli stili dei bottoni attivi
+                document.querySelectorAll('.set-gesture').forEach(button => {
+                    button.classList.remove('active');
+                });
+                
+                // Evidenzia i bottoni attivi
+                document.querySelectorAll(`.set-gesture[data-action="left_click"][data-gesture="${data.left_click}"]`).forEach(btn => {
+                    btn.classList.add('active');
+                });
+                document.querySelectorAll(`.set-gesture[data-action="right_click"][data-gesture="${data.right_click}"]`).forEach(btn => {
+                    btn.classList.add('active');
+                });
+                document.querySelectorAll(`.set-gesture[data-action="mode_switch"][data-gesture="${data.mode_switch}"]`).forEach(btn => {
+                    btn.classList.add('active');
+                });
+                document.querySelectorAll(`.set-gesture[data-action="scroll_direction"][data-gesture="${data.scroll_direction}"]`).forEach(btn => {
+                    btn.classList.add('active');
+                });
+            } catch (error) {
+                console.error('Error fetching current gesture mappings:', error);
+            }
+        }
+
         // Fetch status initially and every few seconds
         updateStatus();
+        updateCurrentGestures();
         setInterval(updateStatus, 1000); // Poll every 1 second
     </script>
 </body>

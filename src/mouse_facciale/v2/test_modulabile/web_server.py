@@ -41,8 +41,9 @@ def generate_frames():
             controller_started = True
 
     while True:
-        if controller.video_frame is not None:
-            ret, buffer = cv2.imencode('.jpg', controller.video_frame)
+        # ***CORREZIONE QUI: Usa controller.processed_frame_for_display per il feed video***
+        if controller.processed_frame_for_display is not None:
+            ret, buffer = cv2.imencode('.jpg', controller.processed_frame_for_display)
             if ret:
                 frame = buffer.tobytes()
                 yield (b'--frame\r\n'
@@ -92,6 +93,44 @@ def adjust_sensitivity(sensitivity_type, amount):
 def set_mode_route(mode):
     return jsonify(controller.set_mode(mode))
 
+@app.route('/get_gesture_mappings')
+def get_gesture_mappings():
+    """Returns the current gesture mappings configuration."""
+    return jsonify({
+        'left_click': controller.user_config.get('left_click', 'left eye'),
+        'right_click': controller.user_config.get('right_click', 'right eye'),
+        'mode_switch': controller.user_config.get('mode_switch', 'mouth open'),
+        'scroll_direction': controller.user_config.get('scroll_direction', 'nose up/down')
+    })
+
+@app.route('/set_gesture_mapping/<action>/<gesture>')
+def set_gesture_mapping(action, gesture):
+    """Sets a new gesture mapping for an action."""
+    valid_actions = ['left_click', 'right_click', 'mode_switch', 'scroll_direction']
+    valid_gestures = {
+        'left_click': ['left eye', 'right eye', 'mouth open'],
+        'right_click': ['left eye', 'right eye', 'mouth open'],
+        'mode_switch': ['left eye', 'right eye', 'mouth open'],
+        'scroll_direction': ['nose up/down', 'mouth up/down', 'eyes up/down (average)']
+    }
+    
+    if action not in valid_actions:
+        return jsonify({'success': False, 'message': 'Invalid action type'})
+    
+    if gesture not in valid_gestures[action]:
+        return jsonify({'success': False, 'message': 'Invalid gesture for this action'})
+    
+    # Update the configuration
+    controller.user_config[action] = gesture
+    
+    # Reinitialize the controller with new mappings
+    controller.setup_event_action_mappings()
+    
+    return jsonify({
+        'success': True,
+        'message': f'Mapping updated: {action} now triggered by {gesture}',
+        'current_mappings': controller.user_config
+    })
 
 if __name__ == '__main__':
     try:
