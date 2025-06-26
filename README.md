@@ -1,4 +1,4 @@
-# REPO DL
+# Repository Deep Learning
 
 In questo repository sono riportati tutti i progressi fatti sullo studio di Markdown, Git, GitHub, reti neurali e LLM fatti nel percorso di PCTO di:
 - [Luca Campion](mailto:21048@studenti.marconiverona.edu.it)
