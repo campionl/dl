@@ -12,8 +12,8 @@ In questo repository sono riportati tutti i progressi fatti sullo studio di Mark
 
 ## Documentazione propedeutica: linguaggio Markdown, Git e GitHub
 
-- [Documentazione su Markdown](./docs/git/markdown.md)
-- [Documentazione su Git e GitHub](./docs/git/git_github.md)
+- [Documentazione su Markdown](markdown.md)
+- [Documentazione su Git e GitHub](git_github.md)
 
 ## Deep Learning 
 

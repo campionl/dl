@@ -70,8 +70,8 @@ Esistono due distinzioni:
      `esempio di codice inline`
    + Il **Blocco di codice** è usato per evidenziare diverse righe di codice, si usano tre apici inversi all'inizio e alla fine del blocco di codice.
      ```python
-	     for(i in range(10)):
-				print(i)
+	     for i in range(10):
+			print(i)
 	 ```
 
 ## Elenchi
@@ -79,7 +79,6 @@ Esistono due distinzioni:
 Per gli elenchi puntati si inserisce un trattino `-` all'inizio della riga  
 
 *Sintassi:*  
-
 `- elemento 1`  
 `- elemento 2`  
 
@@ -90,13 +89,11 @@ Per gli elenchi puntati si inserisce un trattino `-` all'inizio della riga
 Per l’elenco numerato si inserisce il numero dell’elemento seguito da un punto all’inizio della riga.
 
 *Sintassi:*
-
 `1. elemento 1`  
 `2. elemento 2`  
 `3. elemento 3`  
 
 *Esempio:*
-
 1. elemento 1
 2. elemento 2
 3. elemento 3
@@ -107,21 +104,17 @@ Per l’elenco numerato si inserisce il numero dell’elemento seguito da un pun
 Per inserire un collegamento ad un sito esterno.  
 
 *Sintassi:*  
-
 `<indirizzo del sito web>.`  
 
 *Esempio:*  
-
 <https://www.wikipedia.org>
 
 Collegamento con nome personalizzato.  
 
 *Sintassi:*  
-
 `[nome personalizzato]\(<link>).`  
 
 *Esempio:*  
-
 [Visita Wikipedia](https://www.wikipedia.org)  
 
 ## Inserire immagini
@@ -129,7 +122,6 @@ Collegamento con nome personalizzato.
 Per inserire le immagini  
 
 *Sintassi:*  
-
 __`![Testo alternativo](URL o percorso “Titolo opzionale")`__
 
 `!` : indica che inserisci l’immagine.  
@@ -139,7 +131,6 @@ __`![Testo alternativo](URL o percorso “Titolo opzionale")`__
 
 
 *Esempio:*  
-
 `![Logo di GitHub](https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png "Vai su GitHub")`  
 
 ![Logo di GitHub](https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png "Vai su GitHub")
@@ -152,7 +143,6 @@ Per rendere cliccabile un immagine in Markdown (cioè che porta a un link)
 *Sintassi:*  
 
 __`[![Testo alternativo](URL o percorso “Titolo”)](Link di destinazione)`__
-
 `[ … ]` : le parentesi indicano che si sta creando un link.  
 `!` : Dice che dentro ci sarà un immagine.  
 `![Testo alternativo]` : È l’immagine vera e propria.  
@@ -162,7 +152,6 @@ __`[![Testo alternativo](URL o percorso “Titolo”)](Link di destinazione)`__
 
 
   *Esempio:*  
-
 `[![GitHub Logo](https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png "Vai su GitHub")](https://github.com)`  
 
   [![GitHub Logo](https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png "Vai su GitHub")](https://github.com)
