@@ -55,3 +55,7 @@ I **Large Language Models (LLM)** sono sistemi di IA basati su reti neurali, add
 Il mouse facciale è un dispositivo di puntamento che consente il controllo del cursore tramite i movimenti della testa, il click sinistro o destro attraverso l’ammiccamento dell’occhio corrispondente, e il passaggio alla modalità di scorrimento tramite l’apertura della bocca.
 
 - [Codici](./src/mouse_facciale/)
+
+## Considerazioni di fine percorso
+
+[Analisi SWOT](./SWOT.md)
