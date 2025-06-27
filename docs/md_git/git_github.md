@@ -2,20 +2,21 @@
 
 ## Cos’è Git
 
-Git è un sistema di controllo di versione che permette di **gestire e tenere traccia delle modifiche al codice di un progetto**. Ogni sviluppatore ha una copia completa del repository, compresa la cronologia delle modifiche, e può lavorare sia offline che online. Questo rende il lavoro di squadra più sicuro, organizzato ed efficiente.
+Git è un **sistema di controllo di versione** che permette di **gestire e tenere traccia delle modifiche al codice di un progetto**. Ogni sviluppatore ha una copia completa del repository, compresa la cronologia delle modifiche, e può lavorare sia offline che online. Questo rende il **lavoro di squadra** più **sicuro, organizzato ed efficiente**.
 
 ## Concetti chiave
 
--  **Repository (repo)**: una cartella speciale per il  progetto, non contiene solo i  file, ma anche tutta la storia delle modifiche. Ne esistono due tipi:
-	- **Locale**: la copia in locale del progetto
-	- **Remota**: la copia del progetto che si trova su un server online (come GitHub), utile per collaborare con altri o per avere un backup.
--  **Commit**: una "fotografia" (snapshot) del progetto in quel preciso momento, cattura lo stato di tutti i file così come sono in quel commit.
+> **Repository (o repo)**  
+> Una cartella speciale per il progetto, non contiene solo i file, ma anche tutta la storia delle modifiche. Può essere locale (copia in locale del progetto) o remota (copia del progetto che si trova su un server online come GitHub, utile per collaborare con altri o per avere un backup).
 
-## Aree di lavoro
+> **Commit**  
+> Una "fotografia" (snapshot) del progetto in quel preciso momento, cattura lo stato di tutti i file così come sono in quel commit
 
--  **Working directory**: dove si modificano i file
--  **Staging area**: dove si preparano le modifiche da includere nel commit
--  **Repository locale**: dove Git salva definitivamente i commit
+## Aree di Lavoro
+
+- **Working directory**: l'**area di lavoro attuale**, dove vengono modificati, aggiunti o eliminati file.
+- **Staging area**: un'**area intermedia** dove vengono preparate le modifiche che si vogliono includere nel prossimo *commit*.
+- **Repository locale**: il database Git effettivo in locale, dove **Git salva definitivamente i commit** che provengono dalla staging area.
 
 ## Flusso di lavoro base
 
@@ -23,6 +24,14 @@ Git è un sistema di controllo di versione che permette di **gestire e tenere tr
 2.  **Aggiungere i file modificati** all’area di staging con `git add`
 3.  **Salvare le modifiche** con `git commit` indicando una descrizione appropriata
 4.  **Sincronizzare con il repository** remoto usando `git push` (invia) e `git pull` (riceve)
+
+```mermaid
+graph LR
+    WD[Working Directory] --> |git add| SA[Staging Area]
+    SA --> |git commit| LR[Local Repository]
+    LR --> |git push| RR[Remote Repository]
+    RR --> |git pull| LR
+```
 
 ## Configurazione iniziale
 
@@ -40,7 +49,6 @@ Per fare il login su Github esistono due modi.
 
 ### HTTPS e Token Personale
 
-Per accedere a repository GitHub tramite HTTPS:
 GitHub richiede un *Token di Accesso Personale (PAT)* per motivi di sicurezza:
 - Maggiore protezione contro attacchi brute-force
 - Controllo granulare sui permessi (es. accesso solo ai repository)
@@ -72,25 +80,28 @@ Per funzionare viene creato un **lucchetto** (detto chiave pubblica) e una **chi
 	ssh-keygen -t ed25519 -C "tua_email@esempio.com"
 	```
 	Premendo invio tre volte, le chiavi verranno salvate nella cartella di default `C:\\Users\\nomeutente\\.ssh`
+
 2. **Avvia il portachiavi digitale**
 	```
 	eval "$(ssh-agent -s)"
 	```
 	Con Windows è necessario abilitare il servizio ssh-agent
-
 	```
 	sc config ssh-agent start=auto
 	sc start ssh-agent
 	```
+
 3. **Aggiungiamo la chiave privata**
 	```
 	ssh-add ~/.ssh/id_ed25519
 	```
+
 4. **Copiare la chiave pubblica**
 		Eseguire questo comando e copiare la chiave.
 	```
 	type ~/.ssh/id_ed25519.pub
 	```
+
 5. **Registrare la chiave su GitHub**
 	1. Andare su [github.com/settings/keys](https://github.com/settings/keys)  (bisogna essere loggato)
 	2. Clicca  **"New SSH key"**
@@ -99,13 +110,15 @@ Per funzionare viene creato un **lucchetto** (detto chiave pubblica) e una **chi
 	    - **Key type**: Lascia "Authentication Key"
 	    - **Key**: Incolla (`Ctrl+V`) il testo copiato al punto 4
 	4. Clicca  **"Add SSH key"**
+
 6. **Tentativo di connessione**
 	```
 	ssh -T git@github.com
 	```
 	Se il comando non dà errori, tutto è stato fatto correttamente.  
+
 7. **Conclusioni**
-Da adesso, quando si aprirà una repository bisognerà seguire questa sintassi.
+   Da adesso, quando si aprirà una repository bisognerà seguire questa sintassi.
 	```
 	git clone git@github.com:tuousername/nomerepo.git
 	```
@@ -443,6 +456,7 @@ Un **buon commit** segue questo schema:
 <corpo del commit (opzionale)>
 <footer (opzionale)>
 ```
+
 Nel campo **"tipo"** possiamo avere:
 - `feat` (nuova funzionalità);
 - `fix` (correzione bug);
@@ -541,7 +555,7 @@ Quando abbiamo finito di lavorare ad una feature **e** abbiamo ottenuto l'approv
 `git flow feature finish feature_branch`  
 oppure senza:  
 `git checkout develop`  
-[`git merge feature_branch`](https://github.com/campionl/dl/blob/4edf30cc6e715a677dc493fe65a291c02501e2b1/git.md?plain=1#L42)  
+`git merge feature_branch`
 
 ### Quando devo rilasciare il programma come mi preparo?  
 
